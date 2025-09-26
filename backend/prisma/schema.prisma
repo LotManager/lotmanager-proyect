@@ -1,0 +1,218 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Feedlot {
+  id           Int       @id @default(autoincrement())
+  nombre       String
+  localidad    Localidad @relation(fields: [id_localidad], references: [id])
+  id_localidad Int
+  corral       Corral[]
+}
+
+model Localidad {
+  id            Int       @id @default(autoincrement())
+  codigo_postal Int
+  nombre        String
+  provincia     Provincia @relation(fields: [id_provincia], references: [id])
+  id_provincia  Int
+  feedlot       Feedlot[]
+}
+
+model Provincia {
+  id        Int         @id @default(autoincrement())
+  nombre    String
+  localidad Localidad[]
+}
+
+model Raza {
+  id     Int      @id @default(autoincrement())
+  nombre String
+  bovino Bovino[]
+}
+
+model Usuario {
+  id         Int        @id @default(autoincrement())
+  id_rol     Int
+  usuario    String
+  contrasena String
+  rol        Rol        @relation(fields: [id_rol], references: [id])
+  personal   Personal[]
+}
+
+model Personal {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  apellido   String
+  id_usuario Int?
+  usuario    Usuario? @relation(fields: [id_usuario], references: [id])
+}
+
+model Alimento {
+  id              Int               @id @default(autoincrement())
+  nro_serie       Int
+  vencimiento     String
+  detallealimento DetalleAlimento[]
+  Suministro      Suministro[]
+}
+
+model DetalleAlimento {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  tipo        String
+  alimento    Alimento @relation(fields: [id_alimento], references: [id])
+  id_alimento Int
+}
+
+model Alimentacion {
+  id          Int          @id @default(autoincrement())
+  descripcion String
+  nombre      String
+  corral      Corral[]
+  Suministro  Suministro[]
+}
+
+model Suministro {
+  id              Int          @id @default(autoincrement())
+  cantidad        Float
+  id_alimentacion Int
+  id_alimento     Int
+  alimentacion    Alimentacion @relation(fields: [id_alimentacion], references: [id])
+  alimento        Alimento     @relation(fields: [id_alimento], references: [id])
+}
+
+model Enfermedad {
+  id                     Int                      @id @default(autoincrement())
+  nombre                 String
+  descripcion            String
+  tipo                   String
+  detallesenfermedad     DetalleEnfermedad[]
+  enfermedadxtratamiento EnfermedadxTratamiento[]
+}
+
+model Tratamiento {
+  id                     Int                      @id @default(autoincrement())
+  descripcion            String
+  dosis_aplicada         String
+  nombre                 String
+  enfermedadxtratamiento EnfermedadxTratamiento[]
+}
+
+model EnfermedadxTratamiento {
+  id_tratamiento   Int
+  id_enfermedad    Int
+  periodo_aplicado String
+  tratamiento      Tratamiento @relation(fields: [id_tratamiento], references: [id])
+  enfermedad       Enfermedad  @relation(fields: [id_enfermedad], references: [id])
+
+  @@id([id_tratamiento, id_enfermedad])
+}
+
+model Pesaje {
+  id        Int      @id @default(autoincrement())
+  id_bovino Int
+  fecha     DateTime
+  peso_dado Float
+  bovino    Bovino   @relation(fields: [id_bovino], references: [id])
+}
+
+model Bovino {
+  id                 Int                 @id @default(autoincrement())
+  id_raza            Int
+  id_corral          Int
+  caravana           Int
+  estado_bovino      EstadoBovino
+  estado_salud       EstadoSalud         @default(SANO)
+  ingreso            DateTime
+  egreso             DateTime?
+  peso_ingreso       Float
+  peso_egreso        Float?
+  sexo               Sexo
+  tipo_bovino        TipoBovino
+  raza               Raza                @relation(fields: [id_raza], references: [id])
+  corral             Corral              @relation(fields: [id_corral], references: [id])
+  detallesenfermedad DetalleEnfermedad[]
+  pesaje             Pesaje[]
+}
+
+model DetalleEnfermedad {
+  id_bovino     Int
+  id_enfermedad Int
+  id_corral     Int
+  fecha_inicio  DateTime
+  fecha_fin     DateTime
+  enfermedad    Enfermedad @relation(fields: [id_enfermedad], references: [id])
+  corral        Corral     @relation(fields: [id_corral], references: [id])
+  bovino        Bovino     @relation(fields: [id_bovino], references: [id])
+
+  @@id([id_bovino, id_enfermedad])
+}
+
+model Corral {
+  id                 Int                 @id @default(autoincrement())
+  capacidad_maxima   Int
+  numero             Int
+  tipo_corral        TipoCorral
+  alimentacion       Alimentacion?       @relation(fields: [id_alimentacion], references: [id])
+  id_alimentacion    Int?
+  feedlot            Feedlot             @relation(fields: [id_feedlot], references: [id])
+  id_feedlot         Int
+  bovino             Bovino[]
+  detallesenfermedad DetalleEnfermedad[]
+}
+
+model Rol {
+  id      Int       @id @default(autoincrement())
+  nombre  String
+  usuario Usuario[]
+}
+
+enum EstadoBovino {
+  ENCORRAL
+  ENFERMA 
+  MUERTA
+  EGRESADA
+}
+
+enum TipoCorral {
+  ENGORDE
+  ENFERMA
+}
+
+enum EstadoSalud {
+  SANO
+  ENFERMO
+  FALLECIDO
+}
+
+enum Sexo {
+  MACHO
+  HEMBRA
+}
+
+enum TipoBovino {
+  TERNERO
+  NOVILLO
+  VAQUILLONA
+  DESCARTE
+}
+
+enum TipoEnfermedad {
+  RESPIRATORIA
+  DIGESTIVA
+  SISTEMANERVIOSO
+  PARASITARIA
+  INTOXICACION
+  TRAUMATOLOGICA
+}

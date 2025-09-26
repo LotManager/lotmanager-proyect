@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { LocalidadController } from "../controllers/localidad-controller.js";
+import { LocalidadController } from "../controllers/localidad-controller";
 
 const router = Router();
 const localidadController = new LocalidadController();

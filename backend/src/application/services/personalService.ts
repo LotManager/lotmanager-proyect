@@ -1,8 +1,8 @@
-import { PersonalRepository } from "../../domain/interfaces/IPersonalRepository.js";
-import { Personal } from "../../domain/entities/Personal.js";
-import { PersonalCreateDto } from "../personal/dtos/personal.dto.js";
-import { toDomain } from "../personal/mappers/toDomain.js";
-import { toPersistence } from "../personal/mappers/toPersistence.js";
+import { PersonalRepository } from "../../domain/interfaces/IPersonalRepository";
+import { Personal } from "../../domain/entities/Personal";
+import { PersonalCreateDto } from "../personal/dtos/personal.dto";
+import { toDomain } from "../personal/mappers/toDomain";
+import { toPersistence } from "../personal/mappers/toPersistence";
 
 export class PersonalService {
   constructor(private readonly repo: PersonalRepository) {}

@@ -1,6 +1,6 @@
-import { Feedlot } from "../../domain/entities/Feedlot.js";
-import { IFeedlotRepository } from "../../domain/interfaces/IFeedlotRepository.js";
-import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository.js";
+import { Feedlot } from "../../domain/entities/Feedlot";
+import { IFeedlotRepository } from "../../domain/interfaces/IFeedlotRepository";
+import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository";
 
 export class FeedlotService {
   constructor(

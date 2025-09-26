@@ -1,4 +1,4 @@
-import { Rol } from "../value-objects/Rol.js";
+import { Rol } from "../value-objects/Rol";
 
 export interface Personal {
     id: number;

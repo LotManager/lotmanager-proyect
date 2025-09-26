@@ -1,4 +1,4 @@
-import { UserDTO } from "../../application/auth/dtos/user.dto.js";
+import { UserDTO } from "../../application/auth/dtos/user.dto";
 
 export interface ITokenService {
   generateAccessToken(user: UserDTO): string;

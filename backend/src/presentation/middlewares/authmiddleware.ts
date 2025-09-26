@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { tokenService } from "../../application/auth/services/tokenService.js";
-import { AuthPayload } from "../../application/auth/types/AuthPayload.js";
+import { tokenService } from "../../application/auth/services/tokenService";
+import { AuthPayload } from "../../application/auth/types/AuthPayload";
 
 declare global {
   namespace Express {

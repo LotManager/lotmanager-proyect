@@ -4,7 +4,7 @@ import {
   loginHandler,
   refreshHandler,
   logoutHandler,
-} from "../../presentation/controllers/auth-controller.js";
+} from "../../presentation/controllers/auth-controller";
 
 const router = Router();
 

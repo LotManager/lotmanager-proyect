@@ -1,4 +1,4 @@
-import { Rol } from "../../../domain/value-objects/Rol.js";
+import { Rol } from "../../../domain/value-objects/Rol";
 
 export interface PersonalPersisted {
   id: number;

@@ -1,11 +1,13 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { Request, Response } from 'express';
-import usuarioRutas from './presentation/routes/usuario-rutas.js';
-import provinciaRutas from './presentation/routes/provincia-rutas.js';
-import localidadRutas from './presentation/routes/localidad-rutas.js';
-import feedlotRutas from './presentation/routes/feedlot-rutas.js';
+import feedlotRutas from './presentation/routes/feedlot-rutas';
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,9 +21,9 @@ app.use(cors({
 
 //Rutas 
 
-app.use("/api/auth", usuarioRutas);
-app.use("/api/provincias", provinciaRutas);
-app.use("/api/localidades", localidadRutas);
+//app.use("/api/auth", usuarioRutas);
+//app.use("/api/provincias", provinciaRutas);
+//app.use("/api/localidades", localidadRutas);
 app.use("/api/feedlots", feedlotRutas);
 
 

@@ -1,4 +1,4 @@
-import { Personal } from "../../../domain/entities/Personal.js";
+import { Personal } from "../../../domain/entities/Personal";
 
 
 

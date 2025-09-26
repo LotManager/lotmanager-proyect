@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { AuthService } from "../../application/auth/services/auth-service.js";
-import { PrismaUserRepository } from "../../infrastructure/repositorios/PrismaUserRepository.js";
-import { userCreateDTOSchema } from "../../application/auth/dtos/user.dto.js";
-import { tokenService } from "../../application/auth/services/tokenService.js";
+import { AuthService } from "../../application/auth/services/auth-service";
+import { PrismaUserRepository } from "../../infrastructure/repositorios/PrismaUserRepository";
+import { userCreateDTOSchema } from "../../application/auth/dtos/user.dto";
+import { tokenService } from "../../application/auth/services/tokenService";
 
 export async function registerHandler(req: Request, res: Response) {
   console.log("[AuthController] Intento de registro:", req.body.usuario);

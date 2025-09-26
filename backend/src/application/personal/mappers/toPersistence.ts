@@ -1,4 +1,4 @@
-import { PersonalCreateDto } from "../dtos/personal.dto.js";
+import { PersonalCreateDto } from "../dtos/personal.dto";
 
 export function toPersistence(dto: PersonalCreateDto): any {
     return {

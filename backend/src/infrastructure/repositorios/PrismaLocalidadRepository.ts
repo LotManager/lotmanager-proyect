@@ -1,7 +1,7 @@
-import prisma from "../../infrastructure/repositorios/client.js";
-import { Localidad } from "../../domain/entities/Localidad.js";
-import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository.js";
-import { Provincia } from "../../domain/entities/Provincia.js";
+import prisma from "../../infrastructure/repositorios/client";
+import { Localidad } from "../../domain/entities/Localidad";
+import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository";
+import { Provincia } from "../../domain/entities/Provincia";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export class PrismaLocalidadRepository implements ILocalidadRepository {

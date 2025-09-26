@@ -1,6 +1,6 @@
-import prisma from "../../infrastructure/repositorios/client.js";
-import { Provincia } from "../../domain/entities/Provincia.js";
-import { IProvinciaRepository } from "../../domain/interfaces/IProvinciaRepository.js";
+import prisma from "../../infrastructure/repositorios/client";
+import { Provincia } from "../../domain/entities/Provincia";
+import { IProvinciaRepository } from "../../domain/interfaces/IProvinciaRepository";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 

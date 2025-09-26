@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import { config } from "../../../config/config.js";
-import { UserDTO } from "../../../application/auth/dtos/user.dto.js";
-import { jwtPayloadSchema } from "../../../application/schemas/jwtPayloadSchema.js";
-import { TokenTipo } from "../tokens/token-tipo.js";
-import { ITokenService } from "../../../domain/interfaces/ITokenService.js";
+import { config } from "../../../config/config";
+import { jwtPayloadSchema } from "../../../application/schemas/jwtPayloadSchema";
+import { TokenTipo } from "../tokens/token-tipo";
+import { ITokenService } from "../../../domain/interfaces/ITokenService";
+
 
 export const tokenService: ITokenService = {
   generateAccessToken(user) {

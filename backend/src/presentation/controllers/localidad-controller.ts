@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { LocalidadService } from "../../application/services/localidadService.js";
-import { PrismaLocalidadRepository } from "../../infrastructure/repositorios/PrismaLocalidadRepository.js";
-import { PrismaProvinciaRepository } from "../../infrastructure/repositorios/PrismaProvinciaRepository.js";
+import { LocalidadService } from "../../application/services/localidadService";
+import { PrismaLocalidadRepository } from "../../infrastructure/repositorios/PrismaLocalidadRepository";
+import { PrismaProvinciaRepository } from "../../infrastructure/repositorios/PrismaProvinciaRepository";
 
 const localidadService = new LocalidadService(
   new PrismaLocalidadRepository(),

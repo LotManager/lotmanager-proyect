@@ -1,6 +1,6 @@
-import { Localidad } from "../../domain/entities/Localidad.js";
-import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository.js";
-import { IProvinciaRepository } from "../../domain/interfaces/IProvinciaRepository.js";
+import { Localidad } from "../../domain/entities/Localidad";
+import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository";
+import { IProvinciaRepository } from "../../domain/interfaces/IProvinciaRepository";
 
 export class LocalidadService {
   constructor(

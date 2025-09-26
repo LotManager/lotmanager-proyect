@@ -1,8 +1,8 @@
-import prisma from "../../infrastructure/repositorios/client.js";
-import { Feedlot } from "../../domain/entities/Feedlot.js";
-import { IFeedlotRepository } from "../../domain/interfaces/IFeedlotRepository.js";
-import { Localidad } from "../../domain/entities/Localidad.js";
-import { Provincia } from "../../domain/entities/Provincia.js";
+import prisma from "../../infrastructure/repositorios/client";
+import { Feedlot } from "../../domain/entities/Feedlot";
+import { IFeedlotRepository } from "../../domain/interfaces/IFeedlotRepository";
+import { Localidad } from "../../domain/entities/Localidad";
+import { Provincia } from "../../domain/entities/Provincia";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 

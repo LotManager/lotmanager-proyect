@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { personalCreateSchema } from "../../application/personal/schemas/personalCreateSchema.js";
-import { toPersistence } from "../../application/personal/mappers/toPersistence.js";
-import { PersonalService } from "../../application/services/personalService.js";
+import { personalCreateSchema } from "../../application/personal/schemas/personalCreateSchema";
+import { toPersistence } from "../../application/personal/mappers/toPersistence";
+import { PersonalService } from "../../application/services/personalService";
 
 export const personalController = (service: PersonalService) => {
   return async (req: Request, res: Response) => {

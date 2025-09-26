@@ -1,5 +1,5 @@
-import { Provincia } from "../../domain/entities/Provincia.js";
-import { IProvinciaRepository } from "../../domain/interfaces/IProvinciaRepository.js";
+import { Provincia } from "../../domain/entities/Provincia";
+import { IProvinciaRepository } from "../../domain/interfaces/IProvinciaRepository";
 
 export class ProvinciaService {
   constructor(private readonly repo: IProvinciaRepository) {}

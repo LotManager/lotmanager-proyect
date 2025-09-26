@@ -1,4 +1,4 @@
-import { Provincia } from "./Provincia.js";
+import { Provincia } from "./Provincia";
 
 export class Localidad {  
   constructor(

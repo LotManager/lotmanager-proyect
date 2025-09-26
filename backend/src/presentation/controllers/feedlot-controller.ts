@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { FeedlotService } from "../../application/services/feedlotService.js";
-import { PrismaFeedlotRepository } from "../../infrastructure/repositorios/PrismaFeedlotRepository.js";
-import { PrismaLocalidadRepository } from "../../infrastructure/repositorios/PrismaLocalidadRepository.js";
+import { FeedlotService } from "../../application/services/feedlotService";
+import { PrismaFeedlotRepository } from "../../infrastructure/repositorios/PrismaFeedlotRepository";
+import { PrismaLocalidadRepository } from "../../infrastructure/repositorios/PrismaLocalidadRepository";
 
 const feedlotService = new FeedlotService(
   new PrismaFeedlotRepository(),

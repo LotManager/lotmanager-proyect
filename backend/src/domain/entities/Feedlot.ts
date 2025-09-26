@@ -1,4 +1,4 @@
-import { Localidad } from "./Localidad.js";
+import { Localidad } from "./Localidad";
 
 export class Feedlot {
   constructor(

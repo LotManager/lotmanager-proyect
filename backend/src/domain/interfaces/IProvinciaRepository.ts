@@ -1,4 +1,4 @@
-import { Provincia } from "../entities/Provincia.js";
+import { Provincia } from "../entities/Provincia";
 
 export interface IProvinciaRepository {
     findById(id: number): Promise<Provincia | null>;

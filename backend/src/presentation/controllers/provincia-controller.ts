@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ProvinciaService } from "../../application/services/provinciaService.js";
-import { PrismaProvinciaRepository } from "../../infrastructure/repositorios/PrismaProvinciaRepository.js";
+import { ProvinciaService } from "../../application/services/provinciaService";
+import { PrismaProvinciaRepository } from "../../infrastructure/repositorios/PrismaProvinciaRepository";
 
 const provinciaService = new ProvinciaService(new PrismaProvinciaRepository());
 

@@ -1,4 +1,4 @@
-import { Feedlot } from "../entities/Feedlot.js";
+import { Feedlot } from "../entities/Feedlot";
 
 export interface IFeedlotRepository {
   findById(id: number): Promise<Feedlot | null>;

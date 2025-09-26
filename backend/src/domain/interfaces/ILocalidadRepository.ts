@@ -1,4 +1,4 @@
-import { Localidad } from "../entities/Localidad.js";
+import { Localidad } from "../entities/Localidad";
 
 export interface ILocalidadRepository {
   findById(id: number): Promise<Localidad | null>;

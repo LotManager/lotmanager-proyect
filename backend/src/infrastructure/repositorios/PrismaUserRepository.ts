@@ -1,10 +1,9 @@
-import { PasswordHash } from "../../domain/value-objects/PasswordHash.js";
-import prisma from "../../infrastructure/repositorios/client.js";
-import { User } from "../../domain/entities/User.js";
-import { Rol } from "../../domain/value-objects/Rol.js";
+import { PasswordHash } from "../../domain/value-objects/PasswordHash";
+import prisma from "../../infrastructure/repositorios/client";
+import { User } from "../../domain/entities/User";
+import { Rol } from "../../domain/value-objects/Rol";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { IUserRepository } from "../../domain/interfaces/IUserRepository.js";
-import { Prisma } from "@prisma/client";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 
 export class PrismaUserRepository implements IUserRepository {
 

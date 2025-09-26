@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ProvinciaController } from "../../presentation/controllers/provincia-controller.js";
+import { ProvinciaController } from "../../presentation/controllers/provincia-controller";
 
 const router = Router();
 const controller = new ProvinciaController();

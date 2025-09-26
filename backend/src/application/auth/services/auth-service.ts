@@ -1,10 +1,10 @@
-import { IUserRepository } from "../../../domain/interfaces/IUserRepository.js";
-import { UserCreateInput } from "../dtos/user.dto.js";
-import { ITokenService } from "../../../domain/interfaces/ITokenService.js";
-import { PasswordHash } from "../../../domain/value-objects/PasswordHash.js";
-import { Rol } from "../../../domain/value-objects/Rol.js";
-import { AuthResponseDTO } from "../dtos/auth-responde.dto.js";
-import { User } from "../../../domain/entities/User.js";
+import { IUserRepository } from "../../../domain/interfaces/IUserRepository";
+import { UserCreateInput } from "../dtos/user.dto";
+import { ITokenService } from "../../../domain/interfaces/ITokenService";
+import { PasswordHash } from "../../../domain/value-objects/PasswordHash";
+import { Rol } from "../../../domain/value-objects/Rol";
+import { AuthResponseDTO } from "../dtos/auth-responde.dto";
+import { User } from "../../../domain/entities/User";
 
 
 

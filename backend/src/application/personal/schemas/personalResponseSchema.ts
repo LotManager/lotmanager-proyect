@@ -1,4 +1,4 @@
-import { Rol } from "@/src/domain/value-objects/Rol";
+import { Rol } from "../../../domain/value-objects/Rol";
 import { z } from "zod";
 
 export const personalResponseSchema = z.object({

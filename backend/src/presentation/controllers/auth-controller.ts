@@ -79,4 +79,5 @@ export async function logoutHandler(req: Request, res: Response) {
   });
 
   res.status(200).json({ message: "Sesión cerrada correctamente" });
+  console.log("[AuthController] Usuario deslogueado");
 }

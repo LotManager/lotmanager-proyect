@@ -9,15 +9,14 @@ export const tokenService: ITokenService = {
   generateAccessToken(user) {
     return jwt.sign(
       {
-        id: user.id,
+        sub: user.id,
         usuario: user.usuario,
         rol: user.rol,
       },
       config.jwtSecret,
       {
         expiresIn: "1h",
-        issuer: "auth-service",
-        subject: String(user.id),
+        issuer: "auth-service"
       }
     );
   },
@@ -52,7 +51,6 @@ export const tokenService: ITokenService = {
     return jwt.sign(payload, config.recoverySecret, {
       expiresIn: "15m",
       issuer: "auth-service",
-      subject: String(userId),
     });
   },
 
@@ -82,8 +80,7 @@ export const tokenService: ITokenService = {
     };
     return jwt.sign(payload, config.refreshSecret, {
       expiresIn: "7d",
-      issuer: "auth-service",
-      subject: String(userId),
+      issuer: "auth-service"
     });
   },
 

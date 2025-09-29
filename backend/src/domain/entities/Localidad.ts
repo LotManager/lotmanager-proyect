@@ -30,6 +30,9 @@ export class Localidad {
   public getNombreProvincia(): string {
     return this.provincia.getNombre();
 }
+  public getProvincia(): Provincia {
+  return this.provincia;
+}
 
   public getIdProvincia(): number {
     return this.provincia.getId();

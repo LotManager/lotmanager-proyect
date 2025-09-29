@@ -7,6 +7,9 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { Request, Response } from 'express';
 import feedlotRutas from './presentation/routes/feedlot-rutas';
+import localidadRutas from './presentation/routes/localidad-rutas';
+import provinciaRutas from './presentation/routes/provincia-rutas';
+import usuarioRutas from './presentation/routes/usuario-rutas';
 
 
 const PORT = process.env.PORT || 3000;
@@ -21,13 +24,17 @@ app.use(cors({
 
 //Rutas 
 
-//app.use("/api/auth", usuarioRutas);
-//app.use("/api/provincias", provinciaRutas);
-//app.use("/api/localidades", localidadRutas);
+app.use("/api/auth", usuarioRutas);
+app.use("/api/localidades", localidadRutas);
 app.use("/api/feedlots", feedlotRutas);
 
+// app.use("/api/provincias", provinciaRutas);
 
 
+
+app.get("/test-provincia", (req, res) => {
+  res.send("Ruta directa funcionando");
+});
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello, World!');
 });

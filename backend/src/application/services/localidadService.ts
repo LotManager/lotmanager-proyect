@@ -8,7 +8,7 @@ export class LocalidadService {
     private readonly provinciaRepo: IProvinciaRepository
   ) {}
 
-  public async registrar(
+  public async registrarSrv(
     id: number,
     codigoPostal: number,
     nombre: string,
@@ -23,20 +23,35 @@ export class LocalidadService {
     return await this.localidadRepo.create(localidad);
   }
 
-  public async actualizar(
-    id: number,
-    codigoPostal: number,
-    nombre: string,
-    idProvincia: number
-  ): Promise<void> {
-    const provincia = await this.provinciaRepo.findById(idProvincia);
-    if (!provincia) {
-      throw new Error("Provincia no encontrada");
-    }
+ public async actualizarSrv(
+  id: number,
+  cambios: {
+    nombre?: string;
+    codigoPostal?: number;
+    idProvincia?: number;
+  }): Promise<void> {
+  const localidadActual = await this.localidadRepo.findById(id);
+  if (!localidadActual) throw new Error("Localidad no encontrada");
 
-    const localidad = new Localidad(id, codigoPostal, nombre, provincia);
-    await this.localidadRepo.update(localidad);
+  // Usamos la provincia actual por defecto
+  let provincia = localidadActual.getProvincia();
+
+  // Si se solicita cambiar la provincia, la buscamos
+  if (cambios.idProvincia !== undefined && cambios.idProvincia !== provincia.getId()) {
+    const nuevaProvincia = await this.provinciaRepo.findById(cambios.idProvincia);
+    if (!nuevaProvincia) throw new Error("Provincia no encontrada");
+    provincia = nuevaProvincia;
   }
+
+  const nuevaLocalidad = new Localidad(
+    id,
+    cambios.codigoPostal ?? localidadActual.getCodigoPostal(),
+    cambios.nombre ?? localidadActual.getNombre(),
+    provincia 
+  );
+
+  await this.localidadRepo.update(nuevaLocalidad);
+}
 
   public async eliminar(id: number): Promise<void> {
     await this.localidadRepo.delete(id);

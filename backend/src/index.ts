@@ -1,7 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import corralRoutes from './presentation/routes/corral.routes'; // 👈 Import con extensión .js
+import corralRoutes from './presentation/routes/corral.routes'; 
+import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento.routes";
+import suministroRoutes from "./presentation/routes/suministro.routes"
+
 
 dotenv.config();
 
@@ -12,6 +15,8 @@ app.use(express.json());
 
 // Rutas principales
 app.use('/corrales', corralRoutes);
+app.use('/detalle-alimentos', detalleAlimentoRoutes);
+app.use('/suministros', suministroRoutes);
 
 // Ruta de prueba
 app.get('/ping', (_req, res) => {

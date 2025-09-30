@@ -2,9 +2,9 @@ import { Localidad } from "./Localidad";
 
 export class Feedlot {
   constructor(
-    private readonly id: number,
-    private readonly nombre: string,
-    private readonly localidad: Localidad
+    private  id: number,
+    private  nombre: string,
+    private  localidad: Localidad
   ) {
     if (!Feedlot.isNombreValido(nombre)) {
       throw new Error("Nombre de feedlot inválido");

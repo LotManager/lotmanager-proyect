@@ -10,6 +10,7 @@ import feedlotRutas from './presentation/routes/feedlot-rutas';
 import localidadRutas from './presentation/routes/localidad-rutas';
 import provinciaRutas from './presentation/routes/provincia-rutas';
 import usuarioRutas from './presentation/routes/usuario-rutas';
+import personalRutas from './presentation/routes/personal-rutas';
 
 
 const PORT = process.env.PORT || 3000;
@@ -27,6 +28,8 @@ app.use(cors({
 app.use("/api/auth", usuarioRutas);
 app.use("/api/localidades", localidadRutas);
 app.use("/api/feedlots", feedlotRutas);
+app.use("/api/provincias", provinciaRutas);
+app.use("/api/personal", personalRutas);
 
 // app.use("/api/provincias", provinciaRutas);
 
@@ -46,3 +49,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
+ 

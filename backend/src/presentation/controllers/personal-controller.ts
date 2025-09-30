@@ -1,45 +1,73 @@
 import { Request, Response } from "express";
-import { personalCreateSchema } from "../../application/personal/schemas/personalCreateSchema";
-import { toPersistence } from "../../application/personal/mappers/toPersistence";
 import { PersonalService } from "../../application/services/personalService";
+import { personalCreateSchema } from "../../application/personal/schemas/personalCreateSchema";
+import { personalResponseSchema } from "../../application/personal/schemas/personalResponseSchema";
+import { personalUpdateSchema } from "../../application/personal/schemas/personalUpdateSchema";
+import { PersonalUpdateDto } from "../../application/personal/dtos/personal.dto";
 
-export const personalController = (service: PersonalService) => {
-  return async (req: Request, res: Response) => {
+
+export class PersonalController {
+  constructor(private readonly service: PersonalService) {}
+
+  async crear(req: Request, res: Response) {
     try {
-      if (req.method === "POST") {
-        const dto = personalCreateSchema.parse(req.body);
-        const persistible = toPersistence(dto);
-        const creado = await service.registrar(persistible);
-        return res.status(201).json(creado);
-      }
-
-      if (req.method === "GET") {
-        const id = Number(req.params.id!);
-        if (isNaN(id)) {
-          return res.status(400).json({ mensaje: "ID inválido" });
-        }
-
-        const encontrado = await service.obtenerPorId(id);
-        if (!encontrado) {
-          return res.status(404).json({ mensaje: "Personal no encontrado" });
-        }
-
-        return res.json(encontrado);
-      }
-      if (req.method === "DELETE") {
-            const id = Number(req.params.id!);
-        if (isNaN(id)) {
-            return res.status(400).json({ mensaje: "ID inválido" });
-      }
-        await service.eliminar(id);
-        return res.status(204).send();
+      const dto = personalCreateSchema.parse(req.body);
+      const creado = await this.service.crear(dto);
+      const response = creado.toDTO();
+      personalResponseSchema.parse(response); // validación extra opcional
+      res.status(201).json(response);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
-      return res.status(405).json({ mensaje: "Método no permitido" });
-    } catch (error) {
-      return res.status(400).json({
-        mensaje: "Error en la operación",
-        detalles: error instanceof Error ? error.message : error,
-      });
+  }
+
+  async actualizar(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const dto: PersonalUpdateDto = personalUpdateSchema.parse(req.body);
+      const actualizado = await this.service.actualizar(id, dto);
+      const response = actualizado.toDTO();
+      personalResponseSchema.parse(response);
+      res.status(200).json(response);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
-  };
-};
+  }
+
+  async eliminar(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      await this.service.eliminar(id);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async obtenerPorId(req: Request, res: Response) {
+    try {
+      if (!req.params.id) {
+        return res.status(400).json({ error: "ID es requerido" });
+      }
+      const id = Number(req.params.id);
+      const personal = await this.service.buscarPorId(id);
+      if (!personal) {
+        return res.status(404).json({ error: "Personal no encontrado" });
+      }
+      const response = personal.toDTO();
+      personalResponseSchema.parse(response);
+      res.status(200).json(response);
+    } catch (error: any) {
+      res.status(404).json({ error: error.message });
+    }
+  }
+  async obtenerTodos(req: Request, res: Response) {
+  try {
+    const resultado = await this.service.findAll();
+    res.json(resultado);
+  } catch (error) {
+    console.error("Error al obtener todos los personales:", error);
+    res.status(500).send("Error interno");
+  }
+}
+}

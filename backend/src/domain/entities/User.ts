@@ -25,7 +25,9 @@ export class User {
             (!this.rol || this.rol.isValid())
         );
     }
-
+    public async checkPassword(plain: string): Promise<boolean> {
+        return await this.contrasena.compareWith(plain);
+    }
 
     public getId(): number {
         return this.id;

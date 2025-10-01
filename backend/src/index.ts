@@ -11,6 +11,7 @@ import localidadRutas from './presentation/routes/localidad-rutas';
 import provinciaRutas from './presentation/routes/provincia-rutas';
 import usuarioRutas from './presentation/routes/usuario-rutas';
 import personalRutas from './presentation/routes/personal-rutas';
+import enfermedadRutas from './presentation/routes/enfermedad-rutas';
 
 
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,9 @@ app.use("/api/localidades", localidadRutas);
 app.use("/api/feedlots", feedlotRutas);
 app.use("/api/provincias", provinciaRutas);
 app.use("/api/personal", personalRutas);
+app.use("/api/enfermedades", enfermedadRutas);
+
+
 
 // app.use("/api/provincias", provinciaRutas);
 

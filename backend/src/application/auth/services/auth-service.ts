@@ -1,9 +1,9 @@
 import { IUserRepository } from "../../../domain/interfaces/IUserRepository";
-import { UserCreateInput } from "../dtos/user.dto";
+import { UserCreateInput } from "../../dtos/user.dto";
 import { ITokenService } from "../../../domain/interfaces/ITokenService";
 import { PasswordHash } from "../../../domain/value-objects/PasswordHash";
 import { Rol } from "../../../domain/value-objects/Rol";
-import { AuthResponseDTO } from "../dtos/auth-responde.dto";
+import { AuthResponseDTO } from "../../dtos/auth-responde.dto";
 import { User } from "../../../domain/entities/User";
 
 

@@ -1,6 +1,6 @@
 import { PasswordHash } from "../value-objects/PasswordHash";
 import { Rol } from "../value-objects/Rol";
-import { UserDTO } from "../../application/auth/dtos/user.dto";
+import { UserDTO } from "../../application/dtos/user.dto";
 
 
 export class User {

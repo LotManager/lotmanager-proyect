@@ -19,6 +19,6 @@ router.get("/", (req, res) => controller.obtenerTodas(req, res));
 router.put("/:id", (req, res) => controller.actualizarParcial(req, res));
 router.delete("/:id", (req, res) => controller.eliminarController(req, res));
 router.post("/:id/vincular", (req, res) => controller.vincularTratamientoController(req, res));
-router.delete("/:id/vincular/:idTratamiento", (req, res) => controller.desvincularTratamientoController(req, res));
+router.delete("/:id/desvincular/:idTratamiento", (req, res) => controller.desvincularTratamientoController(req, res));
 
 export default router;

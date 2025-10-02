@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import prisma from '../../infrastructure/repositorios/client';
 
 /* ----------------------------------------------------------
-   PUT /api/bovinos/:id  → Actualizar bovino
+PUT /api/bovinos/:id  → Actualizar bovino
 ---------------------------------------------------------- */
 export const actualizarBovino = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -96,7 +96,7 @@ export const eliminarBovino = async (req: Request, res: Response): Promise<void>
       where: { id },
       data: {
         egreso: new Date(),
-        estado_bovino: 'EGRESADO',
+        estado_bovino: 'EGRESADA',
       },
     });
 

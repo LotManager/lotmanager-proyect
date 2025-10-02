@@ -1,31 +1,4 @@
-// src/domain/entities/Bovino.ts
-
-// Enum que **copiamos tal cual** del schema Prisma (para no mezclar strings sueltas)
-export enum EstadoBovino {
-  ENGORDE = 'ENGORDE',
-  ENGORDE_FINAL = 'ENGORDE_FINAL',
-  EGRESADO = 'EGRESADO',
-  // agregá más valores que uses
-}
-
-export enum EstadoSalud {
-  SANO = 'SANO',
-  ENFERMO = 'ENFERMO',
-  RECUPERADO = 'RECUPERADO',
-}
-
-export enum Sexo {
-  MACHO = 'MACHO',
-  HEMBRA = 'HEMBRA',
-}
-
-export enum TipoBovino {
-  TERNERO = 'TERNERO',
-  VAQUILLONA = 'VAQUILLONA',
-  NOVILLO = 'NOVILLO',
-  TORO = 'TORO',
-}
-
+import { EstadoBovino, EstadoSalud, Sexo, TipoBovino } from '../enums/BovinoEnum';
 /* ----------------------------------------------------------
    Entidad PURA (sin Prisma, sin base de datos)
 ---------------------------------------------------------- */
@@ -76,4 +49,39 @@ export class Bovino {
         props.tipo_bovino
     );
   }
+
+  public getId(): number | null {
+    return this.id;
+  }
+  public getIdCorral(): number {
+    return this.id_corral;
+  }
+  public getCaravana(): number {
+    return this.caravana;
+  }
+  public getEstadoBovino(): EstadoBovino {
+    return this.estado_bovino;
+  }
+  public getEstadoSalud(): EstadoSalud {
+    return this.estado_salud;
+  }
+  public getIngreso(): Date {
+    return this.ingreso;
+  }
+  public getEgreso(): Date | null {
+    return this.egreso;
+  }
+  public getPesoIngreso(): number {
+    return this.peso_ingreso;
+  }
+  public getPesoEgreso(): number | null {
+    return this.peso_egreso;
+  }
+  public getSexo(): Sexo {
+    return this.sexo;
+  }
+  public getTipoBovino(): TipoBovino {
+    return this.tipo_bovino;
+  }
+
 }

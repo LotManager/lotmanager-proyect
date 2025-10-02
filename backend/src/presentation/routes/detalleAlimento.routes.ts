@@ -3,7 +3,10 @@ import { DetalleAlimentoController } from "../controllers/detalleAlimento.contro
 
 const router = Router()
 
-router.post("/", DetalleAlimentoController.create)
-router.get("/", DetalleAlimentoController.getAll)
+router.get("/", DetalleAlimentoController.listar)
+router.get("/:id", DetalleAlimentoController.obtenerPorId)
+router.post("/", DetalleAlimentoController.registrar)
+router.put("/:id", DetalleAlimentoController.actualizar)
+router.delete("/:id", DetalleAlimentoController.eliminar)
 
 export default router

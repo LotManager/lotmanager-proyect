@@ -1,10 +1,12 @@
-// src/routes/corral.routes.ts
-import { Router } from 'express';
-import { getAllCorralesController, createCorralController } from '../controllers/corral.controller';
+import { Router } from "express"
+import { CorralController } from "../../presentation/controllers/corral.controller"
 
-const router = Router();
+const router = Router()
 
-router.get('/', getAllCorralesController);
-router.post('/', createCorralController);
+router.get("/", CorralController.listar)
+router.get("/:id", CorralController.obtenerPorId)
+router.post("/", CorralController.registrar)
+router.put("/:id", CorralController.actualizar)
+router.delete("/:id", CorralController.eliminar)
 
-export default router;
+export default router

@@ -1,11 +1,12 @@
-import { z } from 'zod';
+import { TipoCorral } from "../enums/TipoCorral"
 
-export const CorralSchema = z.object({
-  capacidad_maxima: z.number().int().positive(),
-  numero: z.number().int().positive(),
-  tipo_corral: z.enum(['ENGORDE', 'ENFERMA']),
-  id_feedlot: z.number().int().positive(),
-  id_alimentacion: z.number().int().nullable().optional()
-});
-
-export type CorralInput = z.infer<typeof CorralSchema>;
+export class Corral {
+  constructor(
+    public readonly id: number,
+    public readonly capacidadMaxima: number,
+    public readonly numero: number,
+    public readonly tipoCorral: TipoCorral,
+    public readonly idAlimentacion: number | null,
+    public readonly idFeedlot: number
+  ) {}
+}

@@ -1,26 +1,41 @@
-// src/controllers/corral.controller.ts
-import { Request, Response } from 'express';
-import { getAllCorralesUseCase } from '../../use-cases/getAllCorrales';
-import { createCorralUseCase } from '../../use-cases/createCorral';
+import { Request, Response } from "express"
+import { CorralService } from "../../application/services/corralService"
+import { PrismaCorralRepository } from "../../infrastructure/repositorios/PrismaCorralRepository"
+import { CreateCorralDto } from "../../application/corral/dto/CreateCorralDto"
 
-export async function getAllCorralesController(req: Request, res: Response) {
-  try {
-    const corrales = await getAllCorralesUseCase();
-    res.json(corrales);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener corrales' });
+const service = new CorralService(new PrismaCorralRepository())
+
+export class CorralController {
+  static async listar(_req: Request, res: Response) {
+    const corrales = await service.listar()
+    res.json(corrales)
   }
-}
 
-export async function createCorralController(req: Request, res: Response) {
-  try {
-    const nuevoCorral = await createCorralUseCase(req.body);
-    res.status(201).json(nuevoCorral);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(400).json({ error: 'Error desconocido al crear corral' });
-    }
+  static async obtenerPorId(req: Request, res: Response) {
+    const id = Number(req.params.id)
+    const corral = await service.obtenerPorId(id)
+    if (!corral) return res.status(404).json({ message: "No encontrado" })
+    res.json(corral)
+  }
+
+  static async registrar(req: Request, res: Response) {
+    const parsed = CreateCorralDto.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: parsed.error })
+    const nuevo = await service.registrar(parsed.data)
+    res.status(201).json(nuevo)
+  }
+
+  static async actualizar(req: Request, res: Response) {
+    const id = Number(req.params.id)
+    const parsed = CreateCorralDto.safeParse(req.body)
+    if (!parsed.success) return res.status(400).json({ error: parsed.error })
+    await service.actualizar(id, parsed.data)
+    res.status(204).send()
+  }
+
+  static async eliminar(req: Request, res: Response) {
+    const id = Number(req.params.id)
+    await service.eliminar(id)
+    res.status(204).send()
   }
 }

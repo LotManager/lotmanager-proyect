@@ -1,23 +1,38 @@
 import { Request, Response } from "express"
-import { createSuministro } from "../../use-cases/suministro/create"
-import { SuministroRepository } from "../../infrastructure/repositorios/suministro.repository"
+import { SuministroService } from "../../application/services/suministroService"
+import { PrismaSuministroRepository } from "../../infrastructure/repositorios/PrismaSuministroRepository"
+
+const service = new SuministroService(new PrismaSuministroRepository())
 
 export class SuministroController {
-  static async create(req: Request, res: Response) {
-    try {
-      const suministro = await createSuministro(req.body)
-      res.status(201).json(suministro)
-    } catch (error: any) {
-      res.status(400).json({ message: error.message })
-    }
+  static async listar(_req: Request, res: Response) {
+    const suministros = await service.listar()
+    res.json(suministros)
   }
 
-  static async getAll(_req: Request, res: Response) {
-    try {
-      const suministros = await SuministroRepository.getAll()
-      res.json(suministros)
-    } catch (error: any) {
-      res.status(500).json({ message: error.message })
-    }
+  static async obtenerPorId(req: Request, res: Response) {
+    const id = Number(req.params.id)
+    const suministro = await service.obtenerPorId(id)
+    if (!suministro) return res.status(404).json({ message: "No encontrado" })
+    res.json(suministro)
+  }
+
+  static async registrar(req: Request, res: Response) {
+    const { id, cantidad, idAlimentacion, idAlimento } = req.body
+    const nuevo = await service.registrar(id, cantidad, idAlimentacion, idAlimento)
+    res.status(201).json(nuevo)
+  }
+
+  static async actualizar(req: Request, res: Response) {
+    const id = Number(req.params.id)
+    const { cantidad, idAlimentacion, idAlimento } = req.body
+    await service.actualizar(id, cantidad, idAlimentacion, idAlimento)
+    res.status(204).send()
+  }
+
+  static async eliminar(req: Request, res: Response) {
+    const id = Number(req.params.id)
+    await service.eliminar(id)
+    res.status(204).send()
   }
 }

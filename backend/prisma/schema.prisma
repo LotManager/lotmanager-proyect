@@ -128,22 +128,21 @@ model Pesaje {
 }
 
 model Bovino {
-  id                 Int                 @id @default(autoincrement())
-  id_raza            Int
-  id_corral          Int
-  caravana           Int
-  estado_bovino      EstadoBovino
-  estado_salud       EstadoSalud         @default(SANO)
-  ingreso            DateTime
-  egreso             DateTime?
-  peso_ingreso       Float
-  peso_egreso        Float?
-  sexo               Sexo
-  tipo_bovino        TipoBovino
-  raza               Raza                @relation(fields: [id_raza], references: [id])
-  corral             Corral              @relation(fields: [id_corral], references: [id])
-  detallesenfermedad DetalleEnfermedad[]
-  pesaje             Pesaje[]
+  id            Int             @id @default(autoincrement())
+  id_raza       Int
+  id_corral     Int
+  caravana      Int
+  estado_bovino String
+  estado_salud  String          @default("SANO")
+  ingreso       DateTime
+  egreso        DateTime?
+  peso_ingreso  Float
+  peso_egreso   Float?
+  sexo          String
+  tipo_bovino   String
+
+  raza   Raza   @relation(fields: [id_raza], references: [id])
+  corral Corral @relation(fields: [id_corral], references: [id])
 }
 
 model DetalleEnfermedad {

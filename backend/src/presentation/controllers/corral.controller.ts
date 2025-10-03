@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { CorralService } from "../../application/services/corralService"
 import { PrismaCorralRepository } from "../../infrastructure/repositorios/PrismaCorralRepository"
-import { CreateCorralDto } from "../../application/corral/dto/CreateCorralDto"
+import { CreateCorralDto } from "../../application/dtos/CreateCorralDto"
 
 const service = new CorralService(new PrismaCorralRepository())
 

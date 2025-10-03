@@ -1,6 +1,6 @@
 import { ICorralRepository } from "../../domain/interfaces/ICorralRepository"
 import { Corral } from "../../domain/entities/Corral"
-import { CreateCorralDtoType } from "../corral/dto/CreateCorralDto"
+import { CreateCorralDtoType } from "../../application/dtos/CreateCorralDto"
 
 export class CorralService {
   constructor(private readonly repo: ICorralRepository) {}

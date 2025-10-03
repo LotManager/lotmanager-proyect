@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { TipoCorral } from "../../../domain/enums/TipoCorral"
+import { TipoCorral } from "../../domain/enums/TipoCorral"
 
 export const CreateCorralDto = z.object({
   capacidadMaxima: z.number().int().positive(),

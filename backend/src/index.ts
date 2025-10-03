@@ -19,8 +19,8 @@ app.use('/detalle-alimentos', detalleAlimentoRoutes);
 app.use('/suministros', suministroRoutes);
 
 // Ruta de prueba
-app.get('/ping', (_req, res) => {
-  res.send('pong 🏓');
-});
+//app.get('/ping', (_req, res) => {
+//  res.send('pong 🏓');
+//});
 
-export default app;
+//export default app;

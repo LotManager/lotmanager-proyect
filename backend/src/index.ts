@@ -4,6 +4,14 @@ dotenv.config();
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { Request, Response } from 'express';
+import feedlotRutas from './presentation/routes/feedlot-rutas';
+import localidadRutas from './presentation/routes/localidad-rutas';
+import provinciaRutas from './presentation/routes/provincia-rutas';
+import usuarioRutas from './presentation/routes/usuario-rutas';
+import personalRutas from './presentation/routes/personal-rutas';
+import enfermedadRutas from './presentation/routes/enfermedad-rutas';
+import trataminetoRutas from './presentation/routes/tratamiento-rutas'
 
 // Routers
 import feedlotRutas from './presentation/routes/feedlot-rutas';
@@ -29,6 +37,13 @@ app.use('/api/bovinos',  bovinoRouter);
 
 /* ---------- Health check ---------- */
 app.get('/', (_req, res) => res.send('Hello, World!'));
+app.use("/api/auth", usuarioRutas);
+app.use("/api/localidades", localidadRutas);
+app.use("/api/feedlots", feedlotRutas);
+app.use("/api/provincias", provinciaRutas);
+app.use("/api/personal", personalRutas);
+app.use("/api/enfermedades", enfermedadRutas);
+app.use("/api/tratamientos", trataminetoRutas);
 
 /* ---------- 404 & Global Error ---------- */
 app.use((_req, res) => res.status(404).json({ error: 'Ruta no encontrada' }));
@@ -36,9 +51,20 @@ app.use((_req, res) => res.status(404).json({ error: 'Ruta no encontrada' }));
 app.use((err: any, _req: Request, res: Response, _next: any) => {
   console.error(err);
   res.status(500).json({ error: 'Error interno del servidor' });
+// app.use("/api/provincias", provinciaRutas);
+
+
+
+app.get("/test-provincia", (req, res) => {
+  res.send("Ruta directa funcionando");
+});
+app.get('/', (req: Request, res: Response) => {
+    res.send('Hello, World!');
 });
 
 /* ---------- Levantar servidor ---------- */
 app.listen(PORT, () => {
-  console.log(` Server ready at http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+ 

@@ -47,24 +47,38 @@ export class PrismaUserRepository implements IUserRepository {
         return this.toDomain(data);
     }
 
-    public async save(user: User): Promise<void> {
+   public async save(user: User): Promise<void> {
         if (!user.isValid()) {
-            throw new Error('Usuario inválido');
+            throw new Error("[UsuarioRepository] Usuario inválido: falló la validación semántica");
         }
+
+        const rol = user.getRol();
+
+        if (!rol || !rol.isValid()) {
+            throw new Error("[UsuarioRepository] Rol inválido o no asignado");
+        }
+
+        // Validar existencia del rol en la base de datos
+        const rolExistente = await prisma.rol.findUnique({ where: { id: rol.getId() } });
+        if (!rolExistente) {
+            throw new Error(`[UsuarioRepository] El rol con ID ${rol.getId()} no existe en la base de datos`);
+        }
+
+        // Persistencia condicional
         await prisma.usuario.upsert({
-        where: { id: user.getId() },
-        update: {
+            where: { id: user.getId() },
+            update: {
             usuario: user.getName(),
             contrasena: user.getPasswordHash(),
-            id_rol: user.getRol()?.getId()
-        },
-        create: {
+            id_rol: rol.getId(),
+            },
+            create: {
             id: user.getId(),
             usuario: user.getName(),
             contrasena: user.getPasswordHash(),
-            id_rol: user.getRol()?.getId()
-        }
-});
+            id_rol: rol.getId(),
+            },
+        });
     }
 
     public async delete(id: number): Promise<void> {
@@ -89,19 +103,36 @@ export class PrismaUserRepository implements IUserRepository {
 
     public async create(user: User): Promise<User> {
         const rol = user.getRol();
-        if (!rol) {
-        throw new Error("El usuario debe tener un rol asignado");
+
+        if (!rol || !rol.isValid()) {
+            throw new Error("[UsuarioRepository] Rol inválido o no asignado");
         }
+
+        // Validar existencia del rol en base de datos
+        const rolExistente = await prisma.rol.findUnique({ where: { id: rol.getId() } });
+        if (!rolExistente) {
+            throw new Error(`[UsuarioRepository] El rol con ID ${rol.getId()} no existe en la base de datos`);
+        }
+
+        // Validar que el nombre de usuario no esté duplicado
+        const usuarioExistente = await prisma.usuario.findFirst({where: { usuario: user.getName() }}); 
+        if (usuarioExistente) {
+            throw new Error(`[UsuarioRepository] El nombre de usuario '${user.getName()}' ya está registrado`);
+        }
+
+        // Crear el usuario
         const nuevoUsuario = await prisma.usuario.create({
-        data: {
-        usuario: user.getName(),
-        contrasena: user.getPasswordHash(),
-        id_rol: rol.getId()
-        },
-        include: { rol: true }
-    });
-    return this.toDomain(nuevoUsuario);
-}
+            data: {
+            usuario: user.getName(),
+            contrasena: user.getPasswordHash(),
+            id_rol: rol.getId(),
+            },
+            include: { rol: true },
+        });
+
+        return this.toDomain(nuevoUsuario);
+        }
+
     
     public async exists(id: number): Promise<boolean> {
         const count = await prisma.usuario.count({ where: { id } });

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthService } from "../../application/auth/services/auth-service";
 import { PrismaUserRepository } from "../../infrastructure/repositorios/PrismaUserRepository";
-import { userCreateDTOSchema } from "../../application/auth/dtos/user.dto";
+import { userCreateDTOSchema } from "../../application/dtos/user.dto";
 import { tokenService } from "../../application/auth/services/tokenService";
 
 export async function registerHandler(req: Request, res: Response) {
@@ -79,4 +79,5 @@ export async function logoutHandler(req: Request, res: Response) {
   });
 
   res.status(200).json({ message: "Sesión cerrada correctamente" });
+  console.log("[AuthController] Usuario deslogueado");
 }

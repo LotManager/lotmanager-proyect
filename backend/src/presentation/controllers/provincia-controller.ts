@@ -2,12 +2,15 @@ import { Request, Response } from "express";
 import { ProvinciaService } from "../../application/services/provinciaService";
 import { PrismaProvinciaRepository } from "../../infrastructure/repositorios/PrismaProvinciaRepository";
 
+
 const provinciaService = new ProvinciaService(new PrismaProvinciaRepository());
 
 export class ProvinciaController {
   public async listar(req: Request, res: Response): Promise<void> {
+    console.log("Entro al metodo listar");
     const provincias = await provinciaService.listar();
     res.status(200).json(provincias);
+    console.log(provincias);
   }
 
   public async obtenerPorId(req: Request, res: Response): Promise<void> {

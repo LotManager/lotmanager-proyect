@@ -55,25 +55,31 @@ export class PrismaFeedlotRepository implements IFeedlotRepository {
   }
 
   public async create(feedlot: Feedlot): Promise<Feedlot> {
-    if (!feedlot.isValid()) {
-      throw new Error("Feedlot inválido");
-    }
-
-    const nuevo = await prisma.feedlot.create({
-      data: {
-        id: feedlot.getId(),
-        nombre: feedlot.getNombre(),
-        id_localidad: feedlot.getIdLocalidad(),
-      },
-      include: {
-        localidad: {
-          include: { provincia: true },
-        },
-      },
-    });
-
-    return this.toDomain(nuevo);
+  if (!feedlot.isValid()) {
+    throw new Error("Feedlot inválido");
   }
+
+  const data: any = {
+    nombre: feedlot.getNombre(),
+    id_localidad: feedlot.getIdLocalidad(),
+  };
+
+  // Solo incluir el id si es distinto de 0
+  if (feedlot.getId() !== 0) {
+    data.id = feedlot.getId();
+  }
+
+  const nuevo = await prisma.feedlot.create({
+    data,
+    include: {
+      localidad: {
+        include: { provincia: true },
+      },
+    },
+  });
+
+  return this.toDomain(nuevo);
+}
 
   public async update(feedlot: Feedlot): Promise<void> {
     try {

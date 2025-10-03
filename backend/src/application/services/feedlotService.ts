@@ -9,7 +9,6 @@ export class FeedlotService {
   ) {}
 
   public async registrar(
-    id: number,
     nombre: string,
     idLocalidad: number
   ): Promise<Feedlot> {
@@ -18,7 +17,7 @@ export class FeedlotService {
       throw new Error("Localidad no encontrada");
     }
 
-    const feedlot = new Feedlot(id, nombre, localidad);
+    const feedlot = new Feedlot(0, nombre, localidad); // ✅ id omitido
     return await this.feedlotRepo.create(feedlot);
   }
 

@@ -23,14 +23,23 @@ export class PasswordHash {
   }
 
   public static fromHash(hash: string): PasswordHash {
+    if (!this.isValid(hash)) {
+      throw new Error('Hash inválido');
+    }
     return new PasswordHash(hash);
   }
 
   public async compareWith(plainPassword: string): Promise<boolean> {
+    if (!PasswordHash.isValid(this.hash)) {
+      throw new Error("Hash inválido para comparación");
+    }
     return await bcrypt.compare(plainPassword, this.hash);
   }
 
   public getValue(): string {
+    return this.hash;
+  }
+  public toJSON(): string {
     return this.hash;
   }
 }

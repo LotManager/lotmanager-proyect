@@ -2,10 +2,10 @@ import { Provincia } from "./Provincia";
 
 export class Localidad {  
   constructor(
-    private readonly id: number,
-    private readonly codigoPostal: number,
-    private readonly nombre: string,
-    private readonly provincia: Provincia
+    private  id: number,
+    private  codigoPostal: number,
+    private  nombre: string,
+    private  provincia: Provincia
 ) {
     if (!Localidad.isNombreValido(nombre)) {
       throw new Error("Nombre de localidad inválido");
@@ -29,6 +29,9 @@ export class Localidad {
 
   public getNombreProvincia(): string {
     return this.provincia.getNombre();
+}
+  public getProvincia(): Provincia {
+  return this.provincia;
 }
 
   public getIdProvincia(): number {

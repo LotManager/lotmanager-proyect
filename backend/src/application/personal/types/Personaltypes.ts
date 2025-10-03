@@ -5,15 +5,17 @@ export interface PersonalPersisted {
   nombre: string;
   apellido: string;
   id_usuario: number | null;
-  usuario?: {
-    id: number;
-    nombre: string;
-    rol: Rol;
-  };
+  usuario?: UsuarioPersisted;
 }
 
 export interface PersonalCreateInput {
   nombre: string;
   apellido: string;
-  id_usuario: number | null;
+  id_usuario?: number;
+}
+
+export interface UsuarioPersisted {
+  id: number;
+  nombre: string;
+  rol: Rol;
 }

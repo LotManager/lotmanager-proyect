@@ -40,7 +40,7 @@ export class Rol {
         return this.nombre === 'admin';
     }
 
-    public toDTO(): { id: number; nombre: "admin" | "user" } {
-        return { id: this.id, nombre: this.nombre as "admin" | "user" };
+    public toDTO(): { id: number; nombre: string } {
+        return { id: this.id, nombre: this.nombre };
 }
 }

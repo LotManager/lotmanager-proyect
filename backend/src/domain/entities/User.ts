@@ -1,6 +1,6 @@
 import { PasswordHash } from "../value-objects/PasswordHash";
 import { Rol } from "../value-objects/Rol";
-import { UserDTO } from "../../application/auth/dtos/user.dto";
+import { UserDTO } from "../../application/dtos/user.dto";
 
 
 export class User {
@@ -25,7 +25,9 @@ export class User {
             (!this.rol || this.rol.isValid())
         );
     }
-
+    public async checkPassword(plain: string): Promise<boolean> {
+        return await this.contrasena.compareWith(plain);
+    }
 
     public getId(): number {
         return this.id;

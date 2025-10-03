@@ -11,7 +11,7 @@ export class EnfermedadController {
       const dto = EnfermedadDTO.parse(req.body);
       const entidad = EnfermedadMapper.fromDTO(dto);
       const creada = await this.service.crear(entidad);
-      res.status(201).json(EnfermedadMapper.toDTO(creada));
+      res.status(201).json(EnfermedadMapper.toResponseDTO(creada));
     } catch (error) {
       console.error("Error al crear enfermedad:", error);
       const errorMessage = typeof error === "object" && error !== null && "message" in error ? (error as any).message : String(error);
@@ -29,7 +29,7 @@ export class EnfermedadController {
       const enfermedad = await this.service.obtenerPorId(id);
       if (!enfermedad) return res.status(404).send("No encontrada");
 
-      res.json(EnfermedadMapper.toDTO(enfermedad));
+      res.json(EnfermedadMapper.toResponseDTO(enfermedad));
     } catch (error) {
       console.error("Error al obtener enfermedad:", error);
       const errorMessage = typeof error === "object" && error !== null && "message" in error ? (error as any).message : String(error);
@@ -37,10 +37,10 @@ export class EnfermedadController {
     }
   }
 
-  async obtenerTodas(req: Request, res: Response) {
+  async obtenerTodas(res: Response) {
     try {
       const lista = await this.service.obtenerTodas();
-      res.json(lista.map(EnfermedadMapper.toDTO));
+      res.json(lista.map(EnfermedadMapper.toResponseDTO));
     } catch (error) {
       console.error("Error al obtener enfermedades:", error);
       const errorMessage = typeof error === "object" && error !== null && "message" in error ? (error as any).message : String(error);

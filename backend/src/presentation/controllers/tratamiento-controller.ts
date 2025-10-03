@@ -1,21 +1,8 @@
-import { Router, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { TratamientoService } from '../../application/services/tratamientoService'
 
 export class TratamientoController {
   constructor(private readonly service: TratamientoService) {}
-
-  router(): Router {
-    const router = Router()
-
-    router.get('/', this.getAll.bind(this))
-    router.get('/:id', this.getById.bind(this))
-    router.get('/:id/enfermedades', this.getWithEnfermedades.bind(this))
-    router.post('/', this.create.bind(this))
-    router.patch('/:id', this.update.bind(this))
-    router.delete('/:id', this.delete.bind(this))
-
-    return router
-  }
 
   async getAll(_req: Request, res: Response) {
     const tratamientos = await this.service.getAll()

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { config } from "../../../config/config";
-import { jwtPayloadSchema } from "../../../application/schemas/jwtPayloadSchema";
+import { jwtPayloadSchema } from "../../dtos/jwtPayload.dto";
 import { TokenTipo } from "../tokens/token-tipo";
 import { ITokenService } from "../../../domain/interfaces/ITokenService";
 

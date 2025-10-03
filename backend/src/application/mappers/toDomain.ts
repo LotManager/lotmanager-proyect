@@ -1,4 +1,4 @@
-import { Personal } from "../../../domain/entities/Personal";
+import { Personal } from "../../domain/entities/Personal";
 import { UserMapper } from "./userMapper";
 
 export function toDomain(db: any): Personal {

@@ -3,7 +3,7 @@ import { PersonalService } from "../../application/services/personalService";
 import { personalCreateSchema } from "../../application/personal/schemas/personalCreateSchema";
 import { personalResponseSchema } from "../../application/personal/schemas/personalResponseSchema";
 import { personalUpdateSchema } from "../../application/personal/schemas/personalUpdateSchema";
-import { PersonalUpdateDto } from "../../application/personal/dtos/personal.dto";
+import { PersonalUpdateDto } from "../../application/dtos/personal.dto";
 
 
 export class PersonalController {

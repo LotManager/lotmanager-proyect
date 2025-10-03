@@ -15,7 +15,7 @@ const router = Router();
 
 router.post("/", (req, res) => controller.crear(req, res));
 router.get("/:id", (req, res) => controller.obtenerPorId(req, res));
-router.get("/", (req, res) => controller.obtenerTodas(req, res));
+router.get("/", (req, res) => controller.obtenerTodas(res));
 router.put("/:id", (req, res) => controller.actualizarParcial(req, res));
 router.delete("/:id", (req, res) => controller.eliminarController(req, res));
 router.post("/:id/vincular", (req, res) => controller.vincularTratamientoController(req, res));

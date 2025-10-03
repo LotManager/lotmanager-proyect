@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { EnfermedadResponseDTO } from './enfermedad.dto';
 
 
 export const TratamientoCreateDtoSchema = z.object({
@@ -16,15 +17,8 @@ export const TratamientoDtoSchema = TratamientoCreateDtoSchema.extend({
 })
 
 
-export const EnfermedadDtoSchema = z.object({
-  id: z.number().int().positive(),
-  nombre: z.string(),
-  descripcion: z.string(),
-  tipo: z.string(),
-})
-
 export const TratamientoConEnfermedadesDtoSchema = TratamientoDtoSchema.extend({
-  enfermedades: z.array(EnfermedadDtoSchema),
+  enfermedades: z.array(EnfermedadResponseDTO),
 })
 
 

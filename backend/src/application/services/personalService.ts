@@ -1,9 +1,9 @@
-import { PersonalCreateDto, PersonalUpdateDto } from "../personal/dtos/personal.dto";
+import { PersonalCreateDto, PersonalUpdateDto } from "../dtos/personal.dto";
 import { Personal } from "../../domain/entities/Personal";
 import { PersonalRepository } from "../../domain/interfaces/IPersonalRepository";
-import { UserMapper } from "../personal/mappers/userMapper";
-import { toDomain } from "../personal/mappers/toDomain";
-import { toPersistence } from "../personal/mappers/toPersistence";
+import { UserMapper } from "../mappers/userMapper";
+import { toDomain } from "../mappers/toDomain";
+import { toPersistence } from "../mappers/toPersistence";
 import { User } from "../../domain/entities/User";
 
 

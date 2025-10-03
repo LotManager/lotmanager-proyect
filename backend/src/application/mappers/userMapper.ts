@@ -1,6 +1,6 @@
-import { User } from "../../../domain/entities/User";
-import { Rol } from "../../../domain/value-objects//Rol";
-import { PasswordHash } from "../../../domain/value-objects/PasswordHash";
+import { User } from "../../domain/entities/User";
+import { Rol } from "../../domain/value-objects/Rol";
+import { PasswordHash } from "../../domain/value-objects/PasswordHash";
 
 export class UserMapper {
   static fromPrisma(dbUser: any): User {

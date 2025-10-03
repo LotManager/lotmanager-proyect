@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PersonalRepository } from "../../domain/interfaces/IPersonalRepository";
 import { PersonalCreateInput, PersonalPersisted } from "../../application/personal/types/Personaltypes";
-import { mapToPersonalPersisted } from "../../application/personal/mappers/mapToPersonalPersisted";
+import { mapToPersonalPersisted } from "../../application/mappers/mapToPersonalPersisted";
 
 
 const prisma = new PrismaClient();

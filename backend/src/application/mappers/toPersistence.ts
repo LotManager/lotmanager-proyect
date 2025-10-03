@@ -1,4 +1,4 @@
-import { Personal } from "../../../domain/entities/Personal";
+import { Personal } from "../../domain/entities/Personal";
 
 export function toPersistence(personal: Personal): any {
   return {

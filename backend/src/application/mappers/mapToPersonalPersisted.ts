@@ -1,5 +1,5 @@
-import { PersonalPersisted } from "../types/Personaltypes";
-import { Rol } from "../../../domain/value-objects/Rol";
+import { PersonalPersisted } from "../personal/types/Personaltypes";
+import { Rol } from "../../domain/value-objects/Rol";
 
 
 export function mapToPersonalPersisted(db: any): PersonalPersisted {

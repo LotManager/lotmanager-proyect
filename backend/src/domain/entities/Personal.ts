@@ -1,4 +1,4 @@
-import { PersonalResponseDto } from "application/personal/dtos/personal.dto";
+import { PersonalResponseDto } from "application/dtos/personal.dto";
 import { User} from "./User";
 
 export class Personal {

@@ -13,14 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rutas principales
 app.use('/corrales', corralRoutes);
 app.use('/detalle-alimentos', detalleAlimentoRoutes);
 app.use('/suministros', suministroRoutes);
-
-// Ruta de prueba
-//app.get('/ping', (_req, res) => {
-//  res.send('pong 🏓');
-//});
-
-//export default app;

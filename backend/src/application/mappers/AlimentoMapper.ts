@@ -1,0 +1,1 @@
+import { AlimentoDTOType } from "application/dtos/alimento.dto";

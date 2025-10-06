@@ -1,8 +1,8 @@
 
 export class Provincia {
   constructor(
-    private readonly id: number,
-    private readonly nombre: string
+    private id: number,
+    private nombre: string
   ) {
     if (!Provincia.isNombreValido(nombre)) {
       throw new Error("Nombre de provincia inválido");

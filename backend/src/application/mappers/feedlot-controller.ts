@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FeedlotService } from "../../application/services/feedlotService";
+import { FeedlotService } from "../services/feedlotService";
 import { PrismaFeedlotRepository } from "../../infrastructure/repositorios/PrismaFeedlotRepository";
 import { PrismaLocalidadRepository } from "../../infrastructure/repositorios/PrismaLocalidadRepository";
 
@@ -50,9 +50,9 @@ export class FeedlotController {
   }
 
   public async registrar(req: Request, res: Response): Promise<void> {
-    const { id, nombre, idLocalidad } = req.body;
+    const { nombre, idLocalidad } = req.body; // ✅ id eliminado
     try {
-      const nuevo = await feedlotService.registrar(id, nombre, idLocalidad);
+      const nuevo = await feedlotService.registrar(nombre, idLocalidad); // ✅ sin id
       res.status(201).json({
         id: nuevo.getId(),
         nombre: nuevo.getNombre(),

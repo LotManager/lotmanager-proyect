@@ -96,7 +96,7 @@ model Enfermedad {
   id                     Int                      @id @default(autoincrement())
   nombre                 String
   descripcion            String
-  tipo                   String
+  tipo                   TipoEnfermedad
   detallesenfermedad     DetalleEnfermedad[]
   enfermedadxtratamiento EnfermedadxTratamiento[]
 }

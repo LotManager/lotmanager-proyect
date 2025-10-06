@@ -10,6 +10,10 @@ export class PrismaProvinciaRepository implements IProvinciaRepository {
   }
 
   public async findById(id: number): Promise<Provincia | null> {
+    if (typeof id !== "number" || id <= 0) {
+      throw new Error("ID de provincia inválido");
+    }
+    
     const data = await prisma.provincia.findUnique({ where: { id } });
     return data ? this.toDomain(data) : null;
   }
@@ -51,6 +55,9 @@ export class PrismaProvinciaRepository implements IProvinciaRepository {
 
   public async delete(id: number): Promise<void> {
     try {
+      if (typeof id !== "number" || id <= 0) {
+          throw new Error("ID de provincia inválido");
+      }
       await prisma.provincia.delete({ where: { id } });
     } catch (error) {
       if (

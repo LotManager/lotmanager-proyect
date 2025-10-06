@@ -1,13 +1,13 @@
-//import { suministro } from "./Suministro";
-//import { DetalleAlimento } from "./DetalleAlimento";
+import { DetalleAlimento } from "./DetalleAlimento";
+import { Suministro } from "./Suministro";
 
 export class Alimento {
     constructor(
         private id: number,
         private nroSerie: string,
         private vencimiento: Date,
-        //private detalleAlimento: DetalleAlimento
-        //private Suministro: Suministro[]
+        private detalleAlimento?: DetalleAlimento,
+        private suministros?: Suministro[],
     ){}
     //Getters
     public getId(): number {
@@ -19,12 +19,12 @@ export class Alimento {
     public getVencimiento(): Date {
         return this.vencimiento;
     }
-    //public getDetalleAlimento(): DetalleAlimento {
-    //    return this.detalleAlimento;
-    //}
-    //public getSuministro(): Suministro[] {
-    //    return this.Suministro;
-    //}
+    public getDetalleAlimento(): DetalleAlimento | undefined {
+        return this.detalleAlimento;
+    }
+    public getSuministro(): Suministro[] | undefined {
+        return this.suministros;
+    }
     //Setters
     public setNroSerie(nroSerie: string): void {
         this.nroSerie = nroSerie;
@@ -32,10 +32,10 @@ export class Alimento {
     public setVencimiento(vencimiento: Date): void {
         this.vencimiento = vencimiento;
     }
-    //public setDetalleAlimento(detalleAlimento: DetalleAlimento): void {
-    //    this.detalleAlimento = detalleAlimento;
-    //}
-    //public setSuministro(suministro: Suministro[]): void {
-    //    this.Suministro = suministro;
-    //}
+    public setDetalleAlimento(detalleAlimento: DetalleAlimento): void {
+        this.detalleAlimento = detalleAlimento;
+    }
+    public setSuministro(suministro: Suministro[]): void {
+        this.suministros = suministro;
+    }
 }

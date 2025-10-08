@@ -48,5 +48,13 @@ export class Enfermedad {
             this.tratamientos.push({ idTratamiento, periodo });
     }   
 
+    public toDTO(): { nombre: string; descripcion: string; tipo: TipoEnfermedad } {
+    return {
+        nombre: this.nombre,
+        descripcion: this.descripcion,
+        tipo: this.tipo
+};
+}
+
 
 }

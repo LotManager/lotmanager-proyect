@@ -12,6 +12,7 @@ export async function registerHandler(req: Request, res: Response) {
     console.warn("[AuthController] Datos inválidos en registro:", result.error.format());
     return res.status(400).json({ error: result.error.format() });
   }
+  console.log("[AuthController] Rol recibido:", result.data.rol);
 
   try {
     const authService = new AuthService(new PrismaUserRepository(), tokenService);

@@ -21,7 +21,7 @@ export class PrismaUserRepository implements IUserRepository {
     if (!data.rol) {
         throw new Error("El usuario no tiene un rol asignado");
     }
-    const role = new Rol(data.rol.id, data.rol.nombre as "admin" | "encargado");
+    const role = Rol.fromId(data.rol.id);
     return new User(data.id, data.usuario, password, role);
     }  
     

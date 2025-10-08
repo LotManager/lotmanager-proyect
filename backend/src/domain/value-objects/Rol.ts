@@ -3,6 +3,9 @@ export class Rol {
     private nombre: "admin" | "encargado";
 
     constructor(id: number, nombre: "admin" | "encargado") {
+        if (!["admin", "encargado"].includes(nombre)) {
+            throw new Error(`Rol inválido: ${nombre}`);
+        }
         this.id = id;
         this.nombre = nombre;
     }

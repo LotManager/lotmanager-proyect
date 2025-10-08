@@ -2,6 +2,8 @@ import { EnfermedadParcialDTOType } from "application/dtos/enfermedad.dto";
 import { Enfermedad } from "../../domain/entities/Enfermedad";
 import { IEnfermedadRepository } from "../../domain/interfaces/IEnfermedadRepository";
 import { IEnfermedadxTratamientoRepository } from "../../domain/interfaces/IEnfermedadxTratamientoRepository";
+import { EnfermedadMapper } from "application/mappers/EnfermedadMapper";
+
 
 export class EnfermedadService {
   constructor(private repo: IEnfermedadRepository,
@@ -9,13 +11,14 @@ export class EnfermedadService {
   ) {}
 
   async crear(enfermedad: Enfermedad): Promise<Enfermedad> {
-    const existe = await this.repo.exists(enfermedad.getId());
-    if (existe) {
-      throw new Error(`Ya existe una enfermedad con ID ${enfermedad.getId()}`);
-    }
-    return await this.repo.create(enfermedad);
+  const id = enfermedad.getId();
+
+  if (id && await this.repo.exists(id)) {
+    throw new Error(`Ya existe una enfermedad con ID '${id}'`);
   }
 
+  return await this.repo.create(enfermedad.toDTO()); // ← pasás la entidad directamente
+}
   async obtenerPorId(id: number): Promise<Enfermedad | null> {
     if (!id || id <= 0) {
       throw new Error("ID inválido proporcionado");
@@ -34,7 +37,7 @@ export class EnfermedadService {
   if (cambios.descripcion) existente.setDescripcion(cambios.descripcion);
   if (cambios.tipo) existente.setTipo(cambios.tipo);
 
-  await this.repo.update(existente);
+  await this.repo.update(id, existente.toDTO());
 }
 
   async eliminar(id: number): Promise<void> {

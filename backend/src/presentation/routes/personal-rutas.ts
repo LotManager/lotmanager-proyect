@@ -2,7 +2,7 @@ import { Router } from "express";
 import { PersonalController } from "../controllers/personal-controller";
 import { PersonalService } from "../../application/services/personalService";
 import { PrismaPersonalRepository } from "../../infrastructure/repositorios/PrismaPersonalRepository";
-import authMiddleware from "../middlewares/authmiddleware";
+import {authMiddleware} from "../middlewares/authmiddleware";
 
 
 

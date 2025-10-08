@@ -13,7 +13,7 @@ export class AlimentoService {
     ) { }
     public async registrar(
         id: number,
-        nroSerie: string,
+        nroSerie: number,
         vencimiento: Date,
         idDetalleAlimento?: number,
         suministros?: Suministro[]
@@ -48,7 +48,7 @@ export class AlimentoService {
     }
     public async actualizar(
         id: number,
-        nroSerie: string,
+        nroSerie: number,
         vencimiento: Date,
         idDetalleAlimento?: number,
         suministros?: Suministro[]

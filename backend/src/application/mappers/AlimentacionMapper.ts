@@ -6,6 +6,7 @@ import { Suministro } from "../../domain/entities/Suministro";
 export function toPersistence(dto: CreateAlimentacionDTO | UpdateAlimentacionDTO): any {
   const payload: any = {};
   if ((dto as any).descripcion !== undefined) payload.descripcion = (dto as any).descripcion;
+  if ((dto as any).nombre !== undefined) payload.nombre = (dto as any).nombre;
 
   // Mapear suministros para nested create en Prisma
   if ((dto as any).suministros !== undefined && Array.isArray((dto as any).suministros)) {
@@ -30,7 +31,9 @@ export function toDomain(db: any): Alimentacion {
   const id = db.id ?? db.ID;
   if (typeof id !== "number") throw new Error("Missing id in alimentacion DB object");
 
-  const descripcion = db.descripcion ?? db.name ?? db.nombre ?? (() => { throw new Error("Missing descripcion in alimentacion DB object"); })();
+  // Extraer descripcion y nombre por separado (varios alias posibles)
+  const descripcion = db.descripcion ?? db.description ?? db.name ?? (() => { throw new Error("Missing descripcion in alimentacion DB object"); })();
+  const nombre = db.nombre ?? db.name ?? db.nombre ?? db.nombre ?? (() => { throw new Error("Missing nombre in alimentacion DB object"); })();
 
   // mapear corral: Prisma puede devolver un array `corral` (Corral[]). Tomamos el primero si existe.
   let corral: Corral | undefined = undefined;
@@ -46,7 +49,7 @@ export function toDomain(db: any): Alimentacion {
     suministros = suministrosRaw.map((s: any) => new Suministro(s.id, s.cantidad, s.id_alimentacion ?? s.idAlimentacion, s.id_alimento ?? s.idAlimento));
   }
 
-  return new Alimentacion(id, descripcion, corral, suministros);
+  return new Alimentacion(id, descripcion, nombre, corral, suministros);
 }
 
 export function toResponse(alimentacion: Alimentacion): any {
@@ -54,6 +57,7 @@ export function toResponse(alimentacion: Alimentacion): any {
   const base: any = {
     id: alimentacion.getId(),
     descripcion: alimentacion.getDescripcion(),
+    nombre: alimentacion.getNombre(),
   };
 
   const c = alimentacion.getCorral();

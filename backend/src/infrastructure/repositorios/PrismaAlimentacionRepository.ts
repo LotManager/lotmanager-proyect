@@ -12,8 +12,10 @@ export class PrismaAlimentacionRepository implements IAlimentacionRepository {
     const id = typeof data.id === "number" ? data.id : (typeof data.ID === "number" ? data.ID : undefined)
     if (id === undefined) throw new Error("Missing id in alimentacion DB object")
 
-    const descripcion = data.descripcion ?? data.descripcion ?? undefined
-    if (descripcion === undefined || descripcion === null) throw new Error("Missing descripcion in alimentacion DB object")
+  const descripcion = data.descripcion ?? data.description ?? data.name ?? undefined
+  if (descripcion === undefined || descripcion === null) throw new Error("Missing descripcion in alimentacion DB object")
+
+  const nombre = data.nombre ?? data.name ?? data.nombre ?? String(descripcion).slice(0, 100)
 
     // mapear corral (relación opcional)
     let corral: Corral | undefined = undefined
@@ -29,7 +31,7 @@ export class PrismaAlimentacionRepository implements IAlimentacionRepository {
       suministros = suministrosRaw.map((s: any) => new Suministro(s.id, s.cantidad, s.id_alimentacion, s.id_alimento))
     }
 
-    return new Alimentacion(id, descripcion, corral, suministros)
+  return new Alimentacion(id, descripcion, nombre, corral, suministros)
   }
 
   public async findById(id: number): Promise<Alimentacion | null> {
@@ -48,7 +50,7 @@ export class PrismaAlimentacionRepository implements IAlimentacionRepository {
 
     const nuevo = await prisma.alimentacion.create({
       data: {
-        nombre: String(alimentacion.getDescripcion()).slice(0, 100),
+        nombre: alimentacion.getNombre(),
         descripcion: alimentacion.getDescripcion(),
         corral: corral ? { connect: { id: corral.id } } : undefined,
         Suministro: suministros ? { create: suministros.map(s => ({ cantidad: s.cantidad, id_alimento: s.idAlimento })) } : undefined
@@ -63,7 +65,8 @@ export class PrismaAlimentacionRepository implements IAlimentacionRepository {
       await prisma.alimentacion.update({
         where: { id: alimentacion.getId() },
         data: {
-          descripcion: alimentacion.getDescripcion()
+          descripcion: alimentacion.getDescripcion(),
+          nombre: alimentacion.getNombre()
           // actualizaciones de relaciones (corral/suministros) se manejan desde servicios/repositorios específicos
         }
       })

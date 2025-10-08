@@ -32,9 +32,7 @@ export function toDomain(db: any): Alimento {
   if (id === undefined) throw new Error("Missing id in alimento DB object");
   const nroSerieRaw = db.nro_serie ?? db.nroSerie ?? db.nro ?? undefined;
   if (nroSerieRaw === undefined || nroSerieRaw === null) throw new Error("Missing nroSerie in alimento DB object");
-  const nroSerieNum = Number(nroSerieRaw);
-  if (!Number.isFinite(nroSerieNum) || !Number.isInteger(nroSerieNum)) throw new Error("Invalid nroSerie in alimento DB object: must be an integer number");
-  const nroSerie = nroSerieNum;
+  const nroSerie = Number(nroSerieRaw);
 
   if (db.vencimiento == null) throw new Error("Missing vencimiento in alimento DB object");
   const vencimiento = new Date(db.vencimiento);

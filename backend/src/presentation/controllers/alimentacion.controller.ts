@@ -3,6 +3,7 @@ import { AlimentacionService } from "../../application/services/alimentacionServ
 import { PrismaAlimentacionRepository } from "../../infrastructure/repositorios/PrismaAlimentacionRepository"
 import { PrismaCorralRepository } from "../../infrastructure/repositorios/PrismaCorralRepository"
 import { PrismaSuministroRepository } from "../../infrastructure/repositorios/PrismaSuministroRepository"
+import { toResponse } from "../../application/mappers/AlimentacionMapper"
 
 const service = new AlimentacionService(
   new PrismaAlimentacionRepository(),
@@ -13,21 +14,23 @@ const service = new AlimentacionService(
 export class AlimentacionController {
   static async listar(_req: Request, res: Response) {
     const items = await service.listar()
-    res.json(items)
+    // Mapear a objetos planos para JSON
+    const out = items.map((it) => toResponse(it))
+    res.json(out)
   }
 
   static async obtenerPorId(req: Request, res: Response) {
     const id = Number(req.params.id)
     const item = await service.obtenerPorId(id)
     if (!item) return res.status(404).json({ message: "No encontrado" })
-    res.json(item)
+    res.json(toResponse(item))
   }
 
   static async registrar(req: Request, res: Response) {
     const { id, descripcion, corral, suministros } = req.body
     // Si corral viene como objeto con id, pasar la misma estructura
     const creado = await service.registrar(id, descripcion, corral, suministros)
-    res.status(201).json(creado)
+    res.status(201).json(toResponse(creado))
   }
 
   static async actualizar(req: Request, res: Response) {

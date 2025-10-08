@@ -26,7 +26,9 @@ export class AlimentacionService {
       corralEntity = found;
     }
 
-    const alimentacion = new Alimentacion(id, descripcion, corralEntity, suministros);
+  // Por compatibilidad, usar `descripcion` también como `nombre` si no se provee otro valor.
+  const nombre = (descripcion ?? "").toString().slice(0, 100);
+  const alimentacion = new Alimentacion(id, descripcion, nombre, corralEntity, suministros);
     const creado = await this.repo.create(alimentacion);
 
     if (suministros && this.suministroRepo) {
@@ -46,7 +48,8 @@ export class AlimentacionService {
       if (!found) throw new Error("Corral no encontrado");
       corralEntity = found;
     }
-    const alimentacion = new Alimentacion(id, descripcion, corralEntity, suministros);
+  const nombre = (descripcion ?? "").toString().slice(0, 100);
+  const alimentacion = new Alimentacion(id, descripcion, nombre, corralEntity, suministros);
     await this.repo.update(alimentacion);
 
     if (suministros && this.suministroRepo) {

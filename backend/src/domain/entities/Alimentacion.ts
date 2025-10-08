@@ -5,6 +5,7 @@ export class Alimentacion {
     constructor(
         private id: number,
         private descripcion: string,
+        private nombre: string,
         private corral?: Corral,
         private suministros?: Suministro[],
     ){}
@@ -23,9 +24,16 @@ export class Alimentacion {
         return this.suministros;
     }
 
+    public getNombre(): string {
+        return this.nombre;
+    }
+
     //Setters
     public setDescripcion(descripcion: string): void {
         this.descripcion = descripcion;
+    }
+    public setNombre(nombre: string): void {
+        this.nombre = nombre;
     }
     public setCorral(corral: Corral): void {
         this.corral = corral;

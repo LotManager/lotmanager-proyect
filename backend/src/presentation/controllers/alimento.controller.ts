@@ -19,25 +19,17 @@ export class AlimentoController {
   }
 
   static async registrar(req: Request, res: Response) {
-    const { id, nroSerie: nroSerieRaw, vencimiento, idDetalleAlimento, suministros } = req.body
+    const { id, nroSerie, vencimiento, idDetalleAlimento, suministros } = req.body
     // convertir vencimiento a Date si viene como string
     const fecha = vencimiento ? new Date(vencimiento) : undefined
-    const nroSerie = nroSerieRaw !== undefined && nroSerieRaw !== null ? Number(nroSerieRaw) : undefined
-    if (nroSerie === undefined || !Number.isFinite(nroSerie) || !Number.isInteger(nroSerie)) {
-      return res.status(400).json({ message: "nroSerie inválido: debe ser un número entero" })
-    }
     const nuevo = await service.registrar(id, nroSerie, fecha as Date, idDetalleAlimento, suministros)
     res.status(201).json(nuevo)
   }
 
   static async actualizar(req: Request, res: Response) {
     const id = Number(req.params.id)
-    const { nroSerie: nroSerieRaw, vencimiento, idDetalleAlimento, suministros } = req.body
+    const { nroSerie, vencimiento, idDetalleAlimento, suministros } = req.body
     const fecha = vencimiento ? new Date(vencimiento) : undefined
-    const nroSerie = nroSerieRaw !== undefined && nroSerieRaw !== null ? Number(nroSerieRaw) : undefined
-    if (nroSerie === undefined || !Number.isFinite(nroSerie) || !Number.isInteger(nroSerie)) {
-      return res.status(400).json({ message: "nroSerie inválido: debe ser un número entero" })
-    }
     await service.actualizar(id, nroSerie, fecha as Date, idDetalleAlimento, suministros)
     res.status(204).send()
   }

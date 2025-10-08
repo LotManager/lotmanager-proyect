@@ -3,8 +3,7 @@ import { CreateSuministroDto } from "./createSuministro.dto";
 
 export const CreateAlimentacionSchema = z.object({
 	descripcion: z.string().min(1).max(255),
-	// referencia a corral existente (opcional). Si querés crear el corral inline,
-	// cambia esto por un objeto usando CreateCorralDto.
+	nombre: z.string().min(1).max(100),
 	idCorral: z.number().int().positive().optional(),
 	suministros: z.array(CreateSuministroDto).optional(),
 });

@@ -4,7 +4,7 @@ import { Suministro } from "./Suministro";
 export class Alimento {
     constructor(
         private id: number,
-        private nroSerie: string,
+        private nroSerie: number,
         private vencimiento: Date,
         private detalleAlimento?: DetalleAlimento,
         private suministros?: Suministro[],
@@ -13,7 +13,7 @@ export class Alimento {
     public getId(): number {
         return this.id;
     }
-    public getNroSerie(): string {
+    public getNroSerie(): number {
         return this.nroSerie;
     }
     public getVencimiento(): Date {
@@ -26,7 +26,7 @@ export class Alimento {
         return this.suministros;
     }
     //Setters
-    public setNroSerie(nroSerie: string): void {
+    public setNroSerie(nroSerie: number): void {
         this.nroSerie = nroSerie;
     }
     public setVencimiento(vencimiento: Date): void {

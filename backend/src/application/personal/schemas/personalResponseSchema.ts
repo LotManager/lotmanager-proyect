@@ -1,9 +1,5 @@
 import { z } from "zod";
-
-export const rolSchema = z.object({
-  id: z.number().int().positive(),
-  nombre: z.string(),
-});
+import { rolSchema } from "../../dtos/user.dto";
 
 export const usuarioSchema = z.object({
   id: z.number().int().positive(),

@@ -81,3 +81,32 @@ export async function logoutHandler(req: Request, res: Response) {
   res.status(200).json({ message: "Sesión cerrada correctamente" });
   console.log("[AuthController] Usuario deslogueado");
 }
+
+export async function changePasswordHandler(req: Request, res: Response) {
+  const userId = req.user?.id;
+  if (!userId || typeof userId !== "number") {
+    return res.status(401).json({ error: "Usuario no autenticado" });
+  }
+
+  const { contrasenaActual, nuevaContrasena } = req.body;
+
+  if (
+    typeof contrasenaActual !== "string" ||
+    typeof nuevaContrasena !== "string" ||
+    contrasenaActual.trim().length === 0 ||
+    nuevaContrasena.trim().length < 6
+  ) {
+    return res.status(400).json({ error: "Datos inválidos o contraseña demasiado corta" });
+  }
+
+  try {
+    const authService = new AuthService(new PrismaUserRepository(), tokenService);
+    await authService.changePassword(userId, contrasenaActual, nuevaContrasena);
+    res.status(200).json({ message: "Contraseña actualizada correctamente" });
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+    console.log(`[AuthController] Error al cambiar la contraseña del usuario ${userId}:`, errorMessage);
+    res.status(400).json({ error: errorMessage });
+  }
+}
+

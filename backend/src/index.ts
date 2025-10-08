@@ -17,7 +17,7 @@ import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento-routes"
 import suministroRoutes from "./presentation/routes/suministro-routes"
 import alimentoRoutes from "./presentation/routes/alimento-routes"
 import alimentacionRoutes from "./presentation/routes/alimentacion-routes"
-
+import detalleEnfermedadRoutes from './presentation/routes/detalleEnfermedad-rutas';
 
 const PORT = process.env.PORT || 3000;
 
@@ -43,6 +43,7 @@ app.use('/detalle-alimentos', detalleAlimentoRoutes);
 app.use('/suministros', suministroRoutes);
 app.use('/alimentos', alimentoRoutes);
 app.use('/alimentaciones', alimentacionRoutes);
+app.use('/detalle-enfermedad', detalleEnfermedadRoutes);
 
 
 // app.use("/api/provincias", provinciaRutas);

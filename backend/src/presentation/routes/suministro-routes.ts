@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { SuministroController } from "../../presentation/controllers/suministro.controller"
+import { SuministroController } from "../controllers/suministro-controller"
 
 const router = Router()
 

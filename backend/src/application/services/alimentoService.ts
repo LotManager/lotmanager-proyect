@@ -1,9 +1,9 @@
-import { Alimento } from "domain/entities/Alimento";
-import { DetalleAlimento } from "domain/entities/DetalleAlimento";
-import { Suministro } from "domain/entities/Suministro";
-import { IAlimentoRepository } from "domain/interfaces/IAlimentoRepository";
-import { IDetalleAlimentoRepository } from "domain/interfaces/IDetalleAlimentoRepository";
-import { ISuministroRepository } from "domain/interfaces/ISuministroRepository";
+import { Alimento } from "../../domain/entities/Alimento";
+import { DetalleAlimento } from "../../domain/entities/DetalleAlimento";
+import { Suministro } from "../../domain/entities/Suministro";
+import { IAlimentoRepository } from "../../domain/interfaces/IAlimentoRepository";
+import { IDetalleAlimentoRepository } from "../../domain/interfaces/IDetalleAlimentoRepository";
+import { ISuministroRepository } from "../../domain/interfaces/ISuministroRepository";
 
 export class AlimentoService {
     constructor(

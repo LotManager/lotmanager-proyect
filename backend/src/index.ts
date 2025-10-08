@@ -12,11 +12,11 @@ import usuarioRutas from './presentation/routes/usuario-rutas';
 import personalRutas from './presentation/routes/personal-rutas';
 import enfermedadRutas from './presentation/routes/enfermedad-rutas';
 import trataminetoRutas from './presentation/routes/tratamiento-rutas'
-import corralRoutes from './presentation/routes/corral.routes'; 
-import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento.routes";
-import suministroRoutes from "./presentation/routes/suministro.routes"
-import alimentoRoutes from "./presentation/routes/alimento.routes"
-import alimentacionRoutes from "./presentation/routes/alimentacion.routes"
+import corralRoutes from './presentation/routes/corral-routes'; 
+import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento-routes";
+import suministroRoutes from "./presentation/routes/suministro-routes"
+import alimentoRoutes from "./presentation/routes/alimento-routes"
+import alimentacionRoutes from "./presentation/routes/alimentacion-routes"
 
 
 const PORT = process.env.PORT || 3000;
@@ -25,7 +25,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:3000', // Adjust as needed
+    origin: 'http://localhost:3001',
     credentials: true,
 }));
 

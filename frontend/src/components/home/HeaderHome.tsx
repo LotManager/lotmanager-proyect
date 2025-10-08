@@ -32,6 +32,7 @@ export default function HeaderHome() {
                             color: 'white'
                         },
                     }}
+                    href='/register'
                 >
                 Registrarse
                 </Button>

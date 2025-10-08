@@ -7,6 +7,7 @@ export class Corral {
     public readonly numero: number,
     public readonly tipoCorral: TipoCorral,
     public readonly idAlimentacion: number | null,
-    public readonly idFeedlot: number
+    public readonly idFeedlot: number,
+    public nombreAlimentacion?: string,
   ) {}
 }

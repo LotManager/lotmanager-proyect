@@ -2,7 +2,7 @@ import { z } from "zod";
 import { CreateSuministroDto as CreateSuministroSchema } from "./createSuministro.dto";
 
 export const CreateAlimentoSchema = z.object({
-    nroSerie: z.string().min(1).max(100),
+    nroSerie: z.int().positive(),
     vencimiento: z.date(),
     // referencia a un detalle existente (opcional). Si quieres permitir crear el detalle inline,
     // cambia esto a un objeto con el esquema de detalle correspondiente.

@@ -1,3 +1,4 @@
+// routes/corral.routes.ts
 import { Router } from "express"
 import { CorralController } from "../controllers/corral-controller"
 

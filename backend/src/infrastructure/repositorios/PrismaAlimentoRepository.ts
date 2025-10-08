@@ -14,7 +14,7 @@ export class PrismaAlimentoRepository implements IAlimentoRepository {
 
     const nroSerieRaw = data.nro_serie ?? data.nroSerie ?? data.nro ?? undefined
     if (nroSerieRaw === undefined || nroSerieRaw === null) throw new Error("Missing nroSerie in alimento DB object")
-    const nroSerie = String(nroSerieRaw)
+    const nroSerie = Number(nroSerieRaw)
 
     if (data.vencimiento == null) throw new Error("Missing vencimiento in alimento DB object")
     const vencimiento = new Date(data.vencimiento)

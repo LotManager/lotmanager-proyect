@@ -12,6 +12,11 @@ import usuarioRutas from './presentation/routes/usuario-rutas';
 import personalRutas from './presentation/routes/personal-rutas';
 import enfermedadRutas from './presentation/routes/enfermedad-rutas';
 import trataminetoRutas from './presentation/routes/tratamiento-rutas'
+import corralRoutes from './presentation/routes/corral.routes'; 
+import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento.routes";
+import suministroRoutes from "./presentation/routes/suministro.routes"
+import alimentoRoutes from "./presentation/routes/alimento.routes"
+import alimentacionRoutes from "./presentation/routes/alimentacion.routes"
 
 
 const PORT = process.env.PORT || 3000;
@@ -33,6 +38,11 @@ app.use("/api/provincias", provinciaRutas);
 app.use("/api/personal", personalRutas);
 app.use("/api/enfermedades", enfermedadRutas);
 app.use("/api/tratamientos", trataminetoRutas);
+app.use('/corrales', corralRoutes);
+app.use('/detalle-alimentos', detalleAlimentoRoutes);
+app.use('/suministros', suministroRoutes);
+app.use('/alimentos', alimentoRoutes);
+app.use('/alimentaciones', alimentacionRoutes);
 
 
 // app.use("/api/provincias", provinciaRutas);
@@ -47,5 +57,3 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-
- 

@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -38,11 +37,6 @@ app.use("/api/tratamientos", trataminetoRutas);
 
 // app.use("/api/provincias", provinciaRutas);
 
-
-
-app.get("/test-provincia", (req, res) => {
-  res.send("Ruta directa funcionando");
-});
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello, World!');
 });

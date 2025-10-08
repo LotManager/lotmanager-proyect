@@ -8,6 +8,7 @@ import {
 } from "../../presentation/controllers/auth-controller";
 import { authMiddleware } from "../../presentation/middlewares/authmiddleware";
 
+
 const router = Router();
 
 router.post("/register", registerHandler);

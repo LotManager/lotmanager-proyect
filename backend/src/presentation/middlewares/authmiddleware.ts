@@ -10,6 +10,7 @@ declare global {
   }
 }
 
+
 export const authMiddleware = (
   req: Request,
   res: Response,
@@ -23,12 +24,12 @@ export const authMiddleware = (
   }
 
   try {
-    const payload = tokenService.verifyAccessToken(token);
+    const payload = tokenService.verifyAccessToken(token) as AuthPayload | null;
     console.log("[AUTH] Payload verificado:");
     if (!payload) {
       throw new Error("Token inválido o expirado");
     }
-
+    
     req.user = payload;
     next();
   } catch (error) {

@@ -1,48 +1,65 @@
-import { Request, Response } from 'express';
-import { BovinoService } from '../../application/services/bovinoService';
-import { PrismaBovinoRepository } from '../../infrastructure/repositorios/PrismaBovinoRepository';
-import { Bovino, EstadoBovino, EstadoSalud, Sexo, TipoBovino } from '../../domain/entities/Bovino';
+import { Request, Response } from "express"
+import { BovinoService } from "../../application/services/bovinoService"
+import { PrismaBovinoRepository } from "../../infrastructure/repositorios/PrismaBovinoRepository"
+import { Bovino } from "../../domain/entities/Bovino"
 
-const service = new BovinoService(new PrismaBovinoRepository());
+const service = new BovinoService(new PrismaBovinoRepository())
 
-/* ---------- PUT /api/bovinos/:id ---------- */
-export const actualizarBovino = async (req: Request, res: Response): Promise<void> => {
+export const crearBovino = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) { res.status(400).json({ error: 'ID inválido' }); return; }
+    const nuevo = await service.crear(req.body)
+    res.status(201).json(nuevo)
+  } catch (e: any) {
+    res.status(400).json({ error: e.message })
+  }
+}
 
-    const {
-      id_raza, id_corral, caravana, estado_bovino, estado_salud,
-      ingreso, egreso, peso_ingreso, peso_egreso, sexo, tipo_bovino
-    } = req.body;
+export const listarBovinos = async (req: Request, res: Response) => {
+  const bovinos = await service.listar()
+  res.json(bovinos)
+}
 
+export const obtenerBovino = async (req: Request, res: Response) => {
+  const id = Number(req.params.id)
+  const bovino = await service.obtener(id)
+  if (!bovino) {
+    res.status(404).json({ error: "Bovino no encontrado" })
+    return
+  }
+  res.json(bovino)
+}
+
+export const actualizarBovino = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id)
+    const data = req.body
     const bovino = new Bovino(
-      id, Number(id_raza), Number(id_corral), Number(caravana),
-      estado_bovino as EstadoBovino,
-      estado_salud as EstadoSalud,
-      new Date(ingreso),
-      egreso ? new Date(egreso) : null,
-      parseFloat(peso_ingreso),
-      peso_egreso ? parseFloat(peso_egreso) : null,
-      sexo as Sexo,
-      tipo_bovino as TipoBovino
-    );
-
-    const actualizado = await service.actualizar(bovino);
-    res.json(actualizado);
+      id,
+      data.id_raza,
+      data.id_corral,
+      data.caravana,
+      data.estado_bovino,
+      data.estado_salud,
+      new Date(data.ingreso),
+      data.egreso ? new Date(data.egreso) : null,
+      data.peso_ingreso,
+      data.peso_egreso ?? null,
+      data.sexo,
+      data.tipo_bovino
+    )
+    const actualizado = await service.actualizar(bovino)
+    res.json(actualizado)
   } catch (e: any) {
-    res.status(400).json({ error: e.message });
+    res.status(400).json({ error: e.message })
   }
-};
+}
 
-/* ---------- DELETE /api/bovinos/:id ---------- */
-export const eliminarBovino = async (req: Request, res: Response): Promise<void> => {
+export const eliminarBovino = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) { res.status(400).json({ error: 'ID inválido' }); return; }
-    await service.eliminar(id);
-    res.json({ msg: 'Bovino egresado' });
+    const id = Number(req.params.id)
+    await service.eliminar(id)
+    res.status(204).send()
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    res.status(400).json({ error: e.message })
   }
-};
+}

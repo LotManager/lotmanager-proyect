@@ -18,8 +18,9 @@ import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento.routes"
 import suministroRoutes from "./presentation/routes/suministro.routes"
 import alimentoRoutes from "./presentation/routes/alimento.routes"
 import alimentacionRoutes from "./presentation/routes/alimentacion.routes"
-import pesajeRouter from './presentation/routes/pesaje-rutas';
-import { bovinoRouter } from 'presentation/routes/bovino-rutas';
+import pesajeRouter from "./presentation/routes/pesaje-rutas";    
+import bovinoRouter from "./presentation/routes/bovino-rutas";
+import corralMetricsRouter from './presentation/routes/corral-metrics-rutas';
 
 const PORT = process.env.PORT || 3000;
 
@@ -46,9 +47,8 @@ app.use('/suministros', suministroRoutes);
 app.use('/alimentos', alimentoRoutes);
 app.use('/alimentaciones', alimentacionRoutes);
 app.use('/api/pesaje', pesajeRouter);
-
-
-
+app.use('/api/bovinos', bovinoRouter);
+app.use('/api/corral-metrics', corralMetricsRouter);
 
 // app.use("/api/provincias", provinciaRutas);
 

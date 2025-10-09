@@ -1,11 +1,18 @@
-import { Router } from 'express';
-import { authMiddleware } from '../middlewares/authmiddleware';
-import { actualizarBovino, eliminarBovino } from '../controllers/bovino-controller';
+import { Router } from "express"
+import {
+  crearBovino,
+  listarBovinos,
+  obtenerBovino,
+  actualizarBovino,
+  eliminarBovino,
+} from "../controllers/bovino-controller"
 
-export const bovinoRouter = Router();
+const bovinoRouter = Router()
 
-/* ---------- PUT /api/bovinos/:id ---------- */
-bovinoRouter.put('/:id', authMiddleware, actualizarBovino);
+bovinoRouter.post("/", crearBovino)
+bovinoRouter.get("/", listarBovinos)
+bovinoRouter.get("/:id", obtenerBovino)
+bovinoRouter.put("/:id", actualizarBovino)
+bovinoRouter.delete("/:id", eliminarBovino)
 
-/* ---------- DELETE /api/bovinos/:id ---------- */
-bovinoRouter.delete('/:id', authMiddleware, eliminarBovino);
+export default bovinoRouter

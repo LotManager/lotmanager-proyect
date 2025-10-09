@@ -1,3 +1,5 @@
+'use client';
+import Link from 'next/link';
 import Button from '@mui/material/Button';
 import * as React from 'react';
 
@@ -9,11 +11,12 @@ export default function HeaderHome() {
                 <h1 className='text-[var(--color-secondary)] font-bold'>LotManager</h1>
             </div>
             <div className="flex justify-between gap-4">
-                <Button 
-                    variant="contained"
-                    sx={{
-                        bgcolor: 'var(--color-primary)',
-                        color: 'white',
+                <Link href="/login">
+                    <Button
+                        variant="contained"
+                        sx={{
+                            bgcolor: 'var(--color-primary)',
+                            color: 'white',
                         '&:hover': {
                             bgcolor: 'var(--color-secondary)',
                             color: 'white'
@@ -22,7 +25,9 @@ export default function HeaderHome() {
                 >
                 Iniciar Sesion
                 </Button>
-                <Button 
+            </Link>
+            <Link href="/register">
+                <Button
                     variant="contained"
                     sx={{
                         bgcolor: 'var(--color-primary)',
@@ -35,6 +40,7 @@ export default function HeaderHome() {
                 >
                 Registrarse
                 </Button>
+            </Link>
             </div>
         </header>
     );

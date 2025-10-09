@@ -34,26 +34,25 @@ export class PrismaEnfermedadRepository implements IEnfermedadRepository {
     });
   }
 
-  async create(enfermedad: Enfermedad): Promise<Enfermedad> {
+  async create(enfermedad: { nombre: string; descripcion: string; tipo: TipoEnfermedad }): Promise<Enfermedad> {
     const data = await prisma.enfermedad.create({
       data: {
-        id: enfermedad.getId(),
-        nombre: enfermedad.getNombre(),
-        descripcion: enfermedad.getDescripcion(),
-        tipo: enfermedad.getTipo()
+        nombre: enfermedad.nombre,
+        descripcion: enfermedad.descripcion,
+        tipo: enfermedad.tipo
       }
     });
     const tipoEnum = TipoEnfermedad[data.tipo as keyof typeof TipoEnfermedad];
     return new Enfermedad(data.id, data.nombre, data.descripcion, tipoEnum);
   }
 
-  async update(enfermedad: Enfermedad): Promise<void> {
+  async update(id: number, enfermedad: { nombre?: string; descripcion?: string; tipo?: TipoEnfermedad }): Promise<void> {
     await prisma.enfermedad.update({
-      where: { id: enfermedad.getId() },
+      where: { id },
       data: {
-        nombre: enfermedad.getNombre(),
-        descripcion: enfermedad.getDescripcion(),
-        tipo: enfermedad.getTipo()
+        ...(enfermedad.nombre !== undefined && { nombre: enfermedad.nombre }),
+        ...(enfermedad.descripcion !== undefined && { descripcion: enfermedad.descripcion }),
+        ...(enfermedad.tipo !== undefined && { tipo: enfermedad.tipo })
       }
     });
   }

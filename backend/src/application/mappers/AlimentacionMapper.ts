@@ -35,11 +35,14 @@ export function toDomain(db: any): Alimentacion {
   const descripcion = db.descripcion ?? db.description ?? db.name ?? (() => { throw new Error("Missing descripcion in alimentacion DB object"); })();
   const nombre = db.nombre ?? db.name ?? db.nombre ?? db.nombre ?? (() => { throw new Error("Missing nombre in alimentacion DB object"); })();
 
-  // mapear corral: Prisma puede devolver un array `corral` (Corral[]). Tomamos el primero si existe.
-  let corral: Corral | undefined = undefined;
-  if (Array.isArray(db.corral) && db.corral.length > 0) {
-    const c = db.corral[0];
-    corral = new Corral(c.id, c.capacidad_maxima ?? c.capacidadMaxima, c.numero, c.tipo_corral ?? c.tipoCorral, c.id_alimentacion ?? c.idAlimentacion ?? null, c.id_feedlot ?? c.idFeedlot);
+  // mapear corrales: Prisma devuelve un array `corral` (Corral[])
+  let corrales: Corral[] | undefined = undefined;
+  const corralRaw = db.corral ?? db.Corral ?? db.corrales;
+  if (Array.isArray(corralRaw) && corralRaw.length > 0) {
+    corrales = corralRaw.map((c: any) => new Corral(c.id, c.capacidad_maxima ?? c.capacidadMaxima, c.numero, c.tipo_corral ?? c.tipoCorral, c.id_alimentacion ?? c.idAlimentacion ?? null, c.id_feedlot ?? c.idFeedlot));
+  } else if (corralRaw && typeof corralRaw === 'object') {
+    const c = corralRaw;
+    corrales = [new Corral(c.id, c.capacidad_maxima ?? c.capacidadMaxima, c.numero, c.tipo_corral ?? c.tipoCorral, c.id_alimentacion ?? c.idAlimentacion ?? null, c.id_feedlot ?? c.idFeedlot)];
   }
 
   // mapear suministros (buscar por varios posibles nombres)
@@ -49,7 +52,7 @@ export function toDomain(db: any): Alimentacion {
     suministros = suministrosRaw.map((s: any) => new Suministro(s.id, s.cantidad, s.id_alimentacion ?? s.idAlimentacion, s.id_alimento ?? s.idAlimento));
   }
 
-  return new Alimentacion(id, descripcion, nombre, corral, suministros);
+  return new Alimentacion(id, descripcion, nombre, corrales, suministros);
 }
 
 export function toResponse(alimentacion: Alimentacion): any {
@@ -61,15 +64,15 @@ export function toResponse(alimentacion: Alimentacion): any {
   };
 
   const c = alimentacion.getCorral();
-  if (c) {
-    base.corral = {
-      id: c.id,
-      capacidadMaxima: c.capacidadMaxima,
-      numero: c.numero,
-      tipoCorral: c.tipoCorral,
-      idAlimentacion: c.idAlimentacion,
-      idFeedlot: c.idFeedlot,
-    };
+  if (c && Array.isArray(c)) {
+    base.corrales = c.map((co: Corral) => ({
+      id: co.id,
+      capacidadMaxima: co.capacidadMaxima,
+      numero: co.numero,
+      tipoCorral: co.tipoCorral,
+      idAlimentacion: co.idAlimentacion,
+      idFeedlot: co.idFeedlot,
+    }));
   }
 
   const s = alimentacion.getSuministro();

@@ -15,20 +15,23 @@ export class AlimentacionService {
   public async registrar(
     id: number,
     descripcion: string,
-    corral?: Corral,
+    corrales?: Corral[],
     suministros?: Suministro[]
   ): Promise<Alimentacion> {
-    // Si se pasó un corral y hay repo, validarlo y obtener la entidad completa.
-    let corralEntity = corral;
-    if (corral && this.corralRepo) {
-      const found = await this.corralRepo.findById(corral.id);
-      if (!found) throw new Error("Corral no encontrado");
-      corralEntity = found;
+    // Si se pasaron corrales y hay repo, validarlos y obtener las entidades completas.
+    let corralesEntity: Corral[] | undefined = undefined;
+    if (Array.isArray(corrales) && corrales.length > 0 && this.corralRepo) {
+      corralesEntity = [];
+      for (const c of corrales) {
+        const found = await this.corralRepo.findById(c.id);
+        if (!found) throw new Error(`Corral no encontrado: ${c.id}`);
+        corralesEntity.push(found);
+      }
     }
 
   // Por compatibilidad, usar `descripcion` también como `nombre` si no se provee otro valor.
   const nombre = (descripcion ?? "").toString().slice(0, 100);
-  const alimentacion = new Alimentacion(id, descripcion, nombre, corralEntity, suministros);
+  const alimentacion = new Alimentacion(id, descripcion, nombre, corralesEntity, suministros);
     const creado = await this.repo.create(alimentacion);
 
     if (suministros && this.suministroRepo) {
@@ -41,15 +44,18 @@ export class AlimentacionService {
     return creado;
   }
 
-  public async actualizar(id: number, descripcion: string, corral?: Corral, suministros?: Suministro[]): Promise<void> {
-    let corralEntity = corral;
-    if (corral && this.corralRepo) {
-      const found = await this.corralRepo.findById(corral.id);
-      if (!found) throw new Error("Corral no encontrado");
-      corralEntity = found;
+  public async actualizar(id: number, descripcion: string, corrales?: Corral[], suministros?: Suministro[]): Promise<void> {
+    let corralesEntity: Corral[] | undefined = undefined;
+    if (Array.isArray(corrales) && corrales.length > 0 && this.corralRepo) {
+      corralesEntity = [];
+      for (const c of corrales) {
+        const found = await this.corralRepo.findById(c.id);
+        if (!found) throw new Error(`Corral no encontrado: ${c.id}`);
+        corralesEntity.push(found);
+      }
     }
   const nombre = (descripcion ?? "").toString().slice(0, 100);
-  const alimentacion = new Alimentacion(id, descripcion, nombre, corralEntity, suministros);
+  const alimentacion = new Alimentacion(id, descripcion, nombre, corralesEntity, suministros);
     await this.repo.update(alimentacion);
 
     if (suministros && this.suministroRepo) {

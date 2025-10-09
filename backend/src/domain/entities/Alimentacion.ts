@@ -6,7 +6,7 @@ export class Alimentacion {
         private id: number,
         private descripcion: string,
         private nombre: string,
-        private corral?: Corral,
+        private corral?: Corral[],
         private suministros?: Suministro[],
     ){}
 
@@ -17,7 +17,7 @@ export class Alimentacion {
     public getDescripcion(): string {
         return this.descripcion;
     }
-    public getCorral(): Corral | undefined {
+    public getCorral(): Corral[] | undefined {
         return this.corral;
     }
     public getSuministro(): Suministro[] | undefined {
@@ -35,7 +35,7 @@ export class Alimentacion {
     public setNombre(nombre: string): void {
         this.nombre = nombre;
     }
-    public setCorral(corral: Corral): void {
+    public setCorral(corral: Corral[]): void {
         this.corral = corral;
     }
     public setSuministro(suministro: Suministro[]): void {

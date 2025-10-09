@@ -17,11 +17,15 @@ export class PrismaAlimentacionRepository implements IAlimentacionRepository {
 
   const nombre = data.nombre ?? data.name ?? data.nombre ?? String(descripcion).slice(0, 100)
 
-    // mapear corral (relación opcional)
-    let corral: Corral | undefined = undefined
-    if (data.corral) {
-      const c = data.corral
-      corral = new Corral(c.id, c.capacidad_maxima, c.numero, c.tipo_corral, c.id_alimentacion, c.id_feedlot)
+    // mapear corrales (relación opcional) -> Alimentacion.corral es Corral[] en el dominio
+    let corrales: Corral[] | undefined = undefined
+    const corralRaw = data.corral ?? data.Corral ?? data.corrales
+    if (Array.isArray(corralRaw) && corralRaw.length > 0) {
+      corrales = corralRaw.map((c: any) => new Corral(c.id, c.capacidad_maxima, c.numero, c.tipo_corral, c.id_alimentacion, c.id_feedlot))
+    } else if (corralRaw && typeof corralRaw === "object") {
+      // caso cuando viene un solo objeto (compatibilidad)
+      const c = corralRaw
+      corrales = [new Corral(c.id, c.capacidad_maxima, c.numero, c.tipo_corral, c.id_alimentacion, c.id_feedlot)]
     }
 
     // mapear suministros (puede venir en diferentes nombres)
@@ -31,7 +35,7 @@ export class PrismaAlimentacionRepository implements IAlimentacionRepository {
       suministros = suministrosRaw.map((s: any) => new Suministro(s.id, s.cantidad, s.id_alimentacion, s.id_alimento))
     }
 
-  return new Alimentacion(id, descripcion, nombre, corral, suministros)
+  return new Alimentacion(id, descripcion, nombre, corrales, suministros)
   }
 
   public async findById(id: number): Promise<Alimentacion | null> {
@@ -45,15 +49,15 @@ export class PrismaAlimentacionRepository implements IAlimentacionRepository {
   }
 
   public async create(alimentacion: Alimentacion): Promise<Alimentacion> {
-    const corral = alimentacion.getCorral()
-    const suministros = alimentacion.getSuministro()
+  const corrales = alimentacion.getCorral()
+  const suministros = alimentacion.getSuministro()
 
     const nuevo = await prisma.alimentacion.create({
       data: {
         nombre: alimentacion.getNombre(),
         descripcion: alimentacion.getDescripcion(),
-        corral: corral ? { connect: { id: corral.id } } : undefined,
-        Suministro: suministros ? { create: suministros.map(s => ({ cantidad: s.cantidad, id_alimento: s.idAlimento })) } : undefined
+  corral: corrales && Array.isArray(corrales) && corrales.length > 0 ? { connect: corrales.map(c => ({ id: c.id })) } : undefined,
+  Suministro: suministros ? { create: suministros.map(s => ({ cantidad: s.cantidad, id_alimento: s.idAlimento })) } : undefined
       },
       include: { corral: true, Suministro: true }
     })

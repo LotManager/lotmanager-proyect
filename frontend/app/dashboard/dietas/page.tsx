@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import DietaCard from "@/src/components/dashboard/dietas/DietaCard";
-import { listarDietas } from "@/src/services/dietaService";
+import { listarDietas, actualizarDieta } from "@/src/services/dietaService";
 
 export default function DietasPage() {
   const [dietas, setDietas] = useState<any[]>([]);
@@ -28,8 +28,6 @@ export default function DietasPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Dietas</h1>
-      <p className="mt-4">Gestión de dietas para los animales.</p>
 
       {loading && <div className="mt-4">Cargando dietas...</div>}
       {error && <div className="mt-4 text-red-600">Error: {error}</div>}
@@ -38,7 +36,22 @@ export default function DietasPage() {
         <div className="mt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {dietas.length === 0 && <div>No hay dietas</div>}
           {dietas.map((dt) => (
-            <DietaCard key={String(dt.id)} dieta={dt} onView={(id)=>console.log('ver', id)} onEdit={(id)=>console.log('edit', id)} />
+            <DietaCard
+              key={String(dt.id)}
+              dieta={dt}
+              onView={(id) => console.log('ver', id)}
+              onEdit={async (id) => {
+                try {
+                  const nuevoNombre = window.prompt('Nuevo nombre para la dieta:', String(dt.nombre ?? ''));
+                  if (!nuevoNombre) return; 
+                  const updated = await actualizarDieta(id, { nombre: nuevoNombre });
+                  setDietas((prev) => prev.map((p) => (String(p.id) === String(id) ? updated : p)));
+                } catch (err) {
+                  console.error('Error al actualizar dieta', err);
+                  alert('No se pudo actualizar la dieta: ' + String(err));
+                }
+              }}
+            />
           ))}
         </div>
       )}

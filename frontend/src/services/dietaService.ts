@@ -18,32 +18,48 @@ async function handleJsonResponse(res: Response) {
 	return res.json();
 }
 
-/** Mapea el objeto 'Alimentacion' desde el backend al tipo `Dieta` que usa la UI */
 function mapAlimentacionToDieta(raw: Record<string, unknown>): Dieta {
-	// Backend (AlimentacionMapper.toResponse) devuelve: { id, descripcion, corral?, suministros? }
+
 	const id = (raw?.id ?? raw?.ID ?? "") as string | number;
 	const descripcion = (raw?.descripcion ?? raw?.name ?? raw?.nombre ?? "") as string;
 
-	// nombre requerido por la card: usamos una versión corta de descripcion si no hay nombre explícito
+
 	const nombre = (raw?.nombre ?? raw?.name ?? (typeof descripcion === "string" ? descripcion.slice(0, 40) : String(id))) as string;
 
 	let corrales: Array<{ id: string | number; nombre: string } | string> = [];
 	const c = (raw as Record<string, unknown>)['corral'] ?? (raw as Record<string, unknown>)['corales'] ?? (raw as Record<string, unknown>)['corrales'];
+
+	if (typeof process !== 'undefined' && (process.env as any)?.NODE_ENV !== 'production') {
+		try {
+
+			console.debug('[dietaService] raw.corral =', JSON.stringify(c));
+		} catch (e) {
+
+		}
+	}
 	if (c) {
+
 		if (Array.isArray(c)) {
 			corrales = c.map((cc) => {
 				if (typeof cc === 'string') return { id: cc, nombre: cc };
+				if (typeof cc === 'number') return { id: cc, nombre: String(cc) };
 				if (typeof cc === 'object' && cc !== null) {
 					const obj = cc as Record<string, unknown>;
-					const cid = (obj['id'] ?? obj['ID'] ?? obj['numero'] ?? '') as string | number;
-					const cn = (obj['nombre'] ?? obj['numero'] ?? String(obj['id'] ?? '')) as string;
+					// Support multiple possible id field names returned by backend
+					const cid = (obj['id'] ?? obj['ID'] ?? obj['numero'] ?? obj['corralId'] ?? obj['corral_id'] ?? obj['id_corral'] ?? obj['idCorral'] ?? '') as string | number;
+					const cn = (obj['nombre'] ?? obj['name'] ?? obj['numero'] ?? String(cid ?? '')) as string;
 					return { id: cid, nombre: cn };
 				}
-				return { id: '', nombre: '' };
+				return { id: String(cc ?? ''), nombre: String(cc ?? '') };
 			});
+		} else if (typeof c === 'string' || typeof c === 'number') {
+
+			corrales = [{ id: c as string | number, nombre: String(c) }];
 		} else if (typeof c === 'object' && c !== null) {
 			const obj = c as Record<string, unknown>;
-			corrales = [{ id: (obj['id'] ?? obj['ID'] ?? '') as string | number, nombre: (obj['nombre'] ?? obj['numero'] ?? String(obj['id'] ?? '')) as string }];
+			const cid = (obj['id'] ?? obj['ID'] ?? obj['numero'] ?? obj['corralId'] ?? obj['corral_id'] ?? obj['id_corral'] ?? obj['idCorral'] ?? '') as string | number;
+			const cn = (obj['nombre'] ?? obj['name'] ?? obj['numero'] ?? String(cid ?? '')) as string;
+			corrales = [{ id: cid, nombre: cn }];
 		}
 	}
 
@@ -89,4 +105,20 @@ export async function obtenerDieta(id: string | number): Promise<Dieta> {
 	}
 }
 
-export default { listarDietas, obtenerDieta, mapAlimentacionToDieta };
+/** Actualiza una alimentacion (dieta) parcialmente. Retorna la dieta actualizada mapeada. */
+export async function actualizarDieta(id: string | number, payload: Partial<Dieta>): Promise<Dieta> {
+	try {
+		const res = await fetch(`${API_BASE}/alimentaciones/${id}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+		});
+		const data = await handleJsonResponse(res);
+		return mapAlimentacionToDieta(data);
+	} catch (err) {
+		console.error('[dietaService] actualizarDieta failed', err);
+		throw err;
+	}
+}
+
+export default { listarDietas, obtenerDieta, actualizarDieta, mapAlimentacionToDieta };

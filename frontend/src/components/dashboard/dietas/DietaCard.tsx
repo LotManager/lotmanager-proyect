@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
-import { Box, Card, CardContent, CardActions, Button, Chip, Stack, Typography, SvgIcon } from "@mui/material";
-import { GiWheat } from "react-icons/gi";
-import { AiOutlineEdit, AiOutlineEye } from "react-icons/ai";
+import React, { useState } from "react";
+import { Box, Card, CardContent, CardActions, Button, Stack, Typography, TextField } from "@mui/material";
+import { CiWheat } from "react-icons/ci";
+import { Collapse, Chip } from '@mui/material';
 
 export type Dieta = {
   id: string | number;
@@ -14,71 +14,46 @@ export type Dieta = {
 
 type Props = {
   dieta: Dieta;
-  onEdit?: (id: string | number) => void;
+  // onEdit can receive updated partial object: (id, updated?) => void
+  onEdit?: (id: string | number, updated?: Partial<Dieta> | null) => void;
   onView?: (id: string | number) => void;
 };
 
 export default function DietaCard({ dieta, onEdit, onView }: Props) {
-  const corrales =
-    dieta.corrales?.map((c) => (typeof c === "string" ? { id: c, nombre: c } : c)) || [];
+  const [showDetails, setShowDetails] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [editForm, setEditForm] = useState<{ nombre: string; descripcion: string; corrales: string[] }>({
+    nombre: dieta.nombre ?? '',
+    descripcion: dieta.descripcion ?? '',
+    corrales: (dieta.corrales ?? []).map((c) => (typeof c === 'string' ? c : (c as any).nombre ?? String((c as any).id))),
+  });
+
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <Card sx={{ borderRadius: 2, maxWidth: 420 }}>
       <CardContent>
         <Stack direction="row" spacing={2} alignItems="flex-start">
-          <Box sx={{ color: 'success.dark', mt: 0.2 }} aria-hidden>
-            <SvgIcon component={GiWheat as any} fontSize="small" />
-          </Box>
-
           <Box sx={{ flex: 1 }}>
+            <CiWheat className="w-6 h-6 text-[var(--color-secondary)]" />
             <Typography variant="h6" component="h3" sx={{ fontWeight: 600, color: 'success.main' }}>
               {dieta.nombre}
             </Typography>
-            {dieta.descripcion && (
+            {/* {dieta.descripcion && (
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 {dieta.descripcion}
               </Typography>
-            )}
+            )} */}
           </Box>
         </Stack>
-
-        {/* <Box sx={{ mt: 2 }}>
-          <Stack spacing={0.5}>
-            <Typography variant="body2">
-              <strong>Proteína:</strong> {dieta.proteina ?? '-'}%
-            </Typography>
-            <Typography variant="body2">
-              <strong>Energía:</strong> {dieta.energia ?? '-'} Mcal/kg
-            </Typography>
-            <Typography variant="body2">
-              <strong>Fibra:</strong> {dieta.fibra ?? '-'}%
-            </Typography>
-          </Stack>
-        </Box> */}
-
-        {corrales.length > 0 && (
-          <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-            {corrales.map((c) => {
-              const cc = typeof c === 'string' ? { id: c, nombre: String(c) } : (c as { id: string | number; nombre: string });
-              return (
-                <Chip
-                  key={cc.id}
-                  label={cc.nombre}
-                  size="small"
-                  color="success"
-                  sx={{ borderRadius: '999px' }}
-                />
-              );
-            })}
-          </Box>
-        )}
       </CardContent>
 
       <CardActions sx={{ px: 2, pb: 2 }}>
         <Stack direction="row" spacing={1}>
           <Button
             variant="outlined"
-            startIcon={<SvgIcon component={AiOutlineEdit as any} />}
             onClick={() => onEdit && onEdit(dieta.id)}
             size="small"
             color="primary"
@@ -88,16 +63,30 @@ export default function DietaCard({ dieta, onEdit, onView }: Props) {
           </Button>
           <Button
             variant="outlined"
-            startIcon={<SvgIcon component={AiOutlineEye as any} />}
-            onClick={() => onView && onView(dieta.id)}
+            onClick={() => setShowDetails((s) => !s)}
             size="small"
             color="inherit"
             aria-label={`Ver dieta ${dieta.nombre}`}
           >
-            Ver
+            {showDetails ? 'Ocultar' : 'Ver'}
           </Button>
         </Stack>
       </CardActions>
+      <Collapse in={showDetails} timeout="auto" unmountOnExit>
+        <CardContent>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Descripción</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 1 }}>
+            {dieta.descripcion ?? 'Sin descripción'}
+          </Typography>
+
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mt: 1 }}>Corrales</Typography>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+            {(dieta.corrales ?? []).map((c, idx) => (
+              <Chip key={`${typeof c === 'string' ? c : (c as any).id}-${idx}`} label={typeof c === 'string' ? c : (c as any).nombre ?? String((c as any).id)} size="small" />
+            ))}
+          </Box>
+        </CardContent>
+      </Collapse>
     </Card>
   );
 }

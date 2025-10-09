@@ -19,6 +19,7 @@ export class Alimento {
     public getVencimiento(): Date {
         return this.vencimiento;
     }
+
     public getDetalleAlimento(): DetalleAlimento | undefined {
         return this.detalleAlimento;
     }

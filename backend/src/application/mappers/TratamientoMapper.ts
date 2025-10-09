@@ -34,7 +34,6 @@ export class TratamientoMapper {
 
   static toPrisma(entity: Tratamiento): Prisma.TratamientoUncheckedCreateInput {
     return {
-      id: entity.getId(),
       descripcion: entity.getDescripcion(),
       dosis_aplicada: entity.getDosisAplicada(),
       nombre: entity.getNombre(),
@@ -81,5 +80,12 @@ export class TratamientoMapper {
       tipo: enfermedad.getTipo(),
     })),
   }
-}  
+}
+  static toUpdatePrisma(entity: Tratamiento): Prisma.TratamientoUpdateInput {
+    return {
+      descripcion: entity.getDescripcion(),
+      dosis_aplicada: entity.getDosisAplicada(),
+      nombre: entity.getNombre()
+    };
+  }
 }

@@ -21,18 +21,28 @@ export class TratamientoRepository {
   }
 
   async update(id: number, dto: TratamientoUpdateDto): Promise<Tratamiento | null> {
+    if (Object.keys(dto).length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar");
+    }
     const data: Prisma.TratamientoUpdateInput = {
         ...(dto.descripcion !== undefined && { descripcion: dto.descripcion }),
         ...(dto.dosisAplicada !== undefined && { dosis_aplicada: dto.dosisAplicada }),
         ...(dto.nombre !== undefined && { nombre: dto.nombre }),
     }
+  
 
-  const updated = await this.prisma.tratamiento.update({
-    where: { id },
-    data,
-  })
-
-  return TratamientoMapper.toEntity(updated)
+    try {
+      const updated = await this.prisma.tratamiento.update({
+        where: { id },
+        data,
+      });
+      return TratamientoMapper.toEntity(updated);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        return null; // registro no encontrado
+      }
+      throw error;
+    }
 }
 
 

@@ -71,7 +71,7 @@ model DetalleAlimento {
   id          Int      @id @default(autoincrement())
   nombre      String
   tipo        String
-  alimento    Alimento @relation(fields: [id_alimento], references: [id])
+  alimento    Alimento @relation(fields: [id_alimento], references: [id], onDelete: Cascade)
   id_alimento Int
 }
 

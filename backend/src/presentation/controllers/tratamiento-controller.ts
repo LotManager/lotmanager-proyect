@@ -46,11 +46,8 @@ export class TratamientoController {
     const { id } = req.params
     if (!id) return res.status(400).json({ message: 'Falta el parámetro ID' })
 
-    const parsedId = parseInt(id)
-    if (isNaN(parsedId)) return res.status(400).json({ message: 'ID inválido' })
-
     try {
-      const updated = await this.service.update(parsedId, req.body)
+      const updated = await this.service.update(parseInt(id), req.body)
       if (!updated) return res.status(404).json({ message: 'No encontrado' })
       res.json(updated)
     } catch (error) {

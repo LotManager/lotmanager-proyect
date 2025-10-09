@@ -33,23 +33,29 @@ app.use(cors({
     credentials: true,
 }));
 
-//Rutas 
 
+//Rutas Andadndo
 app.use("/api/auth", usuarioRutas);
 app.use("/api/localidades", localidadRutas);
 app.use("/api/feedlots", feedlotRutas);
 app.use("/api/provincias", provinciaRutas);
 app.use("/api/personal", personalRutas);
 app.use("/api/enfermedades", enfermedadRutas);
-app.use("/api/tratamientos", roleGuard(["admin", "encargado"]), trataminetoRutas);
-app.use("/api/corrales", corralRoutes);
+app.use("/api/tratamientos", trataminetoRutas);
+app.use("/api/alimentos", alimentoRoutes);
 app.use("/api/detalle-alimentos", detalleAlimentoRoutes);
 app.use("/api/suministros", suministroRoutes);
-app.use("/api/alimentos", alimentoRoutes);
 app.use("/api/alimentaciones", alimentacionRoutes);
+
+//Mati
+app.use("/api/corrales", corralRoutes); // No anda el put
+
+
 app.use("/api/detalle-enfermedad", detalleEnfermedadRoutes);
-app.use("/api/pesaje", roleGuard(["admin", "encargado"]), pesajeRouter);
-app.use("/api/bovinos", roleGuard(["admin", "encargado"]), bovinoRouter);
+app.use("/api/pesaje", pesajeRouter);
+
+//Mati
+app.use("/api/bovinos", bovinoRouter);
 app.use("/api/corral-metrics", corralMetricsRouter);
 
 // app.use("/api/provincias", provinciaRutas);

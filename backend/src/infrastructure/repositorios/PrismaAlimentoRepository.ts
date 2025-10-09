@@ -49,21 +49,39 @@ export class PrismaAlimentoRepository implements IAlimentoRepository {
   }
 
   public async create(alimento: Alimento): Promise<Alimento> {
-    // preparar nested create si vienen relaciones
-    const detalle = alimento.getDetalleAlimento()
-    const suministros = alimento.getSuministro()
+  const detalle = alimento.getDetalleAlimento();
+  const suministros = alimento.getSuministro();
+  const vencimiento = alimento.getVencimiento()?.toISOString();
 
-    const nuevo = await prisma.alimento.create({
-      data: {
-        nro_serie: Number(alimento.getNroSerie()),
-        vencimiento: alimento.getVencimiento().toISOString(),
-        detallealimento: detalle ? { create: { nombre: detalle.nombre, tipo: detalle.tipo } } : undefined,
-        Suministro: suministros ? { create: suministros.map(s => ({ cantidad: s.cantidad, id_alimentacion: s.idAlimentacion })) } : undefined
-      },
-      include: { detallealimento: true, Suministro: true }
-    })
-    return this.toDomain(nuevo)
-  }
+  const nuevo = await prisma.alimento.create({
+    data: {
+      nro_serie: Number(alimento.getNroSerie()),
+      vencimiento: vencimiento,
+      detallealimento: detalle
+        ? {
+            create: {
+              nombre: detalle.nombre,
+              tipo: detalle.tipo
+            }
+          }
+        : undefined,
+      Suministro: suministros?.length
+        ? {
+            create: suministros.map(s => ({
+              cantidad: s.cantidad,
+              id_alimentacion: s.idAlimentacion
+            }))
+          }
+        : undefined
+    },
+    include: {
+      detallealimento: true,
+      Suministro: true
+    }
+  });
+
+  return this.toDomain(nuevo);
+}
 
   public async update(alimento: Alimento): Promise<void> {
     try {
@@ -71,7 +89,7 @@ export class PrismaAlimentoRepository implements IAlimentoRepository {
         where: { id: alimento.getId() },
         data: {
           nro_serie: Number(alimento.getNroSerie()),
-          vencimiento: alimento.getVencimiento().toISOString()
+          vencimiento: alimento.getVencimiento()?.toString()
           // actualizaciones de relaciones (detalle/suministros) normalmente se manejan en repositorios específicos
         }
       })

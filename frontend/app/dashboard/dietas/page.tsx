@@ -11,35 +11,34 @@ export default function DietasPage() {
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     listarDietas()
-      .then((d) => {
-        if (mounted) setDietas(d);
+      .then((data) => {
+        if (mounted) setDietas(data);
       })
       .catch((err) => {
-        console.error(err);
+        console.error('listarDietas failed', err);
         if (mounted) setError(String(err));
       })
       .finally(() => {
         if (mounted) setLoading(false);
       });
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
   return (
     <div>
       <h1 className="text-2xl font-bold">Dietas</h1>
-      <p className="mt-4">Gestión de dietas para los animales (mapeado desde Alimentación).</p>
+      <p className="mt-4">Gestión de dietas para los animales.</p>
 
       {loading && <div className="mt-4">Cargando dietas...</div>}
       {error && <div className="mt-4 text-red-600">Error: {error}</div>}
 
       {!loading && !error && (
         <div className="mt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {dietas.length === 0 && <div>No hay dietas / alimentaciones</div>}
+          {dietas.length === 0 && <div>No hay dietas</div>}
           {dietas.map((dt) => (
-            <DietaCard key={dt.id} dieta={dt} />
+            <DietaCard key={String(dt.id)} dieta={dt} onView={(id)=>console.log('ver', id)} onEdit={(id)=>console.log('edit', id)} />
           ))}
         </div>
       )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardActions, Button, Chip, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardActions, Button, Chip, Stack, Typography, SvgIcon } from "@mui/material";
 import { GiWheat } from "react-icons/gi";
 import { AiOutlineEdit, AiOutlineEye } from "react-icons/ai";
 
@@ -9,9 +9,6 @@ export type Dieta = {
   id: string | number;
   nombre: string;
   descripcion?: string;
-  proteina?: string | number;
-  energia?: string | number;
-  fibra?: string | number;
   corrales?: Array<{ id: string | number; nombre: string } | string>;
 };
 
@@ -26,73 +23,80 @@ export default function DietaCard({ dieta, onEdit, onView }: Props) {
     dieta.corrales?.map((c) => (typeof c === "string" ? { id: c, nombre: c } : c)) || [];
 
   return (
-    <Card className="max-w-sm rounded-lg shadow-sm" sx={{ borderRadius: 2 }}>
+    <Card sx={{ borderRadius: 2, maxWidth: 420 }}>
       <CardContent>
-        <div className="flex items-start gap-3">
-          <div className="text-green-700 mt-1">
-            <GiWheat size={22} />
-          </div>
-          <div>
-            <Typography variant="h6" component="h3" className="font-semibold text-green-800">
+        <Stack direction="row" spacing={2} alignItems="flex-start">
+          <Box sx={{ color: 'success.dark', mt: 0.2 }} aria-hidden>
+            <SvgIcon component={GiWheat as any} fontSize="small" />
+          </Box>
+
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 600, color: 'success.main' }}>
               {dieta.nombre}
             </Typography>
             {dieta.descripcion && (
-              <Typography variant="body2" color="text.secondary" className="mt-1 text-green-600">
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 {dieta.descripcion}
               </Typography>
             )}
-          </div>
-        </div>
+          </Box>
+        </Stack>
 
-        <div className="mt-4">
+        {/* <Box sx={{ mt: 2 }}>
           <Stack spacing={0.5}>
             <Typography variant="body2">
-              <strong>Proteína:</strong> {dieta.proteina ?? "-"}%
+              <strong>Proteína:</strong> {dieta.proteina ?? '-'}%
             </Typography>
             <Typography variant="body2">
-              <strong>Energía:</strong> {dieta.energia ?? "-"} Mcal/kg
+              <strong>Energía:</strong> {dieta.energia ?? '-'} Mcal/kg
             </Typography>
             <Typography variant="body2">
-              <strong>Fibra:</strong> {dieta.fibra ?? "-"}%
+              <strong>Fibra:</strong> {dieta.fibra ?? '-'}%
             </Typography>
           </Stack>
-        </div>
+        </Box> */}
 
         {corrales.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {corrales.map((c) => (
-              <Chip
-                key={(c as any).id}
-                label={(c as any).nombre}
-                size="small"
-                color="success"
-                className="rounded-full"
-              />
-            ))}
-          </div>
+          <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            {corrales.map((c) => {
+              const cc = typeof c === 'string' ? { id: c, nombre: String(c) } : (c as { id: string | number; nombre: string });
+              return (
+                <Chip
+                  key={cc.id}
+                  label={cc.nombre}
+                  size="small"
+                  color="success"
+                  sx={{ borderRadius: '999px' }}
+                />
+              );
+            })}
+          </Box>
         )}
       </CardContent>
 
-      <CardActions className="px-4 pb-4">
-        <div className="flex gap-2">
+      <CardActions sx={{ px: 2, pb: 2 }}>
+        <Stack direction="row" spacing={1}>
           <Button
             variant="outlined"
-            startIcon={<AiOutlineEdit />}
+            startIcon={<SvgIcon component={AiOutlineEdit as any} />}
             onClick={() => onEdit && onEdit(dieta.id)}
             size="small"
-            color="inherit"
+            color="primary"
+            aria-label={`Editar dieta ${dieta.nombre}`}
           >
             Editar
           </Button>
           <Button
             variant="outlined"
-            startIcon={<AiOutlineEye />}
+            startIcon={<SvgIcon component={AiOutlineEye as any} />}
             onClick={() => onView && onView(dieta.id)}
             size="small"
+            color="inherit"
+            aria-label={`Ver dieta ${dieta.nombre}`}
           >
             Ver
           </Button>
-        </div>
+        </Stack>
       </CardActions>
     </Card>
   );

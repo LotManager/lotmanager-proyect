@@ -1,65 +1,112 @@
-import { Request, Response } from "express"
-import { BovinoService } from "../../application/services/bovinoService"
-import { PrismaBovinoRepository } from "../../infrastructure/repositorios/PrismaBovinoRepository"
-import { Bovino } from "../../domain/entities/Bovino"
+// src/presentation/controllers/bovino.controller.ts
 
-const service = new BovinoService(new PrismaBovinoRepository())
+import { Request, Response } from "express";
+import { BovinoService } from "../../application/services/bovinoService";
+import { PrismaBovinoRepository } from "../../infrastructure/repositorios/PrismaBovinoRepository";
+import { CreateBovinoDto, UpdateBovinoDto } from "../../application/dtos/bovino.dto";
 
-export const crearBovino = async (req: Request, res: Response) => {
-  try {
-    const nuevo = await service.crear(req.body)
-    res.status(201).json(nuevo)
-  } catch (e: any) {
-    res.status(400).json({ error: e.message })
+// 1. Instanciamos nuestras capas (el "setup")
+const bovinoRepo = new PrismaBovinoRepository();
+const bovinoService = new BovinoService(bovinoRepo);
+
+export class BovinoController {
+  
+  /**
+   * ✅ OBTENER TODOS: Llama al servicio para obtener la lista completa.
+   */
+  static async listar(req: Request, res: Response) {
+    try {
+      const bovinos = await bovinoService.listar();
+      res.status(200).json(bovinos);
+    } catch (error) {
+      console.error("Error en el controlador al listar bovinos:", error);
+      res.status(500).json({ message: "Error interno del servidor." });
+    }
   }
-}
 
-export const listarBovinos = async (req: Request, res: Response) => {
-  const bovinos = await service.listar()
-  res.json(bovinos)
-}
+  /**
+   * ✅ OBTENER UNO: Busca un bovino por su ID.
+   */
+  static async obtenerPorId(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const bovino = await bovinoService.obtener(id);
 
-export const obtenerBovino = async (req: Request, res: Response) => {
-  const id = Number(req.params.id)
-  const bovino = await service.obtener(id)
-  if (!bovino) {
-    res.status(404).json({ error: "Bovino no encontrado" })
-    return
+      if (!bovino) {
+        return res.status(404).json({ error: "Bovino no encontrado." });
+      }
+      res.status(200).json(bovino);
+    } catch (error) {
+      console.error("Error en el controlador al obtener bovino:", error);
+      res.status(500).json({ message: "Error interno del servidor." });
+    }
   }
-  res.json(bovino)
-}
 
-export const actualizarBovino = async (req: Request, res: Response) => {
-  try {
-    const id = Number(req.params.id)
-    const data = req.body
-    const bovino = new Bovino(
-      id,
-      data.id_raza,
-      data.id_corral,
-      data.caravana,
-      data.estado_bovino,
-      data.estado_salud,
-      new Date(data.ingreso),
-      data.egreso ? new Date(data.egreso) : null,
-      data.peso_ingreso,
-      data.peso_egreso ?? null,
-      data.sexo,
-      data.tipo_bovino
-    )
-    const actualizado = await service.actualizar(bovino)
-    res.json(actualizado)
-  } catch (e: any) {
-    res.status(400).json({ error: e.message })
+  /**
+   * ✅ CREAR: Valida los datos con el DTO antes de llamar al servicio.
+   */
+  static async crear(req: Request, res: Response) {
+    // 2. Usamos Zod para validar el cuerpo de la petición.
+    const parsed = CreateBovinoDto.safeParse(req.body);
+    if (!parsed.success) {
+      // Si la validación falla, devolvemos un error 400 claro.
+      return res.status(400).json({ error: parsed.error.issues });
+    }
+    try {
+      // 3. Pasamos los datos ya validados al servicio.
+      const nuevoBovino = await bovinoService.crear(parsed.data);
+      res.status(201).json(nuevoBovino);
+    } catch (error) {
+      console.error("Error en el controlador al crear bovino:", error);
+      res.status(500).json({ message: "Error interno del servidor." });
+    }
   }
-}
 
-export const eliminarBovino = async (req: Request, res: Response) => {
-  try {
-    const id = Number(req.params.id)
-    await service.eliminar(id)
-    res.status(204).send()
-  } catch (e: any) {
-    res.status(400).json({ error: e.message })
+  /**
+   * ✅ ACTUALIZAR: Valida datos parciales y maneja el error 404.
+   */
+  static async actualizar(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      
+      // 2. Usamos el DTO de actualización que permite campos opcionales.
+      const parsed = UpdateBovinoDto.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: parsed.error.issues });
+      }
+      
+      // 3. Llamamos al método 'actualizar' del servicio.
+      const actualizado = await bovinoService.actualizar(id, parsed.data);
+      res.status(200).json(actualizado);
+
+    } catch (error: any) {
+      // 4. Atrapamos el error "no encontrado" que lanza el servicio.
+      if (error.message.includes("no encontrado")) {
+        return res.status(404).json({ message: error.message });
+      }
+      console.error("Error en el controlador al actualizar bovino:", error);
+      res.status(500).json({ message: "Error interno del servidor." });
+    }
+  }
+
+  /**
+   * ✅ ELIMINAR: Maneja el error 404 y responde con 204.
+   */
+  static async eliminar(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      await bovinoService.eliminar(id);
+      
+      // 3. El estándar para un DELETE exitoso es devolver 204 (Sin Contenido).
+      res.status(204).send();
+
+    } catch (error: any) {
+      // 4. Atrapamos el error "no encontrado" que lanza el servicio.
+      if (error.message.includes("no encontrado")) {
+        return res.status(404).json({ message: error.message });
+      }
+      console.error("Error en el controlador al eliminar bovino:", error);
+      res.status(500).json({ message: "Error interno del servidor." });
+    }
   }
 }

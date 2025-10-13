@@ -49,7 +49,7 @@ app.use("/api/alimentos", alimentoRoutes);
 app.use("/api/alimentaciones", alimentacionRoutes);
 app.use("/api/detalle-enfermedad", detalleEnfermedadRoutes);
 app.use("/api/pesaje", roleGuard(["admin", "encargado"]), pesajeRouter);
-app.use("/api/bovinos", roleGuard(["admin", "encargado"]), bovinoRouter);
+app.use("/api/bovinos", bovinoRouter);
 app.use("/api/corral-metrics", corralMetricsRouter);
 
 // app.use("/api/provincias", provinciaRutas);

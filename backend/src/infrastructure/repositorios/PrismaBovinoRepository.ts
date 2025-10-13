@@ -1,130 +1,80 @@
-import prisma from "../../config/db"
-import { Bovino } from "../../domain/entities/Bovino"
-import { IBovinoRepository } from "../../domain/interfaces/IBovinoRepository"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
-
-// Enums de Prisma
-import {
-  EstadoBovino as PrismaEstadoBovino,
-  EstadoSalud as PrismaEstadoSalud,
-  Sexo as PrismaSexo,
-  TipoBovino as PrismaTipoBovino,
-} from "@prisma/client"
-
-// Mappers dominio <-> prisma
-import { fromPrismaEstadoBovino, toPrismaEstadoBovino } from "../../application/mappers/estadoBovino.mapper"
-import { fromPrismaEstadoSalud, toPrismaEstadoSalud } from "../../application/mappers/estadoSalud.mapper"
-import { fromPrismaSexo, toPrismaSexo } from "../../application/mappers/sexo.mapper"
-import { fromPrismaTipoBovino, toPrismaTipoBovino } from "../../application/mappers/tipoBovino.mapper"
+import { Bovino } from "../../domain/entities/Bovino";
+import { IBovinoRepository } from "../../domain/interfaces/IBovinoRepository";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { BovinoMapper } from "../../application/mappers/bovino.mapper"; // ✅ IMPORTAMOS EL MAPPER
+import { Bovino as PrismaBovinoModel } from "@prisma/client";
+import  prisma  from "../../config/db";
 
 export class PrismaBovinoRepository implements IBovinoRepository {
-  private toDomain(data: {
-    id: number
-    id_raza: number
-    id_corral: number
-    caravana: number
-    estado_bovino: PrismaEstadoBovino
-    estado_salud: PrismaEstadoSalud
-    ingreso: Date
-    egreso: Date | null
-    peso_ingreso: number
-    peso_egreso: number | null
-    sexo: PrismaSexo
-    tipo_bovino: PrismaTipoBovino
-  }): Bovino {
+  
+   private toDomain(data: PrismaBovinoModel): Bovino {
     return new Bovino(
       data.id,
       data.id_raza,
       data.id_corral,
       data.caravana,
-      fromPrismaEstadoBovino(data.estado_bovino),
-      fromPrismaEstadoSalud(data.estado_salud),
+      data.estado_bovino,
+      data.estado_salud,
       data.ingreso,
-      data.egreso,
       data.peso_ingreso,
-      data.peso_egreso,
-      fromPrismaSexo(data.sexo),
-      fromPrismaTipoBovino(data.tipo_bovino)
-    )
+      data.sexo,
+      data.tipo_bovino,
+      data.egreso,
+      data.peso_egreso
+    );
   }
 
-  public async findById(id: number): Promise<Bovino | null> {
-    const data = await prisma.bovino.findUnique({ where: { id } })
-    return data ? this.toDomain(data) : null
-  }
-
-  public async findAll(): Promise<Bovino[]> {
-    const data = await prisma.bovino.findMany()
-    return data.map(d => this.toDomain(d))
-  }
-
-  public async create(bovino: Omit<Bovino, "id">): Promise<Bovino> {
+  async create(data: Omit<Bovino, "id">): Promise<Bovino> {
     const nuevo = await prisma.bovino.create({
       data: {
-        id_raza: bovino.id_raza,
-        id_corral: bovino.id_corral,
-        caravana: bovino.caravana,
-        estado_bovino: toPrismaEstadoBovino(bovino.estado_bovino),
-        estado_salud: toPrismaEstadoSalud(bovino.estado_salud),
-        ingreso: bovino.ingreso,
-        egreso: bovino.egreso,
-        peso_ingreso: bovino.peso_ingreso,
-        peso_egreso: bovino.peso_egreso,
-        sexo: toPrismaSexo(bovino.sexo),
-        tipo_bovino: toPrismaTipoBovino(bovino.tipo_bovino),
+        id_raza: data.idRaza,
+        id_corral: data.idCorral,
+        caravana: data.caravana,
+        estado_bovino: data.estadoBovino,
+        estado_salud: data.estadoSalud,
+        ingreso: data.ingreso,
+        peso_ingreso: data.pesoIngreso,
+        sexo: data.sexo,
+        tipo_bovino: data.tipoBovino,
+        egreso: data.egreso,
+        peso_egreso: data.pesoEgreso,
       },
-    })
-    return this.toDomain(nuevo)
+    });
+    return BovinoMapper.toDomain(nuevo);
   }
 
-  public async update(bovino: Bovino): Promise<Bovino> {
+  async findAll(): Promise<Bovino[]> {
+    const data = await prisma.bovino.findMany();
+    return data.map(BovinoMapper.toDomain); // ✅ Usamos el mapper
+  }
+
+  async findById(id: number): Promise<Bovino | null> {
+    const data = await prisma.bovino.findUnique({ where: { id } });
+    return data ? BovinoMapper.toDomain(data) : null; // ✅ Usamos el mapper
+  }
+
+  async update(id: number, data: Partial<Omit<Bovino, "id">>): Promise<Bovino> {
+    const dataToUpdate = BovinoMapper.fromDomainToUpdate(data); // ✅ Usamos el mapper
+    const actualizado = await prisma.bovino.update({ where: { id }, data: dataToUpdate });
+    return BovinoMapper.toDomain(actualizado); // ✅ Usamos el mapper
+  }
+
+  async delete(id: number): Promise<void> {
     try {
-      const actualizado = await prisma.bovino.update({
-        where: { id: bovino.id! },
-        data: {
-          id_raza: bovino.id_raza,
-          id_corral: bovino.id_corral,
-          caravana: bovino.caravana,
-          estado_bovino: toPrismaEstadoBovino(bovino.estado_bovino),
-          estado_salud: toPrismaEstadoSalud(bovino.estado_salud),
-          ingreso: bovino.ingreso,
-          egreso: bovino.egreso,
-          peso_ingreso: bovino.peso_ingreso,
-          peso_egreso: bovino.peso_egreso,
-          sexo: toPrismaSexo(bovino.sexo),
-          tipo_bovino: toPrismaTipoBovino(bovino.tipo_bovino),
-        },
-      })
-      return this.toDomain(actualizado)
+      await prisma.bovino.delete({ where: { id } });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
-        throw new Error("Bovino no encontrado")
+        throw new Error("Bovino no encontrado");
       }
-      throw error
+      throw error;
     }
   }
-
-  public async delete(id: number): Promise<void> {
-    try {
-      await prisma.bovino.delete({ where: { id } })
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
-        throw new Error("Bovino no encontrado")
-      }
-      throw error
-    }
+  public async findByCorral(idCorral: number): Promise<Bovino[]> {
+    const data = await prisma.bovino.findMany({
+      where: { id_corral: idCorral },
+      orderBy: { id: "asc" },
+    });
+    // Reutilizamos el método toDomain para convertir cada resultado
+    return data.map(d => this.toDomain(d));
   }
-
-  public async exists(id: number): Promise<boolean> {
-    const count = await prisma.bovino.count({ where: { id } })
-    return count > 0
-  }
-
- public async findByCorral(idCorral: number): Promise<Bovino[]> {
-  const data = await prisma.bovino.findMany({
-    where: { id_corral: idCorral },
-    orderBy: { id: "asc" },
-  })
-  return data.map(d => this.toDomain(d))
-}
 }

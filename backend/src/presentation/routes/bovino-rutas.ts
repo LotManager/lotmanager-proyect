@@ -1,20 +1,12 @@
-import { Router } from "express"
-import {
-  crearBovino,
-  listarBovinos,
-  obtenerBovino,
-  actualizarBovino,
-  eliminarBovino,
-} from "../controllers/bovino-controller"
+import { Router } from "express";
+import { BovinoController } from "../controllers/bovino-controller";
 
+const bovinoRouter = Router();
 
-const bovinoRouter = Router()
+bovinoRouter.post("/", BovinoController.crear);
+bovinoRouter.get("/", BovinoController.listar);
+bovinoRouter.get("/:id", BovinoController.obtenerPorId);
+bovinoRouter.put("/:id", BovinoController.actualizar);
+bovinoRouter.delete("/:id", BovinoController.eliminar);
 
-bovinoRouter.post("/", crearBovino)
-bovinoRouter.get("/", listarBovinos)
-bovinoRouter.get("/:id", obtenerBovino)
-bovinoRouter.put("/:id", actualizarBovino)
-bovinoRouter.delete("/:id", eliminarBovino)
-// el encargado puede asignar bovino a corral
-
-export default bovinoRouter
+export default bovinoRouter;

@@ -55,25 +55,26 @@ export class PrismaCorralRepository implements ICorralRepository {
     return this.toDomain(nuevo)
   }
 
-  public async update(corral: Corral): Promise<void> {
-    try {
-      await prisma.corral.update({
-        where: { id: corral.id },
-        data: {
-          capacidad_maxima: corral.capacidadMaxima,
-          numero: corral.numero,
-          tipo_corral: toPrismaTipoCorral(corral.tipoCorral),
-          id_alimentacion: corral.idAlimentacion,
-          id_feedlot: corral.idFeedlot,
-        },
-      })
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
-        throw new Error("Corral no encontrado")
-      }
-      throw error
-    }
-  }
+  public async update(corral: Corral): Promise<Corral> { 
+    try { 
+      const actualizado = await prisma.corral.update({ 
+        where: { id: corral.id }, 
+        data: { 
+          capacidad_maxima: corral.capacidadMaxima, 
+          numero: corral.numero, 
+          tipo_corral: toPrismaTipoCorral(corral.tipoCorral), 
+          id_alimentacion: corral.idAlimentacion, 
+          id_feedlot: corral.idFeedlot, 
+        }, 
+      }) 
+      return this.toDomain(actualizado) 
+    } catch (error) { 
+      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") { 
+        throw new Error("Corral no encontrado") 
+      } 
+      throw error 
+    } 
+  } 
 
   public async delete(id: number): Promise<void> {
     try {

@@ -22,11 +22,11 @@ export class CorralMetricsService {
     for (const b of bovinos) {
       const pesajes = await this.pesajeRepo.findByBovino(b.id!)
 
-      const pesoInicial = b.peso_ingreso
+      const pesoInicial = b.pesoIngreso
       const pesoFinal =
         pesajes.length > 0
           ? pesajes[pesajes.length - 1]!.peso_dado
-          : b.peso_ingreso
+          : b.pesoIngreso
 
       const dias = Math.max(
         1,
@@ -65,7 +65,7 @@ export class CorralMetricsService {
       if (pesajes.length > 0) {
         pesoTotal += pesajes[pesajes.length - 1]!.peso_dado
       } else {
-        pesoTotal += b.peso_ingreso
+        pesoTotal += b.pesoIngreso
       }
     }
 

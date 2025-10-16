@@ -20,16 +20,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50`}
       >
-        {children}
-        <Footer />
+        {/* CAMBIO CLAVE: Retiramos 'min-h-screen' para que <main> crezca con el contenido */}
+        <main>{children}</main>
+
+        {/* Footer visible solo fuera del dashboard */}
+        {typeof window !== "undefined" &&
+          !window.location.pathname.startsWith("/dashboard") && <Footer />}
       </body>
     </html>
   );

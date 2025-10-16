@@ -13,6 +13,7 @@ export class PrismaCorralRepository implements ICorralRepository {
     tipo_corral: PrismaTipoCorral
     id_alimentacion: number | null
     id_feedlot: number
+    alimentacion?: { id: number; nombre: string } | null
   }): Corral {
     return new Corral(
       data.id,
@@ -20,18 +21,24 @@ export class PrismaCorralRepository implements ICorralRepository {
       data.numero,
       fromPrismaTipoCorral(data.tipo_corral),
       data.id_alimentacion,
-      data.id_feedlot
+      data.id_feedlot,
+      data.alimentacion?.nombre // 👈 ahora mapeamos el nombre de la dieta
     )
   }
 
   public async findById(id: number): Promise<Corral | null> {
-    const data = await prisma.corral.findUnique({ where: { id } })
+    const data = await prisma.corral.findUnique({
+      where: { id },
+      include: { alimentacion: true }, // 👈 incluimos la relación
+    })
     return data ? this.toDomain(data) : null
   }
 
   public async findAll(): Promise<Corral[]> {
-    const data = await prisma.corral.findMany()
-    return data.map(this.toDomain)
+    const data = await prisma.corral.findMany({
+      include: { alimentacion: true }, // 👈 incluimos la relación
+    })
+    return data.map(d => this.toDomain(d))
   }
 
   public async create(corral: Corral): Promise<Corral> {
@@ -41,8 +48,9 @@ export class PrismaCorralRepository implements ICorralRepository {
         numero: corral.numero,
         tipo_corral: toPrismaTipoCorral(corral.tipoCorral),
         id_alimentacion: corral.idAlimentacion,
-        id_feedlot: corral.idFeedlot
-      }
+        id_feedlot: corral.idFeedlot,
+      },
+      include: { alimentacion: true }, // 👈 devolvemos también la dieta
     })
     return this.toDomain(nuevo)
   }
@@ -56,8 +64,8 @@ export class PrismaCorralRepository implements ICorralRepository {
           numero: corral.numero,
           tipo_corral: toPrismaTipoCorral(corral.tipoCorral),
           id_alimentacion: corral.idAlimentacion,
-          id_feedlot: corral.idFeedlot
-        }
+          id_feedlot: corral.idFeedlot,
+        },
       })
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {

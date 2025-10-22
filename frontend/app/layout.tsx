@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "Gestión de lotes de animales",
 };
 
-export default function RootLayout({
+export default function RootLayout ({
   children,
 }: {
   children: React.ReactNode;

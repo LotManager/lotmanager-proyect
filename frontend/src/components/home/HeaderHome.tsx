@@ -8,7 +8,11 @@ import { useScrollPosition } from '@/hooks/useScrollPosition';
 // Definimos el punto de scroll donde queremos que cambie, por ejemplo, 100px.
 const SCROLL_CHANGE_POINT = 10;
 
-export default function HeaderHome() {
+interface HeaderHomeProps {
+  onAuthButtonClick?: (view: 'login' | 'register') => void;
+}
+
+export default function HeaderHome({ onAuthButtonClick }: HeaderHomeProps) {
     // Usamos el hook. isScrolled será true si el scroll > 100
     const isScrolled = useScrollPosition(SCROLL_CHANGE_POINT);
 
@@ -54,6 +58,7 @@ export default function HeaderHome() {
                             borderColor: isScrolled ? 'var(--color-secondary)' : 'white'
                         },
                     }}
+                    onClick={() => onAuthButtonClick?.('login')}
                 >
                     Iniciar Sesion
                 </Button>
@@ -69,6 +74,7 @@ export default function HeaderHome() {
                             color: 'white'
                         },
                     }}
+                    onClick={() => onAuthButtonClick?.('register')}
                 >
                     Registrarse
                 </Button>

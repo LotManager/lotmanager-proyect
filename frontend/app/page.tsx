@@ -7,6 +7,7 @@ import SecondViewHome from "@/components/home/SecondViewHome/SecondViewHome";
 import FooterHome from '@/components/home/FooterHome';
 import AuthModal from "@/components/auth/AuthModal";
 
+
 interface HeaderHomeProps {
   onAuthButtonClick?: () => void
 }

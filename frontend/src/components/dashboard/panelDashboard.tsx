@@ -3,11 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import {FaLayerGroup, FaChartBar,FaWarehouse,FaSyringe,FaUsers,FaSignOutAlt } from "react-icons/fa";
 import { MdDashboard, MdRestaurant, MdLocalHospital } from "react-icons/md";
 import { PiCowDuotone } from "react-icons/pi";
-import { FaLayerGroup } from "react-icons/fa";
 import { FcStatistics } from "react-icons/fc";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut,FiHome,FiList,FiPackage,FiFramer,FiActivity} from "react-icons/fi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
 type NavItem = {
@@ -17,12 +17,15 @@ type NavItem = {
 };
 
 const NAV: NavItem[] = [
-	{ label: "Dashboard", href: "/dashboard", Icon: MdDashboard },
-	{ label: "Gestión de Animales", href: "/dashboard/animals", Icon: PiCowDuotone },
-	{ label: "Corrales/Lotes", href: "/dashboard/corrales", Icon: FaLayerGroup },
-	{ label: "Dietas", href: "/dashboard/dietas", Icon: MdRestaurant },
-	{ label: "Control Sanitario", href: "/dashboard/sanitary", Icon: MdLocalHospital },
-	{ label: "Reportes", href: "/dashboard/reports", Icon: FcStatistics },
+	{ label: "Dashboard", href: "/dashboard", Icon: FiHome },
+	{ label: "Gestión de Animales", href: "/dashboard/animals", Icon: FiList }, 
+	{ label: "Corrales/Lotes", href: "/dashboard/corrales", Icon: FaWarehouse },
+	{ label: "Dietas", href: "/dashboard/dietas", Icon: FiFramer },
+	{ label: "Control Sanitario", href: "/dashboard/sanitary", Icon: FaSyringe },
+	{ label: "Reportes", href: "/dashboard/reports", Icon: FaChartBar },
+
+    // Agregamos el ítem de Empleados
+    { label: "Gestión de Empleados", href: "/dashboard/employees", Icon: FaUsers }, 
 ];
 
 
@@ -48,7 +51,7 @@ export default function PanelDashboard() {
 								href={item.href}
 								className="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-green-50 hover:text-green-800 transition-colors"
 							>
-											<item.Icon className="text-green-600" size={20} />
+											<item.Icon className="text-rgb(35, 76, 47)-600" size={20} />
 								<span className="text-sm font-medium">{item.label}</span>
 							</Link>
 						</li>

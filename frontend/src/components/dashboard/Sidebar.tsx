@@ -27,17 +27,18 @@ export default function Sidebar() {
             </div>
 
             {/* Enlaces de Navegación */}
-            <ul className="space-y-2 flex-1">
+            <ul className="space-y-2 mt-4">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <li key={item.name}>
                             <Link href={item.href} legacyBehavior>
                                 <a 
-                                    className={`flex items-center gap-3 p-3 rounded-lg transition-colors duration-200 
+                                    // 🎯 CLASES DEL LAYOUT GRIS/BLANCO 🎯
+                                    className={`flex items-center gap-3 p-2 rounded transition-colors duration-200 
                                     ${isActive 
-                                        ? 'bg-[var(--color-primary)] text-white font-semibold' 
-                                        : 'text-gray-200 hover:bg-[var(--color-primary)] hover:bg-opacity-80'}`
+                                        ? 'bg-gray-200 text-[var(--color-secondary)] font-semibold' // Fondo gris claro, texto verde
+                                        : 'text-gray-600 hover:bg-gray-100'}` // Texto gris, hover sutil
                                     }
                                 >
                                     <item.icon size={18} />
@@ -51,7 +52,7 @@ export default function Sidebar() {
             
             {/* Botón de Cerrar Sesión (al final del sidebar) */}
             <div className="mt-auto pt-4 border-t border-white/20">
-                 <Button
+                <Button
                     variant="text"
                     startIcon={<FaUser />}
                     sx={{ color: 'white', '&:hover': { color: 'var(--color-primary)', backgroundColor: 'transparent' } }}

@@ -1,40 +1,25 @@
+// app/layout.tsx 
+
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/ui/Footer/Footer";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import React from 'react';
 
 export const metadata: Metadata = {
-  title: "LotManager",
-  description: "Gestión de lotes de animales",
+    title: "LotManager - Gestión de Ganado",
+    description: "Sistema de gestión de lotes y engorde de ganado.",
 };
 
-export default function RootLayout ({
-  children,
+export default function RootLayout({
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50`}
-      >
-        {/* CAMBIO CLAVE: Retiramos 'min-h-screen' para que <main> crezca con el contenido */}
-        <main>{children}</main>
-
-        {/* Footer visible solo fuera del dashboard */}
-        {typeof window !== "undefined" &&
-          !window.location.pathname.startsWith("/dashboard") && <Footer />}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="es">
+            {/* Solo un body limpio para que el page.tsx tome el control total del layout */}
+            <body>
+                <main>{children}</main>
+            </body>
+        </html>
+    );
 }

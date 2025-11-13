@@ -1,8 +1,5 @@
 import React from 'react';
-// Importamos los componentes de Layout y la gráfica
-import DashboardLayout from '@/components/dashboard/DashboardLayout'; 
 import WeightEvolutionChart from '@/components/dashboard/WeightEvolutionChart'; 
-// Importamos los iconos necesarios
 import { FaCog, FaChartLine, FaExclamationTriangle, FaCalendarAlt, FaRulerHorizontal, FaPlus, FaTachometerAlt } from 'react-icons/fa';
 
 
@@ -76,7 +73,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ type, title, detail, tag, tagColo
 
 export default function DashboardPage() {
     return (
-        <DashboardLayout>
+        <>
             {/* Título y Actualización */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-extrabold text-[var(--color-secondary)]">
@@ -123,39 +120,41 @@ export default function DashboardPage() {
             {/* Sección 2 y 3: Gráfica y Alertas Recientes */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                {/* 2. Gráfica de Evolución (Ocupa 2/3 del ancho) */}
+                {/* 2. Gráfica de Evolución*/}
                 <div className="lg:col-span-2">
                     <WeightEvolutionChart />
                 </div>
                 
-                {/* 3. Alertas Recientes (Ocupa 1/3 del ancho) */}
+                {/* 3. Alertas Recientes*/}
                 <div className="lg:col-span-1">
-                    <h3 className="font-semibold text-xl text-gray-800 mb-4">Alertas Recientes</h3>
-                    <div className="space-y-4">
-                        <AlertCard 
-                            type="urgent" 
-                            title="Animal #1247 - Fiebre Alta" 
-                            detail="Corral 5 - Requiere tratamiento urgente" 
-                            tag="Urgente" 
-                            tagColor="bg-red-200 text-red-800"
-                        />
-                        <AlertCard 
-                            type="preventive" 
-                            title="Vacunación programada" 
-                            detail="Corral 2 - Mañana 8:00 AM" 
-                            tag="Preventivo" 
-                            tagColor="bg-yellow-200 text-yellow-800"
-                        />
-                        <AlertCard 
-                            type="routine" 
-                            title="Pesaje semanal" 
-                            detail="Todos los corrales - Viernes 6:00 AM" 
-                            tag="Rutina" 
-                            tagColor="bg-blue-200 text-blue-800"
-                        />
+                    <div className="bg-white p-6 rounded-lg shadow-md h-auto border">
+                        <h3 className="font-semibold text-xl text-gray-800 mb-4">Alertas Recientes</h3>
+                        <div className="space-y-4">
+                            <AlertCard 
+                                type="urgent" 
+                                title="Animal #1247 - Fiebre Alta" 
+                                detail="Corral 5 - Requiere tratamiento urgente" 
+                                tag="Urgente" 
+                                tagColor="bg-red-200 text-red-800"
+                            />
+                            <AlertCard 
+                                type="preventive" 
+                                title="Vacunación programada" 
+                                detail="Corral 2 - Mañana 8:00 AM" 
+                                tag="Preventivo" 
+                                tagColor="bg-yellow-200 text-yellow-800"
+                            />
+                            <AlertCard 
+                                type="routine" 
+                                title="Pesaje semanal" 
+                                detail="Todos los corrales - Viernes 6:00 AM" 
+                                tag="Rutina" 
+                                tagColor="bg-blue-200 text-blue-800"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

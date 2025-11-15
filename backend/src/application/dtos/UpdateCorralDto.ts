@@ -1,6 +1,6 @@
 // application/dtos/UpdateCorralDto.ts
 import { z } from "zod"
-import { CreateCorralDto } from "./CreateCorralDto"
+import { CreateCorralDto } from "./corral.dto"
 
 // Hacemos todos los campos opcionales para permitir updates parciales
 export const UpdateCorralDto = CreateCorralDto.partial()

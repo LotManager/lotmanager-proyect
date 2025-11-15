@@ -7,4 +7,6 @@ export interface IBovinoRepository {
   update(id: number, data: Partial<Omit<Bovino, "id">>): Promise<Bovino>;
   delete(id: number): Promise<void>;
   findByCorral(idCorral: number): Promise<Bovino[]>;
+  findAllConRelaciones(): Promise<any[]>;
+
 }

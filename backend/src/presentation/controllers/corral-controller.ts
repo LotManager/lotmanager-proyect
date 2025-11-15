@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { CorralService } from "../../application/services/corralService"
 import { PrismaCorralRepository } from "../../infrastructure/repositorios/PrismaCorralRepository"
-import { CreateCorralDto, UpdateCorralDto  } from "../../application/dtos/CreateCorralDto"
+import { CreateCorralDto, UpdateCorralDto  } from "../../application/dtos/corral.dto"
 
 const service = new CorralService(new PrismaCorralRepository())
 
@@ -66,14 +66,18 @@ static async actualizar(req: Request, res: Response) {
   }
 }
 
-  static async eliminar(req: Request, res: Response) {
+static async eliminar(req: Request, res: Response) {
     try {
-      const id = Number(req.params.id)
-      await service.eliminar(id)
-      res.status(204).send()
-    } catch (error) {
-      console.error("Error al eliminar corral:", error)
-      res.status(500).json({ message: "Error al eliminar corral" })
+      const id = Number(req.params.id);
+      await service.eliminar(id);
+      res.status(204).send();
+
+    } catch (error: any) {
+      if (error.message.includes("no encontrado")) {
+        return res.status(404).json({ message: error.message });
+      }
+      console.error("Error al eliminar corral:", error);
+      res.status(500).json({ message: "Error al eliminar corral" });
     }
   }
 }

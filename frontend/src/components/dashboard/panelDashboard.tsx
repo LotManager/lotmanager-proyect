@@ -21,7 +21,7 @@ const NAV: NavItem[] = [
 	{ label: "Gestión de Animales", href: "/dashboard/bovinos", Icon: PiCowDuotone },
 	{ label: "Corrales/Lotes", href: "/dashboard/corrales", Icon: FaLayerGroup },
 	{ label: "Dietas", href: "/dashboard/dietas", Icon: MdRestaurant },
-	{ label: "Control Sanitario", href: "/dashboard/sanitary", Icon: MdLocalHospital },
+	{ label: "Control Sanitario", href: "/dashboard/control-sanitario", Icon: MdLocalHospital },
 	{ label: "Reportes", href: "/dashboard/reports", Icon: FcStatistics },
 ];
 

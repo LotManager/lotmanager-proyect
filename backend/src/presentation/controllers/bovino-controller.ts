@@ -1,13 +1,13 @@
-// src/presentation/controllers/bovino.controller.ts
-
 import { Request, Response } from "express";
 import { BovinoService } from "../../application/services/bovinoService";
+import { BovinoViewService } from "../../application/services/bovinoView.service";
 import { PrismaBovinoRepository } from "../../infrastructure/repositorios/PrismaBovinoRepository";
 import { CreateBovinoDto, UpdateBovinoDto } from "../../application/dtos/bovino.dto";
 
 // 1. Instanciamos nuestras capas (el "setup")
 const bovinoRepo = new PrismaBovinoRepository();
 const bovinoService = new BovinoService(bovinoRepo);
+const bovinoViewService = new BovinoViewService(bovinoRepo);
 
 export class BovinoController {
   
@@ -16,7 +16,8 @@ export class BovinoController {
    */
   static async listar(req: Request, res: Response) {
     try {
-      const bovinos = await bovinoService.listar();
+      // ✅ 3. LLAMA AL SERVICIO CORRECTO PARA LA VISTA
+      const bovinos = await bovinoViewService.getBovinosForTable();
       res.status(200).json(bovinos);
     } catch (error) {
       console.error("Error en el controlador al listar bovinos:", error);
@@ -30,8 +31,8 @@ export class BovinoController {
   static async obtenerPorId(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const bovino = await bovinoService.obtener(id);
-
+      // ✅ 3. LLAMA AL SERVICIO CORRECTO
+      const bovino = await bovinoViewService.getBovinoById(id);
       if (!bovino) {
         return res.status(404).json({ error: "Bovino no encontrado." });
       }

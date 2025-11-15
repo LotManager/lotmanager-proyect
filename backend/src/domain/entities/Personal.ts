@@ -39,7 +39,7 @@ export class Personal {
         ? {
             id: this.usuario.getId(),
             nombre: this.usuario.getName(),
-            rol: this.usuario.getRol().toDTO()
+            rol: this.usuario.getRol().getNombre() as "admin" | "encargado"
             }
         : undefined
     };

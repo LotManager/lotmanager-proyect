@@ -3,6 +3,7 @@ import { config } from "../../../config/config";
 import { jwtPayloadSchema } from "../../dtos/jwtPayload.dto";
 import { TokenTipo } from "../tokens/token-tipo";
 import { ITokenService } from "../../../domain/interfaces/ITokenService";
+import { Rol } from "../../../domain/value-objects/Rol";
 
 
 export const tokenService: ITokenService = {
@@ -11,7 +12,7 @@ export const tokenService: ITokenService = {
       {
         sub: user.id,
         usuario: user.usuario,
-        rol: user.rol,
+        rol: user.rol.nombre,
       },
       config.jwtSecret,
       {
@@ -32,10 +33,17 @@ export const tokenService: ITokenService = {
       const result = jwtPayloadSchema.safeParse(decoded);
       if (!result.success) return null;
 
-      const { id, usuario, rol } = result.data;
-      if (rol !== "admin" && rol !== "user") return null;
+      const { sub: id, usuario, rol } = result.data;
+      if (rol !== "admin" && rol !== "encargado") return null;
 
-      return { id, usuario, rol };
+      const rolInstancia = Rol.fromNombre(rol);
+      if (!rolInstancia || !rolInstancia.isValid()) return null;
+      
+      return {
+          id,
+          usuario,
+          rol: rolInstancia.toDTO(), // devuelve { id, nombre }
+    };
     } catch (error) {
       console.warn("Access token verification failed:", error);
       return null;

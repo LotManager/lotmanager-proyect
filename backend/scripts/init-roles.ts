@@ -20,6 +20,5 @@ async function main() {
 main()
   .catch((e) => {
     console.error("Error al inicializar roles:", e);
-    process.exit(1);
   })
   .finally(() => prisma.$disconnect());

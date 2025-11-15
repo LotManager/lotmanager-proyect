@@ -1,5 +1,5 @@
 import React from "react";
-import PanelDashboard from "@/src/components/dashboard/panelDashboard";
+import PanelDashboard from "../../src/components/dashboard/panelDashboard";
 
 export const metadata = {
   title: "Dashboard - Feedlot System",

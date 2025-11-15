@@ -10,12 +10,13 @@ declare global {
   }
 }
 
+
 export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  const token = req.cookies?.["access_token"];
+  const token = req.cookies?.["access_token"] || req.headers?.authorization?.split(" ")[1];
 
   if (!token) {
     res.status(401).json({ error: "Token de acceso no encontrado" });
@@ -23,11 +24,12 @@ export const authMiddleware = (
   }
 
   try {
-    const payload = tokenService.verifyAccessToken(token);
+    const payload = tokenService.verifyAccessToken(token) as AuthPayload | null;
+    console.log("[AUTH] Payload verificado:");
     if (!payload) {
       throw new Error("Token inválido o expirado");
     }
-
+    
     req.user = payload;
     next();
   } catch (error) {

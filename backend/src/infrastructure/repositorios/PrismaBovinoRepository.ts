@@ -1,55 +1,111 @@
-import { Bovino } from '../../domain/entities/Bovino';
-import { IBovinoRepository } from '../../domain/interfaces/IBovinoRepository';
-import { EstadoBovino, EstadoSalud, Sexo, TipoBovino } from '../../domain/entities/Bovino';
-import prisma from './client';
-import { $Enums } from '@prisma/client'; // Importa los enums de Prisma
-
-const toDomain = (p: any): Bovino =>
-  new Bovino(
-    p.id,
-    p.id_raza,
-    p.id_corral,
-    p.caravana,
-    p.estado_bovino as EstadoBovino,
-    p.estado_salud as EstadoSalud,
-    p.ingreso,
-    p.egreso,
-    p.peso_ingreso,
-    p.peso_egreso,
-    p.sexo as Sexo,
-    p.tipo_bovino as TipoBovino
-  );
+import prisma from "../../config/db";
+import { Bovino } from "../../domain/entities/Bovino";
+import { IBovinoRepository } from "../../domain/interfaces/IBovinoRepository";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Bovino as PrismaBovinoModel } from "@prisma/client";
 
 export class PrismaBovinoRepository implements IBovinoRepository {
-  async findById(id: number): Promise<Bovino | null> {
-    const b = await prisma.bovino.findUnique({ where: { id } });
-    return b ? toDomain(b) : null;
+
+  private toDomain(prismaBovino: PrismaBovinoModel): Bovino {
+    return new Bovino(
+      prismaBovino.id,
+      prismaBovino.razaId,          
+      prismaBovino.corralId,        
+      prismaBovino.caravana,
+      prismaBovino.situacionBovino, 
+      prismaBovino.estadoSalud,     
+      prismaBovino.ingreso,
+      prismaBovino.pesoIngreso,     
+      prismaBovino.sexo,            
+      prismaBovino.tipoBovino,      
+      prismaBovino.egreso,
+      prismaBovino.pesoEgreso        
+    );
   }
 
-  async update(bovino: Bovino): Promise<Bovino> {
-    const updated = await prisma.bovino.update({
-      where: { id: bovino.id! },
+  async create(data: Omit<Bovino, "id">): Promise<Bovino> {
+    const nuevo = await prisma.bovino.create({
       data: {
-        id_raza: bovino.id_raza,
-        id_corral: bovino.id_corral,
-        caravana: bovino.caravana,
-        estado_bovino: bovino.estado_bovino as unknown as $Enums.EstadoBovino,
-        estado_salud: bovino.estado_salud as unknown as $Enums.EstadoSalud,
-        ingreso: bovino.ingreso,
-        egreso: bovino.egreso,
-        peso_ingreso: bovino.peso_ingreso,
-        peso_egreso: bovino.peso_egreso,
-        sexo: bovino.sexo as unknown as $Enums.Sexo,
-        tipo_bovino: bovino.tipo_bovino as unknown as $Enums.TipoBovino,
+        razaId: data.idRaza,
+        corralId: data.idCorral,
+        caravana: data.caravana,
+        situacionBovino: data.situacionBovino,
+        estadoSalud: data.estadoSalud,
+        ingreso: data.ingreso,
+        pesoIngreso: data.pesoIngreso,
+        sexo: data.sexo,
+        tipoBovino: data.tipoBovino,
+        egreso: data.egreso,
+        pesoEgreso: data.pesoEgreso,
       },
     });
-    return toDomain(updated);
+    return this.toDomain(nuevo);
   }
 
-  async softDelete(id: number): Promise<void> {
-    await prisma.bovino.update({
-      where: { id },
-      data: { egreso: new Date(), estado_bovino: 'EGRESADO' as unknown as $Enums.EstadoBovino },
+  async findAll(): Promise<Bovino[]> {
+    const data = await prisma.bovino.findMany();
+    return data.map(d => this.toDomain(d));
+  }
+
+  async findById(id: number): Promise<Bovino | null> {
+    const data = await prisma.bovino.findUnique({ where: { id } });
+    return data ? this.toDomain(data) : null;
+  }
+
+
+  async update(id: number, data: Partial<Omit<Bovino, "id">>): Promise<Bovino> {
+    const dataToUpdate: any = {};
+    if (data.idRaza !== undefined) dataToUpdate.razaId = data.idRaza;
+    if (data.idCorral !== undefined) dataToUpdate.corralId = data.idCorral;
+    if (data.caravana !== undefined) dataToUpdate.caravana = data.caravana;
+    if (data.situacionBovino !== undefined) dataToUpdate.situacionBovino = data.situacionBovino;
+    if (data.estadoSalud !== undefined) dataToUpdate.estadoSalud = data.estadoSalud;
+    if (data.ingreso !== undefined) dataToUpdate.ingreso = data.ingreso;
+    if (data.pesoIngreso !== undefined) dataToUpdate.pesoIngreso = data.pesoIngreso;
+    if (data.sexo !== undefined) dataToUpdate.sexo = data.sexo;
+    if (data.tipoBovino !== undefined) dataToUpdate.tipoBovino = data.tipoBovino;
+    if (data.egreso !== undefined) dataToUpdate.egreso = data.egreso;
+    if (data.pesoEgreso !== undefined) dataToUpdate.pesoEgreso = data.pesoEgreso;
+    
+    try {
+      const actualizado = await prisma.bovino.update({ where: { id }, data: dataToUpdate });
+      return this.toDomain(actualizado);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+        throw new Error("Bovino no encontrado");
+      }
+      throw error;
+    }
+  }
+
+  async delete(id: number): Promise<void> {
+    try {
+      await prisma.bovino.delete({ where: { id } });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+        throw new Error("Bovino no encontrado");
+      }
+      throw error;
+    }
+  }
+
+  public async findByCorral(idCorral: number): Promise<Bovino[]> {
+    const data = await prisma.bovino.findMany({
+      where: { corralId: idCorral },
+      orderBy: { id: "asc" },
+    });
+    return data.map(d => this.toDomain(d));
+  }
+
+  public async findAllConRelaciones(): Promise<any[]> {
+    return prisma.bovino.findMany({
+      include: {
+        corral: { select: { numero: true } },
+        pesajes: { 
+          orderBy: { fecha: 'desc' },
+          take: 1,
+        },
+      },
     });
   }
 }

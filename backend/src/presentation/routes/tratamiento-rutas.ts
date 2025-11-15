@@ -1,4 +1,3 @@
-
 import { Router } from 'express'
 import { TratamientoController } from '../../presentation/controllers/tratamiento-controller'
 import { TratamientoService } from '../../application/services/tratamientoService'
@@ -10,13 +9,12 @@ const router = Router()
 const tratamientoService = new TratamientoService(new TratamientoRepository(prisma))
 const controller = new TratamientoController(tratamientoService)
 
-console.log('Tratamiento endpoints cargados')
 
-router.post('/', controller.create.bind(controller))
-router.get('/:id', controller.getById.bind(controller))
-router.get('/:id/enfermedades', controller.getWithEnfermedades.bind(controller))
-router.patch('/:id', controller.update.bind(controller))
-router.delete('/:id', controller.delete.bind(controller))
-router.get('/', controller.getAll.bind(controller))
+router.post('/', controller.crear.bind(controller))
+router.get('/:id', controller.obtenerPorId.bind(controller))
+router.get('/:id/enfermedades', controller.obtenerConEnfermedades.bind(controller))
+router.patch('/:id', controller.actualizar.bind(controller))
+router.delete('/:id', controller.eliminar.bind(controller))
+router.get('/', controller.listar.bind(controller))
 
 export default router

@@ -55,13 +55,13 @@ export class User {
     
     public toDTO(): UserDTO {
         const nombre = this.rol.getNombre();
-        if (nombre !== "admin" && nombre !== "user") {
+        if (nombre !== "admin" && nombre !== "encargado") {
             throw new Error(`Rol inválido: ${nombre}`);
         }
         return {
             id: this.id,
             usuario: this.usuario,
-            rol: nombre as "admin" | "user"
+            rol: this.rol.toDTO()
         };
     }
 }

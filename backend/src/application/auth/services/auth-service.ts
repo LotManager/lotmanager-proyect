@@ -2,7 +2,6 @@ import { IUserRepository } from "../../../domain/interfaces/IUserRepository";
 import { UserCreateInput } from "../../dtos/user.dto";
 import { ITokenService } from "../../../domain/interfaces/ITokenService";
 import { PasswordHash } from "../../../domain/value-objects/PasswordHash";
-import { Rol } from "../../../domain/value-objects/Rol";
 import { AuthResponseDTO } from "../../dtos/auth-response.dto";
 import { User } from "../../../domain/entities/User";
 
@@ -20,7 +19,7 @@ export class AuthService {
 
    
     const passwordHash = await PasswordHash.createFromPlain(data.contrasena);
-    const rol = Rol.fromNombre(data.rol);
+    const rol = data.rol;
     if (!rol) {
       throw new Error("Rol inválido");
     }
@@ -60,6 +59,14 @@ export class AuthService {
   
   public generateRefreshToken(userId: number): string {
     return this.tokenService.generateRefreshToken(userId);
+}
+  public async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<void> {
+  if (newPassword.trim().length < 6) {
+    throw new Error("La nueva contraseña debe tener al menos 6 caracteres");
+  }
+
+  await this.userRepo.cambiarContrasena(userId, currentPassword, newPassword);
+  console.log(`[AuthService] Contraseña actualizada para el usuario con ID ${userId}`);
 }
 }
 

@@ -76,7 +76,7 @@ export class FeedlotController {
     const id = parseInt(req.params.id!);
     const { nombre, idLocalidad } = req.body;
     try {
-      await feedlotService.actualizar(id, nombre, idLocalidad);
+      await feedlotService.actualizarParcial(id, nombre, idLocalidad);
       res.status(204).send();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);

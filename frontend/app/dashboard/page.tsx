@@ -1,8 +1,14 @@
-export default function DashboardPage() {
+import HeaderHome from "@/src/components/home/HeaderHome";
+import FirstViewHome from "@/src/components/home/FirstViewHome";
+import SecondViewHome from "@/src/components/home/SecondViewHome/SecondViewHome";
+
+export default function Home() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p className="mt-4">Welcome to the dashboard!</p>
-    </div>
+    <>
+      <HeaderHome />
+      <FirstViewHome />
+      <SecondViewHome />
+
+    </>
   );
 }

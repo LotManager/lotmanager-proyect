@@ -1,9 +1,11 @@
 import { z } from "zod";
+import { rolesEnumsSchema } from "../../domain/enums/Roles"
+
 
 const jwtPayloadSchema = z.object({
-  id: z.number(),
+  sub: z.number(),
   usuario: z.string(),
-  rol: z.string()
+  rol: rolesEnumsSchema
 });
 
 export type JwtPayload = z.infer<typeof jwtPayloadSchema>;

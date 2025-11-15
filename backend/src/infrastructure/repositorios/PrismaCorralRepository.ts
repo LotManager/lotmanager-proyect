@@ -1,64 +1,50 @@
 import prisma from "../../config/db"
-import { Corral } from "../../domain/entities/Corral"
+import { Corral } from "../../domain/entities/Corral" // Importa la NUEVA entidad
 import { ICorralRepository } from "../../domain/interfaces/ICorralRepository"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
-import { toPrismaTipoCorral, fromPrismaTipoCorral } from "../../application/mappers/tipoCorral.mapper"
-import { TipoCorral as PrismaTipoCorral } from "@prisma/client"
+
+// Importamos el TIPO que Prisma genera para el modelo Corral
+import { Corral as PrismaCorralModel } from "@prisma/client"
 
 export class PrismaCorralRepository implements ICorralRepository {
-  private toDomain(data: {
-    id: number
-    capacidad_maxima: number
-    numero: number
-    tipo_corral: PrismaTipoCorral
-    id_alimentacion: number | null
-    id_feedlot: number
-  }): Corral {
+
+  private toDomain(prismaCorral: PrismaCorralModel): Corral {
     return new Corral(
-      data.id,
-      data.capacidad_maxima,
-      data.numero,
-      fromPrismaTipoCorral(data.tipo_corral),
-      data.id_alimentacion,
-      data.id_feedlot
+      prismaCorral.id,
+      prismaCorral.capacidadMaxima,
+      prismaCorral.numero,
+      prismaCorral.tipo,
+      prismaCorral.feedlotId
     )
   }
 
   public async findById(id: number): Promise<Corral | null> {
-    const data = await prisma.corral.findUnique({ where: { id } })
+    const data = await prisma.corral.findUnique({
+      where: { id },
+    })
     return data ? this.toDomain(data) : null
   }
 
   public async findAll(): Promise<Corral[]> {
-    const data = await prisma.corral.findMany()
-    return data.map(this.toDomain)
+    const data = await prisma.corral.findMany({
+    })
+    return data.map(d => this.toDomain(d))
   }
 
-  public async create(corral: Corral): Promise<Corral> {
+  public async create(data: Omit<Corral, "id">): Promise<Corral> {
     const nuevo = await prisma.corral.create({
-      data: {
-        capacidad_maxima: corral.capacidadMaxima,
-        numero: corral.numero,
-        tipo_corral: toPrismaTipoCorral(corral.tipoCorral),
-        id_alimentacion: corral.idAlimentacion,
-        id_feedlot: corral.idFeedlot
-      }
+      data: data, 
     })
     return this.toDomain(nuevo)
   }
 
-  public async update(corral: Corral): Promise<void> {
+  public async update(id: number, data: Partial<Omit<Corral, "id">>): Promise<Corral> {
     try {
-      await prisma.corral.update({
-        where: { id: corral.id },
-        data: {
-          capacidad_maxima: corral.capacidadMaxima,
-          numero: corral.numero,
-          tipo_corral: toPrismaTipoCorral(corral.tipoCorral),
-          id_alimentacion: corral.idAlimentacion,
-          id_feedlot: corral.idFeedlot
-        }
+      const actualizado = await prisma.corral.update({
+        where: { id: id },
+        data: data, 
       })
+      return this.toDomain(actualizado)
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
         throw new Error("Corral no encontrado")

@@ -4,12 +4,12 @@ import { TratamientoService } from '../../application/services/tratamientoServic
 export class TratamientoController {
   constructor(private readonly service: TratamientoService) {}
 
-  async getAll(_req: Request, res: Response) {
+  async listar(_req: Request, res: Response) {
     const tratamientos = await this.service.getAll()
     res.json(tratamientos)
   }
 
-  async getById(req: Request, res: Response) {
+  async obtenerPorId(req: Request, res: Response) {
     const { id } = req.params
     if(!id) return res.status(400).json({message: 'No se introdujo un id'})
     const parsedId = parseInt(id)
@@ -21,7 +21,7 @@ export class TratamientoController {
     res.json(tratamiento)
   }
 
-  async getWithEnfermedades(req: Request, res: Response) {
+  async obtenerConEnfermedades(req: Request, res: Response) {
     const { id } = req.params
     if(!id) return res.status(400).json({message: 'No se introdujo un id'})
     const parsedId = parseInt(id)
@@ -33,7 +33,7 @@ export class TratamientoController {
     res.json(tratamiento)
   }
 
-  async create(req: Request, res: Response) {
+  async crear(req: Request, res: Response) {
     try {
       const tratamiento = await this.service.create(req.body)
       res.status(201).json(tratamiento)
@@ -42,7 +42,7 @@ export class TratamientoController {
     }
   }
 
-  async update(req: Request, res: Response) {
+  async actualizar(req: Request, res: Response) {
     const { id } = req.params
     if (!id) return res.status(400).json({ message: 'Falta el parámetro ID' })
 
@@ -58,7 +58,7 @@ export class TratamientoController {
     }
   }
 
-  async delete(req: Request, res: Response) {
+  async eliminar(req: Request, res: Response) {
     const { id } = req.params
     if(!id) return res.status(400).json({message: 'No se introdujo un id'})
     const parsedId = parseInt(id)

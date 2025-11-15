@@ -21,19 +21,40 @@ export class FeedlotService {
     return await this.feedlotRepo.create(feedlot);
   }
 
-  public async actualizar(
-    id: number,
-    nombre: string,
-    idLocalidad: number
+  public async actualizarParcial(
+    idFeedlot: number,
+    nombre?: string,
+    idLocalidad?: number
   ): Promise<void> {
-    const localidad = await this.localidadRepo.findById(idLocalidad);
-    if (!localidad) {
-      throw new Error("Localidad no encontrada");
+    // 1. Obtener el feedlot actual
+    const actual = await this.feedlotRepo.findById(idFeedlot);
+    if (!actual) {
+      throw new Error("Feedlot no encontrado");
     }
 
-    const feedlot = new Feedlot(id, nombre, localidad);
-    await this.feedlotRepo.update(feedlot);
-  }
+    // 2. Determinar la localidad (si se actualiza)
+    let localidad = actual.getLocalidad();
+    if (idLocalidad !== undefined) {
+      const nuevaLocalidad = await this.localidadRepo.findById(idLocalidad);
+      if (!nuevaLocalidad) {
+        throw new Error("Localidad no encontrada");
+      }
+      localidad = nuevaLocalidad;
+    }
+
+    // 3. Determinar el nombre (si se actualiza)
+    const nuevoNombre = nombre ?? actual.getNombre();
+
+    // 4. Construir el nuevo feedlot con los datos actualizados
+    const actualizado = new Feedlot(idFeedlot, nuevoNombre, localidad);
+
+    // 5. Validar y persistir
+    if (!actualizado.isValid()) {
+      throw new Error("Datos inválidos para actualización");
+    }
+
+  await this.feedlotRepo.update(actualizado);
+}
 
   public async eliminar(id: number): Promise<void> {
     await this.feedlotRepo.delete(id);

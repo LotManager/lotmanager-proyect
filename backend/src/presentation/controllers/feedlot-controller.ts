@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FeedlotService } from "../services/feedlotService";
+import { FeedlotService } from "../../application/services/feedlotService";
 import { PrismaFeedlotRepository } from "../../infrastructure/repositorios/PrismaFeedlotRepository";
 import { PrismaLocalidadRepository } from "../../infrastructure/repositorios/PrismaLocalidadRepository";
 

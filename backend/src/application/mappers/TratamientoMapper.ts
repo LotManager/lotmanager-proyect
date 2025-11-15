@@ -1,41 +1,30 @@
 import { Tratamiento } from '../../domain/entities/Tratamiento'
-import { Enfermedad } from '../../domain/entities/Enfermedad'
-import { TipoEnfermedad } from '../../domain/enums/TipoEnfermedad'
 import {
   TratamientoDto,
   TratamientoCreateDto,
-  TratamientoConEnfermedadesDto,
+  TratamientoUpdateDto,
 } from '../dtos/tratamiento.dto'
 import { Prisma } from '@prisma/client'
 
-type TratamientoWithEnfermedadesPrisma = Prisma.TratamientoGetPayload<{
-  include: {
-    enfermedadxtratamiento: {
-      include: {
-        enfermedad: true
-      }
-    }
-  }
-}>
 
 export class TratamientoMapper {
   static toEntity(prismaModel: Prisma.TratamientoUncheckedCreateInput): Tratamiento {
     return new Tratamiento(
       prismaModel.id ?? 0,
       prismaModel.descripcion,
-      prismaModel.dosis_aplicada,
-      prismaModel.nombre
+      prismaModel.nombre,
+      prismaModel.unidad
     )
   }
 
   static fromCreateDto(dto: TratamientoCreateDto): Tratamiento {
-    return new Tratamiento(0, dto.descripcion, dto.dosisAplicada, dto.nombre)
+    return new Tratamiento(0, dto.descripcion, dto.nombre, dto.unidad)
   }
 
   static toPrisma(entity: Tratamiento): Prisma.TratamientoUncheckedCreateInput {
     return {
       descripcion: entity.getDescripcion(),
-      dosis_aplicada: entity.getDosisAplicada(),
+      unidad:  entity.getUnidad(),  
       nombre: entity.getNombre(),
     }
   }
@@ -44,48 +33,26 @@ export class TratamientoMapper {
     return {
       id: entity.getId(),
       descripcion: entity.getDescripcion(),
-      dosisAplicada: entity.getDosisAplicada(),
+      unidad: entity.getUnidad(),
       nombre: entity.getNombre(),
     }
   }
 
-  static toEntityWithEnfermedades(model: TratamientoWithEnfermedadesPrisma): Tratamiento {
-  const enfermedades = model.enfermedadxtratamiento.map(rel => 
-    new Enfermedad(
-      rel.enfermedad.id,
-      rel.enfermedad.nombre,
-      rel.enfermedad.descripcion,
-      rel.enfermedad.tipo as TipoEnfermedad
-    )
-  )
-
-  return new Tratamiento(
-    model.id,
-    model.descripcion,
-    model.dosis_aplicada,
-    model.nombre,
-    enfermedades
-  )
-}
-  static toDtoWithEnfermedades(entity: Tratamiento): TratamientoConEnfermedadesDto {
-  return {
-    id: entity.getId(),
-    descripcion: entity.getDescripcion(),
-    dosisAplicada: entity.getDosisAplicada(),
-    nombre: entity.getNombre(),
-    enfermedades: entity.getEnfermedades().map(enfermedad => ({
-      id: enfermedad.getId(),
-      nombre: enfermedad.getNombre(),
-      descripcion: enfermedad.getDescripcion(),
-      tipo: enfermedad.getTipo(),
-    })),
-  }
-}
+ 
+  
   static toUpdatePrisma(entity: Tratamiento): Prisma.TratamientoUpdateInput {
     return {
       descripcion: entity.getDescripcion(),
-      dosis_aplicada: entity.getDosisAplicada(),
+      unidad: entity.getUnidad(),
       nombre: entity.getNombre()
     };
   }
+
+  static toPartialPrisma(dto: TratamientoUpdateDto): Prisma.TratamientoUpdateInput {
+    const update: Prisma.TratamientoUpdateInput = {}
+    if (dto.descripcion) update.descripcion = dto.descripcion
+    if (dto.nombre) update.nombre = dto.nombre
+    if (dto.unidad) update.unidad = dto.unidad
+  return update
+}
 }

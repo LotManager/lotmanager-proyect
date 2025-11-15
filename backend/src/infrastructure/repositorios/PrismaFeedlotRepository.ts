@@ -14,7 +14,7 @@ export class PrismaFeedlotRepository implements IFeedlotRepository {
     localidad: {
       id: number;
       nombre: string;
-      codigo_postal: number;
+      codigoPostal: number | null;
       provincia: {
         id: number;
         nombre: string;
@@ -24,7 +24,7 @@ export class PrismaFeedlotRepository implements IFeedlotRepository {
     const provincia = new Provincia(data.localidad.provincia.id, data.localidad.provincia.nombre);
     const localidad = new Localidad(
       data.localidad.id,
-      data.localidad.codigo_postal,
+      data.localidad.codigoPostal,
       data.localidad.nombre,
       provincia
     );
@@ -60,9 +60,11 @@ export class PrismaFeedlotRepository implements IFeedlotRepository {
   }
 
   const data: any = {
-    nombre: feedlot.getNombre(),
-    id_localidad: feedlot.getIdLocalidad(),
-  };
+  nombre: feedlot.getNombre(),
+  localidad: {
+    connect: { id: feedlot.getIdLocalidad() }
+  },
+};
 
   // Solo incluir el id si es distinto de 0
   if (feedlot.getId() !== 0) {
@@ -82,24 +84,26 @@ export class PrismaFeedlotRepository implements IFeedlotRepository {
 }
 
   public async update(feedlot: Feedlot): Promise<void> {
-    try {
-      await prisma.feedlot.update({
-        where: { id: feedlot.getId() },
-        data: {
-          nombre: feedlot.getNombre(),
-          id_localidad: feedlot.getIdLocalidad(),
+  try {
+    await prisma.feedlot.update({
+      where: { id: feedlot.getId() },
+      data: {
+        nombre: feedlot.getNombre(),
+        localidad: {
+          connect: { id: feedlot.getIdLocalidad() }
         },
-      });
-    } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === "P2025"
-      ) {
-        throw new Error("Feedlot no encontrado");
-      }
-      throw error;
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      throw new Error("Feedlot no encontrado");
     }
+    throw error;
   }
+}
 
   public async delete(id: number): Promise<void> {
     try {

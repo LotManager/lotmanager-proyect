@@ -1,11 +1,11 @@
 import { z } from 'zod'
-import { EnfermedadResponseDTO } from './enfermedad.dto';
+import { TipoUnidad } from '@prisma/client';
 
 
 export const TratamientoCreateDtoSchema = z.object({
-  descripcion: z.string().min(1, 'La descripción es obligatoria'),
-  dosisAplicada: z.string().min(1, 'La dosis aplicada es obligatoria'),
-  nombre: z.string().min(1, 'El nombre es obligatorio'),
+  descripcion: z.string().trim().min(1, 'La descripción es obligatoria'),
+  unidad: z.enum(Object.values(TipoUnidad)),
+  nombre: z.string().trim().min(1, 'El nombre es obligatorio'),
 })
 
 
@@ -17,12 +17,7 @@ export const TratamientoDtoSchema = TratamientoCreateDtoSchema.extend({
 })
 
 
-export const TratamientoConEnfermedadesDtoSchema = TratamientoDtoSchema.extend({
-  enfermedades: z.array(EnfermedadResponseDTO),
-})
 
-
-export type TratamientoConEnfermedadesDto = z.infer<typeof TratamientoConEnfermedadesDtoSchema>
 export type TratamientoCreateDto = z.infer<typeof TratamientoCreateDtoSchema>
 export type TratamientoUpdateDto = z.infer<typeof TratamientoUpdateDtoSchema>
 export type TratamientoDto = z.infer<typeof TratamientoDtoSchema>

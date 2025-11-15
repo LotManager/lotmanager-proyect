@@ -5,7 +5,6 @@ import {
   TratamientoCreateDto,
   TratamientoUpdateDto,
   TratamientoDto,
-  TratamientoConEnfermedadesDto,
 } from '../dtos/tratamiento.dto'
 import { TratamientoMapper } from '../mappers/TratamientoMapper'
 
@@ -34,12 +33,10 @@ export class TratamientoService {
     return tratamientos.map(TratamientoMapper.toDto)
   }
 
-  async delete(id: number): Promise<void> {
-    await this.repository.delete(id)
+  async delete(id: number): Promise<boolean> {
+    return await this.repository.delete(id)
   }
-
-  async getWithEnfermedades(id: number): Promise<TratamientoConEnfermedadesDto | null> {
-    const tratamiento = await this.repository.findWithEnfermedades(id)
-    return tratamiento ? TratamientoMapper.toDtoWithEnfermedades(tratamiento) : null
-}
+  async exists(id: number): Promise<boolean> {
+    return this.repository.exists(id);
+  }
 }

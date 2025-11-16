@@ -13,175 +13,209 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Feedlot {
-  id           Int       @id @default(autoincrement())
-  nombre       String
-  localidad    Localidad @relation(fields: [id_localidad], references: [id])
-  id_localidad Int
-  corral       Corral[]
+// -----------------------------------------------------------------------------
+// Módulo: Geografía
+// -----------------------------------------------------------------------------
+model Provincia {
+  id          Int         @id @default(autoincrement())
+  nombre      String      @unique
+
+  localidades Localidad[]
 }
 
 model Localidad {
   id            Int       @id @default(autoincrement())
-  codigo_postal Int
   nombre        String
-  provincia     Provincia @relation(fields: [id_provincia], references: [id])
-  id_provincia  Int
-  feedlot       Feedlot[]
+  codigoPostal  Int?      @map("codigo_postal")
+  provinciaId   Int       @map("id_provincia")
+  provincia     Provincia @relation(fields: [provinciaId], references: [id])
+  feedlots      Feedlot[]
 }
 
-model Provincia {
-  id        Int         @id @default(autoincrement())
-  nombre    String
-  localidad Localidad[]
+model Feedlot {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  localidadId Int       @map("id_localidad")
+  localidad   Localidad @relation(fields: [localidadId], references: [id])
+
+  corrales    Corral[]
 }
 
-model Raza {
-  id     Int      @id @default(autoincrement())
-  nombre String
-  bovino Bovino[]
+// -----------------------------------------------------------------------------
+// Módulo: Usuarios, Roles y Personas
+// -----------------------------------------------------------------------------
+
+
+model Persona {
+  id       Int      @id @default(autoincrement())
+  nombre   String
+  apellido String
+  email    String  @unique
+
+  usuario  Usuario?
 }
 
 model Usuario {
-  id         Int        @id @default(autoincrement())
-  id_rol     Int
-  usuario    String
-  contrasena String
-  rol        Rol        @relation(fields: [id_rol], references: [id])
-  personal   Personal[]
+  id         Int     @id @default(autoincrement())
+  username   String  @unique // Nombre claro
+  contrasena String  // Contraseña hasheada
+  rol        TipoRol 
+
+  personaId  Int @unique    
+  persona    Persona @relation(fields: [personaId], references: [id])
+  
 }
 
-model Personal {
-  id         Int      @id @default(autoincrement())
-  nombre     String
-  apellido   String
-  id_usuario Int?
-  usuario    Usuario? @relation(fields: [id_usuario], references: [id])
+// -----------------------------------------------------------------------------
+// Módulo: Instalaciones y Animales Base
+// -----------------------------------------------------------------------------
+model Corral {
+  id              Int      @id @default(autoincrement())
+  numero          Int      @unique
+  capacidadMaxima Int      
+  tipo            TipoCorral
+  feedlot         Feedlot  @relation(fields: [feedlotId], references: [id])
+  feedlotId       Int      @map("id_feedlot")
+
+  bovinos             Bovino[]
+  suministros         Suministro[]
+  movimientosDesde    MovimientoCorral[] @relation("MovimientosDesdeCorral")
+  movimientosHacia    MovimientoCorral[] @relation("MovimientosHaciaCorral")
 }
 
-model Alimento {
-  id              Int               @id @default(autoincrement())
-  nro_serie       Int
-  vencimiento     String
-  detallealimento DetalleAlimento[]
-  Suministro      Suministro[]
-}
+model Raza {
+  id      Int      @id @default(autoincrement())
+  nombre  String   @unique
 
-model DetalleAlimento {
-  id          Int      @id @default(autoincrement())
-  nombre      String
-  tipo        String
-  alimento    Alimento @relation(fields: [id_alimento], references: [id])
-  id_alimento Int
-}
-
-model Alimentacion {
-  id          Int          @id @default(autoincrement())
-  descripcion String
-  nombre      String
-  corral      Corral[]
-  Suministro  Suministro[]
-}
-
-model Suministro {
-  id              Int          @id @default(autoincrement())
-  cantidad        Float
-  id_alimentacion Int
-  id_alimento     Int
-  alimentacion    Alimentacion @relation(fields: [id_alimentacion], references: [id])
-  alimento        Alimento     @relation(fields: [id_alimento], references: [id])
-}
-
-model Enfermedad {
-  id                     Int                      @id @default(autoincrement())
-  nombre                 String
-  descripcion            String
-  tipo                   TipoEnfermedad
-  detallesenfermedad     DetalleEnfermedad[]
-  enfermedadxtratamiento EnfermedadxTratamiento[]
-}
-
-model Tratamiento {
-  id                     Int                      @id @default(autoincrement())
-  descripcion            String
-  dosis_aplicada         String
-  nombre                 String
-  enfermedadxtratamiento EnfermedadxTratamiento[]
-}
-
-model EnfermedadxTratamiento {
-  id_tratamiento   Int
-  id_enfermedad    Int
-  periodo_aplicado String
-  tratamiento      Tratamiento @relation(fields: [id_tratamiento], references: [id])
-  enfermedad       Enfermedad  @relation(fields: [id_enfermedad], references: [id])
-
-  @@id([id_tratamiento, id_enfermedad])
-}
-
-model Pesaje {
-  id        Int      @id @default(autoincrement())
-  id_bovino Int
-  fecha     DateTime
-  peso_dado Float
-  bovino    Bovino   @relation(fields: [id_bovino], references: [id])
+  bovinos Bovino[]
 }
 
 model Bovino {
-  id                 Int                 @id @default(autoincrement())
-  id_raza            Int
-  id_corral          Int
-  caravana           Int
-  estado_bovino      EstadoBovino
-  estado_salud       EstadoSalud         @default(SANO)
-  ingreso            DateTime
-  egreso             DateTime?
-  peso_ingreso       Float
-  peso_egreso        Float?
-  sexo               Sexo
-  tipo_bovino        TipoBovino
-  raza               Raza                @relation(fields: [id_raza], references: [id])
-  corral             Corral              @relation(fields: [id_corral], references: [id])
-  detallesenfermedad DetalleEnfermedad[]
-  pesaje             Pesaje[]
+  id              Int            @id @default(autoincrement())
+  caravana        Int            @unique // Caravana suele ser única
+  razaId          Int            @map("id_raza")
+  raza            Raza           @relation(fields: [razaId], references: [id])
+  corralId        Int            @map("id_corral")
+  corral          Corral         @relation(fields: [corralId], references: [id])
+  situacionBovino SituacionBovino // Renombrado de estado_bovino
+  estadoSalud     EstadoSalud    @default(SANO)
+  sexo            SexoBovino
+  tipoBovino      TipoBovino
+  ingreso         DateTime
+  egreso          DateTime?
+  pesoIngreso     Float          @map("peso_ingreso")
+  pesoEgreso      Float?         @map("peso_egreso")
+
+  pesajes         Pesaje[]
+  movimientos     MovimientoCorral[]
+  casosEnfermedad CasoEnfermedad[]
 }
 
-model DetalleEnfermedad {
-  id_bovino     Int
-  id_enfermedad Int
-  id_corral     Int
-  fecha_inicio  DateTime
-  fecha_fin     DateTime
-  enfermedad    Enfermedad @relation(fields: [id_enfermedad], references: [id])
-  corral        Corral     @relation(fields: [id_corral], references: [id])
-  bovino        Bovino     @relation(fields: [id_bovino], references: [id])
-
-  @@id([id_bovino, id_enfermedad])
+model Pesaje {
+  id         Int      @id @default(autoincrement())
+  bovinoId   Int      @map("id_bovino")
+  bovino     Bovino   @relation(fields: [bovinoId], references: [id])
+  fecha      DateTime @default(now()) @map("fechaPesaje") // Nombre más específico
+  pesoActual Float    @map("pesoActual") // Nombre del diagrama de clases
 }
 
-model Corral {
-  id                 Int                 @id @default(autoincrement())
-  capacidad_maxima   Int
-  numero             Int
-  tipo_corral        TipoCorral
-  alimentacion       Alimentacion?       @relation(fields: [id_alimentacion], references: [id])
-  id_alimentacion    Int?
-  feedlot            Feedlot             @relation(fields: [id_feedlot], references: [id])
-  id_feedlot         Int
-  bovino             Bovino[]
-  detallesenfermedad DetalleEnfermedad[]
+// -----------------------------------------------------------------------------
+// Módulo: Movimientos
+// -----------------------------------------------------------------------------
+model MovimientoCorral {
+  id              Int        @id @default(autoincrement())
+  bovinoId        Int        @map("id_bovino")
+  bovino          Bovino     @relation(fields: [bovinoId], references: [id])
+  corralOrigenId  Int       @map("id_corral_origen")
+  corralOrigen    Corral    @relation("MovimientosDesdeCorral", fields: [corralOrigenId], references: [id])
+  corralDestinoId Int        @map("id_corral_destino")
+  corralDestino   Corral     @relation("MovimientosHaciaCorral", fields: [corralDestinoId], references: [id])
+  fecha           DateTime   @default(now()) @map("fechaMovimiento") // Nombre más específico
+  motivo          TipoMotivo
 }
 
-model Rol {
-  id      Int       @id @default(autoincrement())
-  nombre  String
-  usuario Usuario[]
+// -----------------------------------------------------------------------------
+// Módulo: Alimentación
+// -----------------------------------------------------------------------------
+model Alimento {
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  tipo          TipoAlimento // Usamos el Enum
+
+  detallesDieta DetalleDieta[]
 }
 
-enum EstadoBovino {
+model Dieta {
+  id            Int      @id @default(autoincrement())
+  nombre        String   @unique
+  descripcion   String?
+
+  detallesDieta DetalleDieta[]
+  suministros   Suministro[]
+}
+
+model DetalleDieta {
+  dietaId      Int
+  dieta        Dieta    @relation(fields: [dietaId], references: [id])
+  alimentoId   Int
+  alimento     Alimento @relation(fields: [alimentoId], references: [id])
+  proporcionKg Float    @map("proporcionKg") // Cantidad en KG
+
+  @@id([dietaId, alimentoId])
+}
+
+model Suministro {
+  id         Int      @id @default(autoincrement())
+  dietaId    Int
+  dieta      Dieta    @relation(fields: [dietaId], references: [id])
+  corralId   Int
+  corral     Corral   @relation(fields: [corralId], references: [id])
+  cantidadKg Float    @map("cantidadKg") // Cantidad total en KG
+  fecha      DateTime @default(now())
+}
+// -----------------------------------------------------------------------------
+// Módulo: Sanidad Animal
+// -----------------------------------------------------------------------------
+
+model Enfermedad {
+  id              Int              @id @default(autoincrement())
+  nombre          String           @unique
+  descripcion     String?
+  tipo            TipoEnfermedad
+
+  casosEnfermedad CasoEnfermedad[]
+}
+
+// Representa un TIPO de tratamiento o protocolo (ej: "Antibiótico X 10ml", "Vacuna Antirrábica")
+model Tratamiento {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique // El nombre del protocolo/tipo de tratamiento
+  descripcion String? // Descripción general del protocolo
+  unidad      TipoUnidad // Unidad estándar para este tipo de tratamiento
+
+  
+  casosEnfermedad CasoEnfermedad[]
+}
+
+// Representa la instancia de un Bovino teniendo una Enfermedad (el "caso")
+model CasoEnfermedad {
+  id              Int        @id @default(autoincrement())
+  bovinoId        Int        @map("id_bovino")
+  bovino          Bovino     @relation(fields: [bovinoId], references: [id])
+  enfermedadId    Int        @map("id_enfermedad")
+  enfermedad      Enfermedad @relation(fields: [enfermedadId], references: [id])
+  fechaDeteccion  DateTime   @map("fecha_deteccion")
+  fechaAlta       DateTime?  @map("fecha_alta")
+
+  tratamientoId   Int         @map("id_tratamiento")
+  tratamiento     Tratamiento @relation(fields: [tratamientoId], references: [id])
+}
+
+// -----------------------------------------------------------------------------
+// Definición de Enums
+// -----------------------------------------------------------------------------
+enum SituacionBovino {
   ENCORRAL
-  ENFERMA 
-  MUERTA
   EGRESADA
 }
 
@@ -196,7 +230,34 @@ enum EstadoSalud {
   FALLECIDO
 }
 
-enum Sexo {
+enum TipoMotivo {
+  ENFERMEDAD
+  CAMBIO
+}
+
+enum TipoAlimento {
+  GRANO
+  FORRAJE
+  SUPLEMENTO
+}
+
+enum TipoEnfermedad {
+  RESPIRATORIA
+  DIGESTIVA
+  SISTEMA_NERVIOSO
+  OJOS
+  PARASITARIA
+  INTOXICACION
+  TRAUMATOLOGICA
+  OTRA
+}
+
+enum TipoRol {
+  ADMINISTRADOR
+  ENCARGADO
+}
+
+enum SexoBovino {
   MACHO
   HEMBRA
 }
@@ -208,11 +269,10 @@ enum TipoBovino {
   DESCARTE
 }
 
-enum TipoEnfermedad {
-  RESPIRATORIA
-  DIGESTIVA
-  SISTEMANERVIOSO
-  PARASITARIA
-  INTOXICACION
-  TRAUMATOLOGICA
+enum TipoUnidad {
+  ML
+  MG
+  G
+  TABLETA
+  UNIDAD
 }

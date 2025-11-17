@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { SuministroService } from "../../application/services/suministroService"
+import { SuministroService } from "../../application/services/suministroService.ts"
 import { PrismaSuministroRepository } from "../../infrastructure/repositorios/PrismaSuministroRepository"
 
 const service = new SuministroService(new PrismaSuministroRepository())

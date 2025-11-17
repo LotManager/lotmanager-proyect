@@ -21,7 +21,7 @@ export const SuministroResponseSchema = z.object({
     corralId: z.number(),
 });
 
-export type CreateSuministroSchema = z.infer<typeof CreateSuministroSchema>;
-export type UpdateSuministroSchema = z.infer<typeof UpdateSuministroSchema>;
-export type SuministroResponseSchema = z.infer<typeof SuministroResponseSchema>;
+export type CreateSuministroDto = z.infer<typeof CreateSuministroSchema>;
+export type UpdateSuministroDto = z.infer<typeof UpdateSuministroSchema>;
+export type SuministroResponseDto = z.infer<typeof SuministroResponseSchema>;
 export type IdParam = z.infer<typeof IdParamSchema>;

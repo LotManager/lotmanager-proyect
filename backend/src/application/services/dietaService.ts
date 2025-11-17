@@ -28,8 +28,8 @@ export class DietaService {
     }
 
     async findById(id: number): Promise<Dieta | null> {
-    if (id <= 0) throw new Error("ID inválido");
-    return this.dietaRepository.findById(id);
+      if (id <= 0) throw new Error("ID inválido");
+      return this.dietaRepository.findById(id);
     }
     async findAll(): Promise<Dieta[]> {
       return this.dietaRepository.findAll();

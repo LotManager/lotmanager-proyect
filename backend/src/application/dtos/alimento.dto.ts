@@ -15,20 +15,9 @@ export const AlimentoResponseSchema = z.object({
   tipo: z.enum([TipoAlimento.GRANO, TipoAlimento.FORRAJE, TipoAlimento.SUPLEMENTO]),
 });
 
-export const AlimentoWithDetallesResponseSchema = z.object({
-  id: z.number(),
-  nombre: z.string(),
-  tipo: z.enum([TipoAlimento.GRANO, TipoAlimento.FORRAJE, TipoAlimento.SUPLEMENTO]),
-  detalles: z.array(z.object({
-    proporcionKg: z.number(),
-    dietaId: z.number(),
-  })),
-});
-
-export type CreateAlimentoSchema = z.infer<typeof CreateAlimentoSchema>;
-export type UpdateAlimentoSchema = z.infer<typeof UpdateAlimentoSchema>;
-export type AlimentoResponseSchema = z.infer<typeof AlimentoResponseSchema>;
-export type AlimentoWithDetallesResponseSchema = z.infer<typeof AlimentoWithDetallesResponseSchema>;
+export type CreateAlimentoDto = z.infer<typeof CreateAlimentoSchema>;
+export type UpdateAlimentoDto = z.infer<typeof UpdateAlimentoSchema>;
+export type AlimentoResponseDto = z.infer<typeof AlimentoResponseSchema>;
 export type IdParam = z.infer<typeof IdParamSchema>;
 
 

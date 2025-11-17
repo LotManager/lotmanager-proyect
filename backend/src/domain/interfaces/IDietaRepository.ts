@@ -8,7 +8,7 @@ export interface IDietaRepository {
     update(dieta: Dieta): Promise<void>
     delete(id: number): Promise<void>
     exists(id: number): Promise<boolean>
-    addDetalle(dietaId: number, detalle: DetalleDieta): Promise<void>
+    addDetalle(dietaId: number, detalle: DetalleDieta): Promise<Dieta>
     updateDetalle(dietaId: number, detalle: DetalleDieta): Promise<void>
     removeDetalle(dietaId: number, alimentoId: number): Promise<void>
 }

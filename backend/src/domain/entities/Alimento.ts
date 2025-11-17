@@ -1,41 +1,35 @@
-import { DetalleAlimento } from "./DetalleAlimento";
-import { Suministro } from "./Suministro";
+import { DetalleDieta } from "./DetalleDieta";
+import { TipoAlimento } from "domain/enums/TipoAlimento";
 
-export class Alimento {
+export class Alimento{
     constructor(
         private id: number,
-        private nroSerie: number,
-        private vencimiento: Date,
-        private detalleAlimento?: DetalleAlimento,
-        private suministros?: Suministro[],
+        private nombre: string,
+        private tipo: TipoAlimento,
+        private detalleDieta: DetalleDieta[]
     ){}
-    //Getters
+
+    // Getters
     public getId(): number {
         return this.id;
     }
-    public getNroSerie(): number {
-        return this.nroSerie;
+    public getNombre(): string {
+        return this.nombre;
     }
-    public getVencimiento(): Date {
-        return this.vencimiento;
+    public getTipo(): TipoAlimento {
+        return this.tipo;
     }
-    public getDetalleAlimento(): DetalleAlimento | undefined {
-        return this.detalleAlimento;
+    public getDetalleDieta(): DetalleDieta[] {
+        return this.detalleDieta;
     }
-    public getSuministro(): Suministro[] | undefined {
-        return this.suministros;
+    // Setters
+    public setNombre(nombre: string): void {
+        this.nombre = nombre;
     }
-    //Setters
-    public setNroSerie(nroSerie: number): void {
-        this.nroSerie = nroSerie;
+    public setTipo(tipo: string): void {
+        this.tipo = tipo;
     }
-    public setVencimiento(vencimiento: Date): void {
-        this.vencimiento = vencimiento;
-    }
-    public setDetalleAlimento(detalleAlimento: DetalleAlimento): void {
-        this.detalleAlimento = detalleAlimento;
-    }
-    public setSuministro(suministro: Suministro[]): void {
-        this.suministros = suministro;
+    public setDetalleDieta(detalleDieta: DetalleDieta[]): void {
+        this.detalleDieta = detalleDieta;
     }
 }

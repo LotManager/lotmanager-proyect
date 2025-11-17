@@ -1,4 +1,4 @@
-import { EstadoSalud } from "../entities/Bovino";
+import { EstadoSalud } from "@prisma/client";
 
 export interface DetalleEnfermedad {
   id_bovino: number

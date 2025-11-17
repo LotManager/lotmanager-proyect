@@ -1,0 +1,41 @@
+import { DetalleDieta } from "./DetalleDieta";
+import { Suministro } from "./Suministro";
+
+export class Dieta {
+    constructor(
+        private id: number,
+        private nombre: string,
+        private descripcion: string,
+        private detalles: DetalleDieta[],
+        private suministros: Suministro[]
+    ){}
+    // Getters
+    public getId(): number {
+        return this.id;
+    }
+    public getNombre(): string {
+        return this.nombre;
+    }
+    public getDescripcion(): string {
+        return this.descripcion;
+    }
+    public getDetalles(): DetalleDieta[] {
+        return this.detalles;
+    }
+    public getSuministros(): Suministro[] {
+        return this.suministros;
+    }
+    // Setters
+    public setNombre(nombre: string): void {
+        this.nombre = nombre;
+    }
+    public setDescripcion(descripcion: string): void {
+        this.descripcion = descripcion;
+    }
+    public setDetalles(detalles: DetalleDieta[]): void {
+        this.detalles = detalles;
+    }
+    public setSuministros(suministros: Suministro[]): void {
+        this.suministros = suministros;
+    }
+}

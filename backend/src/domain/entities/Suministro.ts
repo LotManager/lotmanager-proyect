@@ -1,10 +1,10 @@
 export class Suministro {
   constructor(
     public id: number,
+    public fecha: Date,
     public cantidadKg: number,
     public dietaId: number,
-    public corralId: number,
-    public fecha: Date
+    public corralId: number
   ) {}
   // Getters
   public getId(): number {

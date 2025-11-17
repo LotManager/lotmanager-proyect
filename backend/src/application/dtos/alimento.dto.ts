@@ -1,20 +1,37 @@
-import { z } from "zod";
-import { CreateSuministroDto as CreateSuministroSchema } from "./createSuministro.dto";
+import z from "zod";
+import { TipoAlimento } from "domain/enums/TipoAlimento";
 
 export const CreateAlimentoSchema = z.object({
-    nroSerie: z.int().positive(),
-    vencimiento: z.date(),
-    // referencia a un detalle existente (opcional). Si quieres permitir crear el detalle inline,
-    // cambia esto a un objeto con el esquema de detalle correspondiente.
-    idDetalleAlimento: z.number().int().positive().optional(),
-    // suministros opcionales asociados al alimento (crear varios suministros al crear el alimento)
-    suministros: z.array(CreateSuministroSchema).optional(),
-});
+    nombre: z.string().min(1, "El nombre no puede estar vacío"),
+    tipo: z.enum([TipoAlimento.GRANO, TipoAlimento.FORRAJE, TipoAlimento.SUPLEMENTO])
+    })
 
 export const UpdateAlimentoSchema = CreateAlimentoSchema.partial();
-
 export const IdParamSchema = z.object({ id: z.string().min(1) });
 
-export type CreateAlimentoDTO = z.infer<typeof CreateAlimentoSchema>;
-export type UpdateAlimentoDTO = z.infer<typeof UpdateAlimentoSchema>;
-export type IdParamDTO = z.infer<typeof IdParamSchema>;
+export const AlimentoResponseSchema = z.object({
+  id: z.number(),
+  nombre: z.string(),
+  tipo: z.enum([TipoAlimento.GRANO, TipoAlimento.FORRAJE, TipoAlimento.SUPLEMENTO]),
+});
+
+export const AlimentoWithDetallesResponseSchema = z.object({
+  id: z.number(),
+  nombre: z.string(),
+  tipo: z.enum([TipoAlimento.GRANO, TipoAlimento.FORRAJE, TipoAlimento.SUPLEMENTO]),
+  detalles: z.array(z.object({
+    proporcionKg: z.number(),
+    dietaId: z.number(),
+  })),
+});
+
+export type CreateAlimentoSchema = z.infer<typeof CreateAlimentoSchema>;
+export type UpdateAlimentoSchema = z.infer<typeof UpdateAlimentoSchema>;
+export type AlimentoResponseSchema = z.infer<typeof AlimentoResponseSchema>;
+export type AlimentoWithDetallesResponseSchema = z.infer<typeof AlimentoWithDetallesResponseSchema>;
+export type IdParam = z.infer<typeof IdParamSchema>;
+
+
+
+
+

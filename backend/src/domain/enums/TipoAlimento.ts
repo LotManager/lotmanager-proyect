@@ -1,5 +1,5 @@
 export class TipoAlimento {
-    static readonly GRANO = "GRANO";
-    static readonly FORRAJE = "FORRAJE";
-    static readonly SUPLEMENTO = "SUPLEMENTO";
+    static GRANO = "GRANO";
+    static FORRAJE = "FORRAJE";
+    static SUPLEMENTO = "SUPLEMENTO";
 }

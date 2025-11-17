@@ -6,8 +6,7 @@ export class Dieta {
         private id: number,
         private nombre: string,
         private descripcion: string,
-        private detalles: DetalleDieta[],
-        private suministros: Suministro[]
+        private detalles: DetalleDieta[]
     ){}
     // Getters
     public getId(): number {
@@ -22,9 +21,6 @@ export class Dieta {
     public getDetalles(): DetalleDieta[] {
         return this.detalles;
     }
-    public getSuministros(): Suministro[] {
-        return this.suministros;
-    }
     // Setters
     public setNombre(nombre: string): void {
         this.nombre = nombre;
@@ -34,8 +30,5 @@ export class Dieta {
     }
     public setDetalles(detalles: DetalleDieta[]): void {
         this.detalles = detalles;
-    }
-    public setSuministros(suministros: Suministro[]): void {
-        this.suministros = suministros;
     }
 }

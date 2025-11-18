@@ -5,7 +5,7 @@ export interface ICasoEnfermedadRepository {
   create(caso: CasoEnfermedad): Promise<CasoEnfermedad>;
   findById(id: number): Promise<CasoEnfermedad | null>;
   findAll(): Promise<CasoEnfermedad[]>;
-  update(id: number, caso: CasoEnfermedad): Promise<void>;
+  update(caso: CasoEnfermedad): Promise<void>;
   delete(id: number): Promise<void>;
   exists(id: number): Promise<boolean>;
 }

@@ -5,31 +5,16 @@ import { Bovino } from "./Bovino";
 export class CasoEnfermedad {
   constructor(
     private id: number,
-    private bovinoId: number,
-    private enfermedadId: number,
-    private tratamientoId: number,
     private fechaDeteccion: Date,
     private fechaAlta?: Date,
-    private enfermedad?: Enfermedad,
-    private tratamiento?: Tratamiento,
-    private bovino?: Bovino
+    private enfermedadId?: number,
+    private tratamientoId?: number,
+    private bovinoId?: number
   ) {}
 
   // Getters
   getId(): number {
     return this.id;
-  }
-
-  getBovinoId(): number {
-    return this.bovinoId;
-  }
-
-  getEnfermedadId(): number {
-    return this.enfermedadId;
-  }
-
-  getTratamientoId(): number {
-    return this.tratamientoId;
   }
 
   getFechaDeteccion(): Date {
@@ -40,16 +25,16 @@ export class CasoEnfermedad {
     return this.fechaAlta;
   }
 
-  getEnfermedad(): Enfermedad | undefined {
-    return this.enfermedad;
+  getEnfermedadId(): number | undefined {
+    return this.enfermedadId;
   }
 
-  getTratamiento(): Tratamiento | undefined {
-    return this.tratamiento;
+  getTratamientoId(): number | undefined {
+    return this.tratamientoId;
   }
 
-  getBovino(): Bovino | undefined {
-    return this.bovino;
+  getBovinoId(): number | undefined {
+    return this.bovinoId;
   }
 
   // Setters
@@ -57,34 +42,15 @@ export class CasoEnfermedad {
     this.fechaAlta = fecha;
   }
 
-  setEnfermedad(enfermedad: Enfermedad): void {
-    this.enfermedad = enfermedad;
+  setEnfermedadId(id: number): void {
+    this.enfermedadId = id;
   }
 
-  setTratamiento(tratamiento: Tratamiento): void {
-    this.tratamiento = tratamiento;
+  setTratamientoId(id: number): void {
+    this.tratamientoId = id;
   }
 
-  setBovino(bovino: Bovino): void {
-    this.bovino = bovino;
-  }
-
-  // DTO para persistencia
-  toDTO(): {
-    id?: number;
-    bovinoId: number;
-    enfermedadId: number;
-    tratamientoId: number;
-    fechaDeteccion: Date;
-    fechaAlta?: Date;
-  } {
-    return {
-      id: this.id,
-      bovinoId: this.bovinoId,
-      enfermedadId: this.enfermedadId,
-      tratamientoId: this.tratamientoId,
-      fechaDeteccion: this.fechaDeteccion,
-      fechaAlta: this.fechaAlta,
-    };
+  setBovinoId(id: number): void {
+    this.bovinoId = id;
   }
 }

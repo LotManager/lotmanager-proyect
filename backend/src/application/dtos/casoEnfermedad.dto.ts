@@ -11,8 +11,30 @@ export const CasoEnfermedadDTO = z.object({
 
 export type CasoEnfermedadDTOType = z.infer<typeof CasoEnfermedadDTO>;
 
-export const CasoEnfermedadResponseDTO = CasoEnfermedadDTO.extend({
+export const CasoEnfermedadResponseDTO = z.object({
   id: z.number().int().positive(),
+  fechaDeteccion: z.coerce.date(),
+  fechaAlta: z.coerce.date().optional(),
+  bovino: z.object({
+    id: z.number().int().positive(),
+    caravana: z.string(),
+  }),
+  enfermedad: z.object({
+    id: z.number().int().positive(),
+    nombre: z.string(),
+  }),
+  tratamiento: z.object({
+    id: z.number().int().positive(),
+    nombre: z.string(),
+  }),
 });
 
 export type CasoEnfermedadResponseDTOType = z.infer<typeof CasoEnfermedadResponseDTO>;
+
+export const CasoEnfermedadUpdateDTO = z.object({
+  id: z.number().int().positive(),
+  fechaAlta: z.coerce.date().optional(),
+  tratamientoId: z.number().int().positive().optional(),
+});
+
+export type CasoEnfermedadUpdateDTOType = z.infer<typeof CasoEnfermedadUpdateDTO>;

@@ -1,6 +1,6 @@
- import { Suministro } from "domain/entities/Suministro";
+import { Suministro } from "domain/entities/Suministro";
 import { ISuministroRepository } from "domain/interfaces/ISuministroRepository";
-import type { CreateSuministroDto } from "../dtos/suministro.dto";
+import type { CreateSuministroDto, UpdateSuministroDto } from "../dtos/suministro.dto";
 
 export class SuministroService {
     constructor(private readonly suministroRepository: ISuministroRepository) {}
@@ -24,8 +24,24 @@ export class SuministroService {
     async delete(id: number): Promise<void> {
         await this.suministroRepository.delete(id);
     }
-    async update(suministro: Suministro): Promise<void> {
-        return this.suministroRepository.update(suministro);
+    async update(params: { id: number; data: UpdateSuministroDto }): Promise<Suministro | null> {
+        const { id, data } = params;
+        if (id <= 0) throw new Error("ID inválido");
+        const exists = await this.suministroRepository.exists(id);
+        if (!exists) return null;
+        if (data.fecha == null) throw new Error("Fecha es obligatoria para actualizar el suministro");
+        if (data.cantidadKg == null) throw new Error("cantidadKg es obligatorio para actualizar el suministro");
+        if (data.dietaId == null) throw new Error("dietaId es obligatorio para actualizar el suministro");
+        if (data.corralId == null) throw new Error("corralId es obligatorio para actualizar el suministro");
+        const suministro = new Suministro(
+            id,
+            new Date(data.fecha),
+            data.cantidadKg,
+            data.dietaId,
+            data.corralId
+        );
+        const updated = await this.suministroRepository.update(suministro);
+        return updated;
     }
     async exists(id: number): Promise<boolean> {
         return this.suministroRepository.exists(id);

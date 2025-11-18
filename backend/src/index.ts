@@ -17,8 +17,8 @@ import corralRoutes from './presentation/routes/corral-routes';
 import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento-routes";
 import suministroRoutes from "./presentation/routes/suministro-routes"
 import alimentoRoutes from "./presentation/routes/alimento-routes"
-import alimentacionRoutes from "./presentation/routes/alimentacion-routes"
 import detalleEnfermedadRoutes from './presentation/routes/detalleEnfermedad-rutas';
+import dietaRoutes from './presentation/routes/dieta-rutas';
 import pesajeRouter from "./presentation/routes/pesaje-rutas";    
 import bovinoRouter from "./presentation/routes/bovino-rutas";
 import corralMetricsRouter from './presentation/routes/corral-metrics-rutas';
@@ -46,8 +46,8 @@ app.use("/api/corrales", corralRoutes);
 app.use("/api/detalle-alimentos", detalleAlimentoRoutes);
 app.use("/api/suministros", suministroRoutes);
 app.use("/api/alimentos", alimentoRoutes);
-app.use("/api/alimentaciones", alimentacionRoutes);
 app.use("/api/detalle-enfermedad", detalleEnfermedadRoutes);
+app.use("/api/dietas", dietaRoutes);
 app.use("/api/pesaje", roleGuard(["admin", "encargado"]), pesajeRouter);
 app.use("/api/bovinos", bovinoRouter);
 app.use("/api/corral-metrics", corralMetricsRouter);

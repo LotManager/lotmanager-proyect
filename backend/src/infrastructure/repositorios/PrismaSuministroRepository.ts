@@ -47,8 +47,8 @@ export class PrismaSuministroRepository implements ISuministroRepository {
             suministro.corralId
         ));
     }
-    async update(suministro: Suministro): Promise<void> {
-        await this.prisma.suministro.update({
+    async update(suministro: Suministro): Promise<Suministro> {
+        const updated = await this.prisma.suministro.update({
             where: { id: suministro.getId() },
             data: {
                 fecha: suministro.getFecha(),
@@ -57,6 +57,13 @@ export class PrismaSuministroRepository implements ISuministroRepository {
                 corralId: suministro.getCorralId(),
             },
         });
+        return new Suministro(
+            updated.id,
+            updated.fecha,
+            updated.cantidadKg,
+            updated.dietaId,
+            updated.corralId
+        );
     }
     async delete(id: number): Promise<void> {
         await this.prisma.suministro.delete({

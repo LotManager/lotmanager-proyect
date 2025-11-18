@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, $Enums } from "@prisma/client";
 import { Alimento } from "../../domain/entities/Alimento";
-import { IAlimentoRepository } from "domain/interfaces/IAlimentoRepository";
-import { $Enums } from "@prisma/client";
+import { IAlimentoRepository, AlimentoFilter } from "domain/interfaces/IAlimentoRepository";
 
 export class PrismaAlimentoRepository implements IAlimentoRepository {
     private prisma: PrismaClient;
@@ -34,6 +33,18 @@ export class PrismaAlimentoRepository implements IAlimentoRepository {
     }
     async findAll(): Promise<Alimento[]> {
         const alimentos = await this.prisma.alimento.findMany();
+        return alimentos.map(
+            (a) => new Alimento(a.id, a.nombre, a.tipo as $Enums.TipoAlimento)
+        );
+    }
+    async findFiltered(filter: AlimentoFilter): Promise<Alimento[]> {
+        const { tipo, nombre } = filter;
+        const alimentos = await this.prisma.alimento.findMany({
+            where: {
+                ...(tipo ? { tipo } : {}),
+                ...(nombre ? { nombre: { contains: nombre } } : {}),
+            },
+        });
         return alimentos.map(
             (a) => new Alimento(a.id, a.nombre, a.tipo as $Enums.TipoAlimento)
         );

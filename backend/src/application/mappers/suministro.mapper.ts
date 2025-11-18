@@ -1,11 +1,11 @@
 import { Suministro } from "domain/entities/Suministro";
-import type { CreateSuministroSchema, SuministroResponseSchema} from "../dtos/suministro.dto";
+import type { CreateSuministroDto, SuministroResponseDto}  from "../dtos/suministro.dto";
 
 export class SuministroMapper {
-    static fromDTO(dto: CreateSuministroSchema): Suministro {
+    static fromDTO(dto: CreateSuministroDto): Suministro {
         return new Suministro(0, new Date(dto.fecha), dto.cantidadKg, dto.dietaId, dto.corralId);
     }
-    static toDTO(entity: Suministro): SuministroResponseSchema {
+    static toDTO(entity: Suministro): SuministroResponseDto {
         return {
             id: entity.getId(),
             fecha: entity.getFecha().toISOString(),

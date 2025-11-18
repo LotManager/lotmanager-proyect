@@ -1,9 +1,17 @@
 import { Dieta } from "domain/entities/Dieta";
-import type { CreateDietaDto, DietaResponseDto, DietaWithDetallesResponseDto } from "../dtos/dieta.dto";
+import type { CreateDietaDto, DietaResponseDto, DietaWithDetallesResponseDto, UpdateDietaDto } from "../dtos/dieta.dto";
 
 export class DietaMapper {
     static fromDTO(dto: CreateDietaDto): Dieta {
         return new Dieta(0, dto.nombre, dto.descripcion, []);
+    }
+    static applyUpdateDto(current: Dieta, dto: UpdateDietaDto): Dieta {
+    return new Dieta(
+      current.getId(),
+      dto.nombre ?? current.getNombre(),
+      dto.descripcion ?? current.getDescripcion(),
+      current.getDetalles(),
+    );
     }
     static toResponseDTO(dieta: Dieta): DietaResponseDto {
         return {

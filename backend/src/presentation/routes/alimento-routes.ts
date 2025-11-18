@@ -4,10 +4,11 @@ import { roleGuard } from "../../presentation/middlewares/roleGuard"
 
 const router = Router()
 
-router.get("/", roleGuard(["admin", "encargado"]), AlimentoController.listar)
-router.get("/:id", roleGuard(["admin", "encargado"]), AlimentoController.obtenerPorId)
-router.post("/", AlimentoController.registrar)
-router.put("/:id", AlimentoController.actualizar)
-router.delete("/:id", AlimentoController.eliminar)
+router.get("/", roleGuard(["admin", "encargado"]), AlimentoController.getAll)
+router.get("/tipos", roleGuard(["admin", "encargado"]), AlimentoController.getTipos)
+router.get("/:id", roleGuard(["admin", "encargado"]), AlimentoController.getById)
+router.post("/", AlimentoController.create)
+router.put("/:id", AlimentoController.update)
+router.delete("/:id", AlimentoController.delete)
 
 export default router

@@ -1,19 +1,26 @@
 import { IDietaRepository } from "domain/interfaces/IDietaRepository";
 import { Dieta } from "domain/entities/Dieta";
 import { DetalleDieta } from "domain/entities/DetalleDieta";
-import type { CreateDietaDto } from "../dtos/dieta.dto";
+import { DietaMapper } from "application/mappers/dieta.mapper";
+import type { CreateDietaDto, UpdateDietaDto } from "../dtos/dieta.dto";
 import type { CreateDetalleDietaDto } from "../dtos/detalle-dieta.dto";
+
+type UpdateDietaInput = {
+  id: number;
+  data: UpdateDietaDto;
+};
 
 export class DietaService {
   constructor(private readonly dietaRepository: IDietaRepository) {}
   // CREA dieta + detalles de una
+  
   async createDieta(dto: CreateDietaDto): Promise<Dieta> {
     // Mapear DTOs de detalle -> entidades DetalleDieta
     const detalles = dto.detalles.map(d =>
       new DetalleDieta(
-        0,
-        d.proporcionKg, // dietaId: placeholder (la DB lo completará)
-        d.alimentoId
+        0,               // dietaId placeholder, lo completa la DB
+        d.alimentoId,
+        d.proporcionKg
       )
     );
     // Crear entidad Dieta
@@ -37,8 +44,14 @@ export class DietaService {
     async delete(id: number): Promise<void> {
       await this.dietaRepository.delete(id);
     }
-    async update(dieta: Dieta): Promise<void> {
-      return this.dietaRepository.update(dieta);
+    async updateDieta(input: UpdateDietaInput): Promise<Dieta | null> {
+      const existing = await this.dietaRepository.findById(input.id);
+      if (!existing) return null;
+
+      const updated = DietaMapper.applyUpdateDto(existing, input.data);
+      await this.dietaRepository.update(updated);
+
+      return updated;
     }
     async exists(id: number): Promise<boolean> {
       return this.dietaRepository.exists(id);
@@ -66,15 +79,22 @@ export class DietaService {
   }
   async removeDetalle(dietaId: number, alimentoId: number): Promise<void> {
     const dieta = await this.dietaRepository.findById(dietaId);
-        if (!dieta) {
-          throw new Error("Dieta no encontrada");
-        }
-
-    }   
-    async updateDetalle(dietaId: number, dto: CreateDetalleDietaDto): Promise<void> {
-    const dieta = await this.dietaRepository.findById(dietaId);
-        if (!dieta) {
-        throw new Error("Dieta no encontrada");
-        }
+    if (!dieta) {
+      throw new Error("Dieta no encontrada");
     }
+    await this.dietaRepository.removeDetalle(dietaId, alimentoId);
+  }
+
+  async updateDetalle(
+    dietaId: number,
+    alimentoId: number,
+    proporcionKg: number
+  ): Promise<void> {
+    const dieta = await this.dietaRepository.findById(dietaId);
+    if (!dieta) {
+      throw new Error("Dieta no encontrada");
+    }
+    const detalle = new DetalleDieta(dietaId, alimentoId, proporcionKg);
+    await this.dietaRepository.updateDetalle(dietaId, detalle);
+  }
 }

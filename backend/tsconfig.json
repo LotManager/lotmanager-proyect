@@ -44,5 +44,5 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"]
+  "include": ["src", "src/application/services/bovinoView.service.ts"]
 }

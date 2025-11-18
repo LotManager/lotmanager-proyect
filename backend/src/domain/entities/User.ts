@@ -5,22 +5,24 @@ import { UserDTO } from "../../application/dtos/user.dto";
 
 export class User {
     private id: number;
-    private usuario: string;
+    private username: string;
     private contrasena: PasswordHash;
     private rol: Rol;
-
-    constructor(id: number, usuario: string, contrasena: PasswordHash, rol: Rol) {
-        if (usuario.trim().length === 0) throw new Error('El nombre no puede estar vacío');
+    private personaId: number;
+    
+    constructor(id: number, username: string, contrasena: PasswordHash, rol: Rol, personaId: number) {
+        if (username.trim().length === 0) throw new Error('El nombre no puede estar vacío');
 
         this.id = id;
-        this.usuario = usuario;
+        this.username = username;
         this.contrasena = contrasena;
         this.rol = rol;
+        this.personaId = personaId;
     }
     
     public isValid(): boolean {
         return (
-            this.usuario.trim().length > 0 &&
+            this.username.trim().length > 0 &&
             PasswordHash.isValid(this.contrasena.getValue()) &&
             (!this.rol || this.rol.isValid())
         );
@@ -38,11 +40,11 @@ export class User {
     }
 
     public getName(): string {
-        return this.usuario;
+        return this.username;
     }
-    public setName(usuario: string): void {
-        if (usuario.trim().length === 0) throw new Error('El nombre no puede estar vacío');
-        this.usuario = usuario;
+    public setName(username: string): void {
+        if (username.trim().length === 0) throw new Error('El nombre no puede estar vacío');
+        this.username = username;
     }
     
     public getPasswordHash(): string {
@@ -60,7 +62,7 @@ export class User {
         }
         return {
             id: this.id,
-            usuario: this.usuario,
+            username: this.username,
             rol: this.rol.toDTO()
         };
     }

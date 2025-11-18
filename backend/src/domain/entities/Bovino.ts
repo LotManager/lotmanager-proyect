@@ -2,25 +2,17 @@ import { SituacionBovino, EstadoSalud, SexoBovino, TipoBovino } from "@prisma/cl
 
 export class Bovino {
   constructor(
-    public readonly id: number | null,
-    public readonly id_raza: number,
-    public readonly id_corral: number,
-    public readonly caravana: number,
-    public readonly estado_bovino: EstadoBovino,
-    public readonly estado_salud: EstadoSalud,
-    public readonly ingreso: Date,
-    public readonly egreso: Date | null,
-    public readonly peso_ingreso: number,
-    public readonly peso_egreso: number | null,
-    public readonly sexo: Sexo,
-    public readonly tipo_bovino: TipoBovino
+    public readonly id: number,
+    public idRaza: number,
+    public idCorral: number,
+    public caravana: number,
+    public situacionBovino: SituacionBovino, 
+    public estadoSalud: EstadoSalud,
+    public ingreso: Date,
+    public pesoIngreso: number,
+    public sexo: SexoBovino, 
+    public tipoBovino: TipoBovino,
+    public egreso: Date | null,
+    public pesoEgreso: number | null
   ) {}
-
-  get estaEgresado(): boolean {
-    return this.estado_bovino === EstadoBovino.EGRESADO || this.egreso !== null;
-  }
-
-  gananciaPeso(pesoActual: number): number {
-    return pesoActual - this.peso_ingreso;
-  }
 }

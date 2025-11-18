@@ -27,7 +27,6 @@ export class CorralMetricsService {
         pesajes.length > 0
           ? pesajes[pesajes.length - 1]!.peso_dado
           : b.pesoIngreso
-
       const dias = Math.max(
         1,
         Math.round(

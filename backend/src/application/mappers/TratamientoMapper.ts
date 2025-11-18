@@ -11,7 +11,7 @@ export class TratamientoMapper {
   static toEntity(prismaModel: Prisma.TratamientoUncheckedCreateInput): Tratamiento {
     return new Tratamiento(
       prismaModel.id ?? 0,
-      prismaModel.descripcion,
+      prismaModel.descripcion ?? 'Sin Descripcion',
       prismaModel.nombre,
       prismaModel.unidad
     )

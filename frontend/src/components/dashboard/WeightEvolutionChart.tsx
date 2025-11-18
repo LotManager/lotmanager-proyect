@@ -1,7 +1,8 @@
+//app/components/dashboard/WeightEvolutionChart.tsx
 "use client";
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 // Datos de ejemplo para la evolución de peso
 const data = [
@@ -38,6 +39,14 @@ export default function WeightEvolutionChart() {
                         }}
                         labelStyle={{ color: 'white' }} 
                         formatter={(value) => [`${value} kg`, 'Peso']} 
+                    />
+                    
+                    {/* Línea de meta 200 kg */}
+                    <ReferenceLine
+                      y={200}
+                      stroke="#ef4444"
+                      strokeDasharray="4 4"
+                      label={<div style={{ transform: 'translate(10px, -10px)', color: '#ef4444' }}>Meta 200 kg</div>}
                     />
                     
                     {/* Barra de la gráfica - Usamos un color de paleta (primary) */}

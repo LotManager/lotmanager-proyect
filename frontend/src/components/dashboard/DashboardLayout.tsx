@@ -1,33 +1,37 @@
+// src/components/dashboard/DashboardLayout.tsx
 "use client";
 
-import React from 'react';
-// IMPORTANTE: Asumimos que PanelDashboard es el componente de sidebar funcional
-import PanelDashboard from './panelDashboard'; 
-import Topbar from './Topbar';  
+import React, { useState } from 'react';
+import Sidebar from './Sidebar'; 
+import { FaBell, FaUserCircle } from 'react-icons/fa'; 
 
 interface DashboardLayoutProps {
     children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-    // ESTADO: Necesitamos obtener el estado 'isCollapsed' del sidebar para ajustar el margen.
-    // Como el sidebar maneja su estado internamente, necesitamos una manera de comunicarlo.
-    // Para simplificar: lo haremos aquí y pasaremos la prop. (PERO ESO ES MÁS CÓDIGO)
-
-    // SOLUCIÓN SIMPLE: El sidebar ya maneja el margen, sólo hay que ajustarlo.
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const secondaryColor = '#234c2f';
+    const contentMarginClass = isCollapsed ? 'lg:ml-20' : 'lg:ml-64'; 
     
     return (
-        // Contenedor principal que se estira y permite al sidebar 'fixed' trabajar
-        <div className="flex min-h-screen bg-gray-50 w-full relative">
+        <div className="flex min-h-screen bg-gray-50 relative w-full">
             
-            {/* Sidebar Colapsable (Ahora fixed/top/left) */}
-            <PanelDashboard />
-            
-            {/* Contenido Principal (Esta área debe ser la que recibe el margen) */}
-            <div className="flex-1 flex flex-col">
-                <Topbar />
+            {/* 1. SIDEBAR (Componente Sidebar) */}
+            <Sidebar 
+                isCollapsed={isCollapsed}
+                onToggle={() => setIsCollapsed(!isCollapsed)}
+            />
+
+            {/* 2. ÁREA DE CONTENIDO PRINCIPAL */}
+            <div className={`
+                flex-1 flex flex-col min-w-0 
+                ${contentMarginClass} 
+                transition-all duration-300 ease-in-out w-full
+            `}>
                 
-                <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+                {/* Contenido de la Página */}
+                <main className="flex-1 p-2 md:p-4 overflow-auto">
                     {children}
                 </main>
             </div>

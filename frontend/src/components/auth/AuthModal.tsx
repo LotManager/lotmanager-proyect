@@ -1,4 +1,4 @@
-// SignInForm.tsx
+//app/components/auth/AuthModal.tsx
 
 "use client";
 

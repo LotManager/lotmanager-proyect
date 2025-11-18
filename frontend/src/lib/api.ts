@@ -1,4 +1,5 @@
-// lib/api.ts
+// src/lib/api.ts
+
 import type { SanidadRow, ResumenRow, EficienciaBar, EvolucionMes } from '@/types/reportes';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 

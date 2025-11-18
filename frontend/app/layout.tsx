@@ -1,25 +1,24 @@
-// app/layout.tsx 
+// app/layout.tsx (Versión Raíz - Server Component)
 
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
 import React from 'react';
+import './globals.css'; 
 
 export const metadata: Metadata = {
-    title: "LotManager - Gestión de Ganado",
-    description: "Sistema de gestión de lotes y engorde de ganado.",
+  title: "LotManager - Gestión de Ganado",
+  description: "La solución integral para la gestión de lotes.",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <html lang="es">
-            {/* Solo un body limpio para que el page.tsx tome el control total del layout */}
-            <body>
-                <main>{children}</main>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="es">
+      <body className="min-h-screen bg-gray-50 text-gray-800">
+        {children}
+      </body>
+    </html>
+  );
 }

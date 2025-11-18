@@ -1,7 +1,7 @@
-import { IDietaRepository } from "domain/interfaces/IDietaRepository";
-import { Dieta } from "domain/entities/Dieta";
-import { DetalleDieta } from "domain/entities/DetalleDieta";
-import { DietaMapper } from "application/mappers/dieta.mapper";
+import { IDietaRepository } from "../../domain/interfaces/IDietaRepository";
+import { Dieta } from "../../domain/entities/Dieta";
+import { DetalleDieta } from "../../domain/entities/DetalleDieta";
+import { DietaMapper } from "../../application/mappers/dieta.mapper";
 import type { CreateDietaDto, UpdateDietaDto } from "../dtos/dieta.dto";
 import type { CreateDetalleDietaDto } from "../dtos/detalle-dieta.dto";
 

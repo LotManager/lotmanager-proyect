@@ -1,5 +1,5 @@
-import { Suministro } from "domain/entities/Suministro";
-import { ISuministroRepository } from "domain/interfaces/ISuministroRepository";
+import { Suministro } from "../../domain/entities/Suministro";
+import { ISuministroRepository } from "../../domain/interfaces/ISuministroRepository";
 import { PrismaClient } from "@prisma/client";
 
 export class PrismaSuministroRepository implements ISuministroRepository {

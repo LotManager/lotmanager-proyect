@@ -1,5 +1,5 @@
 import z from "zod";
-import { TipoAlimento } from "domain/enums/TipoAlimento";
+import { TipoAlimento } from "../../domain/enums/TipoAlimento";
 
 export const CreateAlimentoSchema = z.object({
     nombre: z.string().min(1, "El nombre no puede estar vacío"),

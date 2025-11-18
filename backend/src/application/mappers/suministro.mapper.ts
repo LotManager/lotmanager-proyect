@@ -1,4 +1,4 @@
-import { Suministro } from "domain/entities/Suministro";
+import { Suministro } from "../../domain/entities/Suministro";
 import type { CreateSuministroDto, SuministroResponseDto}  from "../dtos/suministro.dto";
 
 export class SuministroMapper {

@@ -1,8 +1,8 @@
-import { AlimentoMapper } from "application/mappers/alimento.mapper";
-import { AlimentoService } from "application/services/alimentoService";
-import { PrismaAlimentoRepository } from "infrastructure/repositorios/PrismaAlimentoRepository";
+import { AlimentoMapper } from "../../application/mappers/alimento.mapper";
+import { AlimentoService } from "../../application/services/alimentoService";
+import { PrismaAlimentoRepository } from "../../infrastructure/repositorios/PrismaAlimentoRepository";
 import { Request, Response } from "express";
-import { CreateAlimentoSchema, UpdateAlimentoSchema, IdParamSchema, AlimentoQuerySchema } from "application/dtos/alimento.dto";
+import { CreateAlimentoSchema, UpdateAlimentoSchema, IdParamSchema, AlimentoQuerySchema } from "../../application/dtos/alimento.dto";
 
 const service = new AlimentoService(new PrismaAlimentoRepository());
 

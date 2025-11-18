@@ -1,4 +1,4 @@
-import { Dieta } from "domain/entities/Dieta";
+import { Dieta } from "../../domain/entities/Dieta";
 import type { CreateDietaDto, DietaResponseDto, DietaWithDetallesResponseDto, UpdateDietaDto } from "../dtos/dieta.dto";
 
 export class DietaMapper {

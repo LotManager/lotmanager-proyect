@@ -1,4 +1,4 @@
-import { Suministro } from "domain/entities/Suministro";
+import { Suministro } from "../../domain/entities/Suministro";
 import { ISuministroRepository } from "domain/interfaces/ISuministroRepository";
 import type { CreateSuministroDto, UpdateSuministroDto } from "../dtos/suministro.dto";
 

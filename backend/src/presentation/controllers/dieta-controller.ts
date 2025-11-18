@@ -1,9 +1,9 @@
-import { DietaMapper } from "application/mappers/dieta.mapper";
-import { DietaService } from "application/services/dietaService";
-import { PrismaDietaRepository } from "infrastructure/repositorios/PrismaDietaRepository";
+import { DietaMapper } from "../../application/mappers/dieta.mapper";
+import { DietaService } from "../../application/services/dietaService";
+import { PrismaDietaRepository } from "../../infrastructure/repositorios/PrismaDietaRepository";
 import { Request, Response } from "express";
-import { CreateDietaSchema, UpdateDietaSchema, IdParamSchema } from "application/dtos/dieta.dto";
-import { CreateDetalleDietaSchema, UpdateDetalleDietaSchema } from "application/dtos/detalle-dieta.dto";
+import { CreateDietaSchema, UpdateDietaSchema, IdParamSchema } from "../../application/dtos/dieta.dto";
+import { CreateDetalleDietaSchema, UpdateDetalleDietaSchema } from "../../application/dtos/detalle-dieta.dto";
 
 const service = new DietaService(new PrismaDietaRepository());
 

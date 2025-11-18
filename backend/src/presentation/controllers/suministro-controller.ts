@@ -1,8 +1,8 @@
-import { SuministroMapper } from "application/mappers/suministro.mapper";
-import { SuministroService } from "application/services/suministroService";
-import { PrismaSuministroRepository } from "infrastructure/repositorios/PrismaSuministroRepository";
+import { SuministroService } from "../../application/services/suministroService";
+import { SuministroMapper } from "../../application/mappers/suministro.mapper";
+import { PrismaSuministroRepository } from "../../infrastructure/repositorios/PrismaSuministroRepository";
 import { Request, Response } from "express";
-import { CreateSuministroSchema, UpdateSuministroSchema, IdParamSchema } from "application/dtos/suministro.dto";
+import { CreateSuministroSchema, UpdateSuministroSchema, IdParamSchema } from "../../application/dtos/suministro.dto";
 
 const service = new SuministroService(new PrismaSuministroRepository());
 

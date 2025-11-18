@@ -1,7 +1,7 @@
-import { Dieta } from "domain/entities/Dieta";
-import { IDietaRepository } from "domain/interfaces/IDietaRepository";
+import { Dieta } from "../../domain/entities/Dieta";
+import { IDietaRepository } from "../../domain/interfaces/IDietaRepository";
 import { PrismaClient } from "@prisma/client";
-import { DetalleDieta } from "domain/entities/DetalleDieta";
+import { DetalleDieta } from "../../domain/entities/DetalleDieta";
 
 export class PrismaDietaRepository implements IDietaRepository {
     private prisma: PrismaClient;

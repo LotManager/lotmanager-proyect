@@ -1,9 +1,9 @@
-import { IAlimentoRepository } from "domain/interfaces/IAlimentoRepository";
-import { Alimento } from "domain/entities/Alimento";
-import { CreateAlimentoDto } from "application/dtos/alimento.dto";
-import { UpdateAlimentoInput } from "application/dtos/alimento.dto";
+import { IAlimentoRepository } from "../../domain/interfaces/IAlimentoRepository";
+import { Alimento } from "../../domain/entities/Alimento";
+import { CreateAlimentoDto } from "../../application/dtos/alimento.dto";
+import { UpdateAlimentoInput } from "../../application/dtos/alimento.dto";
 import { $Enums } from "@prisma/client";
-import { TipoAlimento } from "domain/enums/TipoAlimento";
+import { TipoAlimento } from "../../domain/enums/TipoAlimento";
 
 export class AlimentoService {
     constructor(private alimentoRepository: IAlimentoRepository) {}

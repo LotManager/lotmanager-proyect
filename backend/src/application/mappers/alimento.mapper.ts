@@ -1,4 +1,4 @@
-import { Alimento } from "domain/entities/Alimento";
+import { Alimento } from "../../domain/entities/Alimento";
 import type { AlimentoResponseDto, CreateAlimentoDto } from "../dtos/alimento.dto";
 import { $Enums } from "@prisma/client";
 

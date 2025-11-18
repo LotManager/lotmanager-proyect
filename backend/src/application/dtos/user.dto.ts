@@ -39,7 +39,8 @@ export const userCreateDTOSchema = z.object({
   contrasena: z.string()
     .min(6, "La contraseña debe tener al menos 6 caracteres")
     .max(100),
-  rol: rolSchema.transform((nombre) => Rol.fromNombre(nombre))
+  rol: rolSchema.transform((nombre) => Rol.fromNombre(nombre)),
+  personaId: z.number().optional()
 });
 
 export type UserCreateInput = z.infer<typeof userCreateDTOSchema>;

@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { PersonalRepository } from "../../domain/interfaces/IPersonalRepository";
-import { PersonalCreateInput, PersonalPersisted } from "../../application/personal/types/Personaltypes";
+import { PersonalCreateDto } from "../../application/dtos/personal.dto";
 import { mapToPersonalPersisted } from "../../application/mappers/mapToPersonalPersisted";
+import { PersonalPersisted } from "../../application/types/Personaltypes";
 
 
 const prisma = new PrismaClient();
@@ -10,30 +11,34 @@ const prisma = new PrismaClient();
 
 
 export class PrismaPersonalRepository implements PersonalRepository {
-  async create(data: PersonalCreateInput): Promise<PersonalPersisted> {
-    const creado = await prisma.personal.create({
-      data: {
-        nombre: data.nombre,
-        apellido: data.apellido,
-        id_usuario: data.id_usuario ?? null
-      },
-      include: {
-        usuario: {
-          include: { rol: true }
-        }
-      }
-    });
-
-    return mapToPersonalPersisted(creado);
+  async create(data: PersonalCreateDto): Promise<PersonalPersisted> {
+  if (data.id_usuario) {
+    const usuario = await prisma.usuario.findUnique({ where: { id: data.id_usuario } });
+    if (!usuario) throw new Error("El usuario asociado no existe");
   }
 
+  const creado = await prisma.persona.create({
+    data: {
+      nombre: data.nombre,
+      apellido: data.apellido,
+      email: data.email,
+      usuario: data.id_usuario
+        ? { connect: { id: data.id_usuario } }
+        : undefined
+    },
+    include: {
+      usuario: true
+    }
+  });
+
+  return mapToPersonalPersisted(creado);
+}
+
   async findById(id: number): Promise<PersonalPersisted | null> {
-    const encontrado = await prisma.personal.findUnique({
+    const encontrado = await prisma.persona.findUnique({
       where: { id },
       include: {
-        usuario: {
-          include: { rol: true }
-        }
+        usuario: true
       }
     });
 
@@ -42,18 +47,16 @@ export class PrismaPersonalRepository implements PersonalRepository {
     return mapToPersonalPersisted(encontrado);
   }
 
-  async save(id: number, data: PersonalCreateInput): Promise<PersonalPersisted> {
-    const actualizado = await prisma.personal.update({
+  async save(id: number, data: PersonalCreateDto): Promise<PersonalPersisted> {
+    const actualizado = await prisma.persona.update({
       where: { id },
       data: {
         nombre: data.nombre,
         apellido: data.apellido,
-        id_usuario: data.id_usuario ?? null
+        email: data.email,
       },
       include: {
-        usuario: {
-          include: { rol: true }
-        }
+        usuario: true
       }
     });
 
@@ -61,21 +64,18 @@ export class PrismaPersonalRepository implements PersonalRepository {
   }
 
   async delete(id: number): Promise<void> {
-    await prisma.personal.delete({ where: { id } });
+    await prisma.persona.delete({ where: { id } });
   }
 
   async buscarPorUsuarioId(id: number): Promise<any> {
     return prisma.usuario.findUnique({
-      where: { id },
-      include: { rol: true }
+      where: { id }
     });
   }
   async findAll(): Promise<PersonalPersisted[]> {
-    const personals = await prisma.personal.findMany({
+    const personals = await prisma.persona.findMany({
       include: {
-        usuario: {
-          include: { rol: true }
-        }
+        usuario: true
       }
     });
     return personals.map(mapToPersonalPersisted);

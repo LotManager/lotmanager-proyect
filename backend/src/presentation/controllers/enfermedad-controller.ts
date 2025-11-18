@@ -37,7 +37,7 @@ export class EnfermedadController {
     }
   }
 
-  async obtenerTodas(req: Request, res: Response) {
+  async obtenerTodas(_req: Request, res: Response) {
     try {
       const lista = await this.service.obtenerTodas();
       res.json(lista.map(EnfermedadMapper.toResponseDTO));

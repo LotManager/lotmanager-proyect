@@ -24,7 +24,7 @@ export class User {
         return (
             this.username.trim().length > 0 &&
             PasswordHash.isValid(this.contrasena.getValue()) &&
-            (!this.rol || this.rol.isValid())
+            this.rol.isValid()
         );
     }
     public async checkPassword(plain: string): Promise<boolean> {
@@ -37,6 +37,10 @@ export class User {
 
     public getRol(): Rol {
         return this.rol;
+    }
+
+    public getPersonaId(): number {
+        return this.personaId;
     }
 
     public getName(): string {
@@ -57,7 +61,7 @@ export class User {
     
     public toDTO(): UserDTO {
         const nombre = this.rol.getNombre();
-        if (nombre !== "admin" && nombre !== "encargado") {
+        if (nombre !== "admin" && nombre !== "tambero") {
             throw new Error(`Rol inválido: ${nombre}`);
         }
         return {

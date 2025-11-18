@@ -6,7 +6,8 @@ export class Personal {
         private id: number,
         private nombre: string,
         private apellido: string,
-        private usuario?: User  
+        private email: string,
+        private usuario: User | null 
     ) {}
     public getId(): number {
         return this.id;
@@ -17,8 +18,12 @@ export class Personal {
     public getApellido(): string {
         return this.apellido;
     }
-    public getUsuario(): User | undefined {
+    public getUsuario(): User | null {
         return this.usuario;
+    }
+
+    public getMail(): string {
+        return this.email;
     }
 
     public hasUsuario(): boolean {
@@ -34,15 +39,7 @@ export class Personal {
         id: this.id,
         nombre: this.nombre,
         apellido: this.apellido,
-        id_usuario: this.usuario?.getId() ?? null,
-        usuario: this.usuario
-        ? {
-            id: this.usuario.getId(),
-            nombre: this.usuario.getName(),
-            rol: this.usuario.getRol().getNombre() as "admin" | "encargado"
-            }
-        : undefined
-    };
+        email: this.email,
     }
-
+}
 }

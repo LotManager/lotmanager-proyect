@@ -255,7 +255,7 @@ enum TipoEnfermedad {
 
 enum TipoRol {
   ADMINISTRADOR
-  ENCARGADO
+  TAMBERO
 }
 
 enum SexoBovino {

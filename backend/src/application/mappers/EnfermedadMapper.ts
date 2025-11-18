@@ -1,22 +1,23 @@
-
+import { TipoEnfermedad as DomainTipoEnfermedad } from "../../domain/enums/TipoEnfermedad";
+import { TipoEnfermedad as PrismaTipoEnfermedad } from "@prisma/client";
 import { Enfermedad } from "../../domain/entities/Enfermedad";
 import type { EnfermedadResponseDTO, EnfermedadDTOType, EnfermedadResponseDTOExtendido } from "../dtos/enfermedad.dto";
 
 export class EnfermedadMapper {
   static fromResponseDTO(dto: EnfermedadDTOType): Enfermedad {
-    return new Enfermedad(0, dto.nombre, dto.descripcion, dto.tipo);
-  }
+  return new Enfermedad(0, dto.nombre, dto.descripcion, dto.tipo);
+}
 
-  static fromPersisted(dto: EnfermedadResponseDTO): Enfermedad {
-   return new Enfermedad(dto.id, dto.nombre, dto.descripcion, dto.tipo);
-  }
+static fromPersisted(dto: EnfermedadResponseDTO): Enfermedad {
+  return new Enfermedad(dto.id, dto.nombre, dto.descripcion, dto.tipo);
+}
   
   static toResponseDTO(entidad: Enfermedad): EnfermedadResponseDTO {
     return {
         id: entidad.getId(),
         nombre: entidad.getNombre(),
         descripcion: entidad.getDescripcion(),
-        tipo: entidad.getTipo()
+        tipo: entidad.getTipo() as EnfermedadResponseDTO["tipo"], 
         };
     }
   
@@ -25,7 +26,7 @@ export class EnfermedadMapper {
     return {
       nombre: entidad.getNombre(),
       descripcion: entidad.getDescripcion(),
-      tipo: entidad.getTipo(),
+      tipo: entidad.getTipo() as EnfermedadResponseDTO["tipo"], 
     };
   }
 
@@ -34,10 +35,18 @@ export class EnfermedadMapper {
     id: entidad.getId(),
     nombre: entidad.getNombre(),
     descripcion: entidad.getDescripcion(),
-    tipo: entidad.getTipo(),
+    tipo: entidad.getTipo() as EnfermedadResponseDTO["tipo"], 
     tratamientos: entidad.getTratamientos().map(t => ({
       nombre: t.nombre
     }))
   };
 }
+
 }  
+export function mapTipoFromPrisma(tipo: PrismaTipoEnfermedad): DomainTipoEnfermedad {
+  return tipo as DomainTipoEnfermedad;
+}
+
+export function mapToPrismaTipo(tipo: DomainTipoEnfermedad): PrismaTipoEnfermedad {
+  return tipo as PrismaTipoEnfermedad;
+}

@@ -1,4 +1,4 @@
-import prisma from "../../config/db"
+/*import prisma from "../../config/db"
 import { DetalleAlimento } from "../../domain/entities/DetalleAlimento"
 import { IDetalleAlimentoRepository } from "../../domain/interfaces/IDetalleAlimentoRepository"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"

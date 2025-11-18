@@ -1,8 +1,8 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient} from "@prisma/client";
 import { Enfermedad } from "../../domain/entities/Enfermedad";
 import { IEnfermedadRepository } from "../../domain/interfaces/IEnfermedadRepository";
-import { TipoEnfermedad } from "../../domain/enums/TipoEnfermedad";
-import { TipoEnfermedadMapper } from "application/mappers/tipoEnfermedadMapper";
+import { TipoEnfermedad as DomainTipoEnfermedad} from "../../domain/enums/TipoEnfermedad";
+import { mapTipoFromPrisma, mapToPrismaTipo } from "../../application/mappers/EnfermedadMapper";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +12,7 @@ export class PrismaEnfermedadRepository implements IEnfermedadRepository {
       where: { id }
     });
     if (!data) return null;
-    const tipoEnum = TipoEnfermedad[data.tipo as keyof typeof TipoEnfermedad];
+    const tipoEnum = DomainTipoEnfermedad[data.tipo as keyof typeof DomainTipoEnfermedad];
     return new Enfermedad(data.id, data.nombre, data.descripcion ?? '', tipoEnum);
   }
 
@@ -20,26 +20,26 @@ export class PrismaEnfermedadRepository implements IEnfermedadRepository {
     const lista = await prisma.enfermedad.findMany({
 
     });
-    return lista.map(e => {
-      const tipoEnum = TipoEnfermedad[e.tipo as keyof typeof TipoEnfermedad];
-      return new Enfermedad(e.id, e.nombre, e.descripcion ?? '', tipoEnum);
-    });
+    return lista.map(e => new Enfermedad(e.id, e.nombre, e.descripcion ?? '', mapTipoFromPrisma(e.tipo)));
   }
 
-  async create(enfermedad: { nombre: string; descripcion: string; tipo: TipoEnfermedad }): Promise<Enfermedad> {
-    const data = await prisma.enfermedad.create({
-      data: {
-        nombre: enfermedad.nombre,
-        descripcion: enfermedad.descripcion,
-        tipo: TipoEnfermedadMapper.toPrisma(enfermedad.tipo),
+  async create(enfermedad:{nombre: string; descripcion: string; tipo: DomainTipoEnfermedad;}): Promise<Enfermedad> {
+      const data = await prisma.enfermedad.create({
+        data: {
+          nombre: enfermedad.nombre,
+          descripcion: enfermedad.descripcion,
+          tipo: mapToPrismaTipo(enfermedad.tipo),
+        },
+      });
 
-      }
-    });
-    const tipoEnum = TipoEnfermedad[data.tipo as keyof typeof TipoEnfermedad];
-    return new Enfermedad(data.id, data.nombre, data.descripcion ?? '', tipoEnum);
-  }
-
-  async update(id: number, enfermedad: { nombre?: string; descripcion?: string; tipo?: TipoEnfermedad }): Promise<void> {
+      return new Enfermedad(
+        data.id,
+        data.nombre,
+        data.descripcion ?? '',
+        data.tipo as DomainTipoEnfermedad
+      );
+    }
+  async update(id: number, enfermedad: { nombre?: string; descripcion?: string; tipo?: DomainTipoEnfermedad }): Promise<void> {
     const data = {
   ...(enfermedad.nombre !== undefined && { nombre: enfermedad.nombre }),
   ...(enfermedad.descripcion !== undefined && { descripcion: enfermedad.descripcion }),

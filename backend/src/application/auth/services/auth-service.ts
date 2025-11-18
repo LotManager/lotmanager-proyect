@@ -14,7 +14,7 @@ export class AuthService {
 
   public async register(data: UserCreateInput): Promise<AuthResponseDTO> {
    
-    const duplicado = await this.userRepo.findByUsername(data.usuario);
+    const duplicado = await this.userRepo.findByUsername(data.username);
     if (duplicado) throw new Error("El nombre de usuario ya está en uso");
 
    
@@ -25,7 +25,7 @@ export class AuthService {
     }
 
    
-    const nuevoUsuario = new User(0, data.usuario, passwordHash, rol);
+    const nuevoUsuario = new User(0, data.username, passwordHash, rol, data.personaId ?? 0);
     if (!nuevoUsuario.isValid()) {
       throw new Error("Datos de usuario inválidos");
     }

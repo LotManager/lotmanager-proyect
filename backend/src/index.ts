@@ -52,9 +52,7 @@ app.use("/api/corrales", corralRoutes); // No anda el put
 
 
 app.use("/api/detalle-enfermedad", detalleEnfermedadRoutes);
-app.use("/api/pesaje", pesajeRouter);
-
-//Mati
+app.use("/api/pesaje", roleGuard(["admin", "encargado"]), pesajeRouter);
 app.use("/api/bovinos", bovinoRouter);
 app.use("/api/corral-metrics", corralMetricsRouter);
 

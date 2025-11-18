@@ -1,27 +1,4 @@
-// src/domain/entities/Bovino.ts
-export enum EstadoBovino {
-  ENGORDE = 'ENGORDE',
-  ENGORDE_FINAL = 'ENGORDE_FINAL',
-  EGRESADO = 'EGRESADO',
-}
-
-export enum EstadoSalud {
-  SANO = 'SANO',
-  ENFERMO = 'ENFERMO',
-  RECUPERADO = 'RECUPERADO',
-}
-
-export enum Sexo {
-  MACHO = 'MACHO',
-  HEMBRA = 'HEMBRA',
-}
-
-export enum TipoBovino {
-  TERNERO = 'TERNERO',
-  VAQUILLONA = 'VAQUILLONA',
-  NOVILLO = 'NOVILLO',
-  TORO = 'TORO',
-}
+import { SituacionBovino, EstadoSalud, SexoBovino, TipoBovino } from "@prisma/client";
 
 export class Bovino {
   constructor(
@@ -31,8 +8,8 @@ export class Bovino {
     public readonly caravana: number,
     public readonly estado_bovino: EstadoBovino,
     public readonly estado_salud: EstadoSalud,
-    public readonly ingreso: number,
-    public readonly egreso: number | null,
+    public readonly ingreso: Date,
+    public readonly egreso: Date | null,
     public readonly peso_ingreso: number,
     public readonly peso_egreso: number | null,
     public readonly sexo: Sexo,

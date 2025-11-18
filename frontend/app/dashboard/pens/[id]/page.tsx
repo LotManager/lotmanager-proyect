@@ -1,4 +1,4 @@
-// frontend/src/app/dashboard/pens/[id]/page.tsx
+/*
 "use client"
 
 import { useEffect, useState } from "react"
@@ -85,10 +85,11 @@ export default function CorralDetailPage() {
   if (!vm) return <div className="p-4"><Alert severity="info">Corral no encontrado</Alert></div>
 
   const ocupacion = Math.round((vm.bovinosCount / vm.corral.capacidadMaxima) * 100)
-
   return (
     <Box className="space-y-6">
+*/
       {/* Header */}
+      /*
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Stack direction="row" spacing={2} alignItems="center">
           <Button variant="text" startIcon={<FaArrowLeft />} onClick={() => router.push("/dashboard/corrales")}>
@@ -107,8 +108,8 @@ export default function CorralDetailPage() {
           Editar
         </Button>
       </Stack>
-
-      {/* Resumen */}
+      {/* Resumen */
+      /*
       <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
         <Card sx={{ flex: 1 }}>
           <CardHeader title="Ocupación" subheader={`Capacidad: ${vm.corral.capacidadMaxima}`} />
@@ -157,7 +158,8 @@ export default function CorralDetailPage() {
         </Card>
       </Stack>
 
-      {/* Estadísticas */}
+      {/* Estadísticas */
+      /*
       <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
         <Card sx={{ flex: 1 }}>
           <CardHeader title="Ganancia media diaria (GMD)" subheader="Promedio actual" />
@@ -194,4 +196,4 @@ export default function CorralDetailPage() {
       />
     </Box>
   )
-}
+}*/

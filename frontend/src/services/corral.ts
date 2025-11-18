@@ -1,32 +1,23 @@
-// frontend/src/services/corral.ts
-
 export type Corral = {
   id: number
   numero: number
   capacidadMaxima: number
-  tipoCorral: "ENGORDE" | "ENFERMA"
+  tipoCorral: string
   idFeedlot: number
   idAlimentacion: number | null
   nombreAlimentacion?: string
 }
 
-export type Dieta = {
-  id: number
-  nombre: string
-}
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-// 🔹 Obtener todos los corrales
 export async function getCorrales(): Promise<Corral[]> {
-  const res = await fetch(`${API_URL}/corrales`, { cache: "no-store" })
+  const res = await fetch(`${API_URL}/api/corrales`, { cache: "no-store" })
   if (!res.ok) throw new Error("Error al obtener corrales")
   return res.json()
 }
 
-// 🔹 Crear un corral
 export async function createCorral(data: Omit<Corral, "id">) {
-  const res = await fetch(`${API_URL}/corrales`, {
+  const res = await fetch(`${API_URL}/api/corrales`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -35,49 +26,46 @@ export async function createCorral(data: Omit<Corral, "id">) {
   return res.json()
 }
 
-// 🔹 Actualizar un corral
+// src/services/corral.ts
+
 export async function updateCorral(id: number, data: Partial<Corral>) {
-  const res = await fetch(`${API_URL}/corrales/${id}`, {
+  const res = await fetch(`${API_URL}/api/corrales/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  })
-  if (!res.ok) throw new Error("Error al actualizar corral")
-  return res.json()
+  });
+
+  // Si el status es 204, la operación fue exitosa pero no hay contenido.
+  // Devolvemos algo para indicar éxito (null, true, un objeto, lo que prefieras).
+  if (res.status === 204) {
+    return null; 
+  }
+
+  // Si no fue 204, pero tampoco fue "ok", ahí sí lanzamos el error.
+  // Esto es más informativo porque podés ver qué status code falló.
+  if (!res.ok) {
+    throw new Error(`Error al actualizar corral. Status: ${res.status}`);
+  }
+
+  // Solo si la respuesta es ok Y tiene contenido, la parseamos.
+  return res.json(); 
 }
 
-// 🔹 Eliminar un corral
 export async function deleteCorral(id: number) {
-  const res = await fetch(`${API_URL}/corrales/${id}`, {
+  const res = await fetch(`${API_URL}/api/corrales/${id}`, {
     method: "DELETE",
   })
   if (!res.ok) throw new Error("Error al eliminar corral")
   return true
 }
 
-// 🔹 Obtener un corral por ID
-export async function getCorralById(id: number): Promise<Corral> {
-  const res = await fetch(`${API_URL}/corrales/${id}`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Error al obtener corral")
-  return res.json()
+export type alimentacion = {
+  id: number
+  nombre: string
 }
 
-// 🔹 Contar bovinos en un corral
-export async function getBovinosCountByCorral(idCorral: number): Promise<number> {
-  const res = await fetch(`${API_URL}/api/bovinos?corralId=${idCorral}`, { cache: "no-store" })
-  if (!res.ok) return 0
-  const data = await res.json()
-  return Array.isArray(data) ? data.length : 0
-}
-
-// 🔹 Obtener dietas (alimentaciones)
-export async function getDietas(): Promise<Dieta[]> {
+export async function getDietas(): Promise<alimentacion[]> {
   const res = await fetch(`${API_URL}/alimentaciones`, { cache: "no-store" })
   if (!res.ok) throw new Error("Error al obtener dietas")
-  const data = await res.json()
-  // Mapear descripcion → nombre
-  return data.map((d: any) => ({
-    id: d.id,
-    nombre: d.descripcion,
-  }))
+  return res.json()
 }

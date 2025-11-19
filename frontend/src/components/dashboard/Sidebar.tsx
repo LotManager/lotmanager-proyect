@@ -1,3 +1,5 @@
+// src/components/dashboard/Sidebar.tsx
+
 "use client";
 
 import React from 'react';
@@ -27,13 +29,14 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     const pathname = usePathname();
-    const secondaryColor = '#234c2f'; // Tu color de ícono
-    const activeBgColor = '#6a8e7f'; // Tu color primario para el estado activo
+    const secondaryColor = '#234c2f'; // Tu color de ícono (Verde oscuro)
+    const activeBgColor = '#6a8e7f'; // Tu color primario (Verde medio)
 
     return (
+        // ASIDE: Estable y fijo en la pantalla
         <aside className={`
             fixed left-0 top-0 h-screen bg-white border-r border-gray-200 flex flex-col
-            transition-all duration-300 ease-in-out z-50 flex-shrink-0
+            transition-all duration-300 ease-in-out z-50
             ${isCollapsed ? 'w-20' : 'w-64'}
         `}>
             
@@ -49,7 +52,6 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                     {!isCollapsed && (
                         <div className="flex-shrink-0">
                             <h2 className="font-bold text-lg" style={{ color: secondaryColor }}>LotManager</h2>
-                            <span className="text-sm text-slate-500">Tambero</span>
                         </div>
                     )}
                 </div>
@@ -83,9 +85,9 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                                     className={`
                                         flex items-center gap-3 p-3 rounded-lg transition-all
                                         ${isCollapsed ? 'justify-center' : ''}
-                                        ${isActive ? 'text-white' : 'text-gray-700 hover:bg-gray-100'}
+                                        ${isActive ? 'pointer-events-none' : 'text-gray-700 hover:bg-gray-100'}
                                     `}
-                                    // 🎯 Fondo verde solo si está activo
+                                    // 🎯 Fondo activo estable y texto activo:
                                     style={{ backgroundColor: isActive ? activeBgColor : undefined }}
                                     title={isCollapsed ? item.name : ""}
                                 >
@@ -95,9 +97,9 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                                         style={{ color: isActive ? 'white' : secondaryColor }} 
                                         className="flex-shrink-0" 
                                     />
-                                    {/* Texto: Blanco si activo, sino normal */}
+                                    {/* Texto: Si está activo, forzamos text-white para asegurar visibilidad */}
                                     {!isCollapsed && (
-                                        <span className={`font-medium whitespace-nowrap ${isActive ? 'text-white' : ''}`}>
+                                        <span className={`font-medium whitespace-nowrap ${isActive ? 'text-white' : 'text-gray-700'}`}>
                                             {item.name}
                                         </span>
                                     )}

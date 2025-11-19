@@ -12,7 +12,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const secondaryColor = '#234c2f';
-    const contentMarginClass = isCollapsed ? 'lg:ml-20' : 'lg:ml-64'; 
+    const contentMarginClass = isCollapsed ? 'ml-0' : 'ml-64'; 
     
     return (
         <div className="flex min-h-screen bg-gray-50 relative w-full">
@@ -24,11 +24,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             />
 
             {/* 2. ÁREA DE CONTENIDO PRINCIPAL */}
-            <div className={`
-                flex-1 flex flex-col min-w-0 
-                ${contentMarginClass} 
-                transition-all duration-300 ease-in-out w-full
-            `}>
+            <div className={`w-full  ${isCollapsed ? 'ml-20' : 'ml-32'}`}>
                 
                 {/* Contenido de la Página */}
                 <main className="flex-1 p-2 md:p-4 overflow-auto">

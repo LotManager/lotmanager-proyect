@@ -51,7 +51,7 @@ export default function DashboardPage() {
       <div className="p-4 md:p-8 w-full">
         {/* Título */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-extrabold text-[var(--color-secondary)]">Dashboard</h1>
+          <h1 className="text-3xl font-extrabold text-[var(--color-secondary)]">Home</h1>
           <span className="text-sm text-gray-500">
             Última actualización: {new Date().toLocaleDateString('es-AR')}
           </span>

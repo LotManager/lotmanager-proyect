@@ -30,3 +30,30 @@ export async function getEvolucionPesoLote(): Promise<EvolucionMes[]> {
   if (!res.ok) throw new Error(`Error ${res.status} al obtener evolución de peso (${url})`);
   return await res.json() as EvolucionMes[];
 }
+
+export async function getEmpleados(): Promise<Empleado[]> {
+  const res = await fetch(`${API}/empleados`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Error al obtener empleados');
+  return res.json();
+}
+
+export async function getEmpleadoStats(): Promise<EmpleadoStats> {
+  const res = await fetch(`${API}/empleados/stats`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Error al obtener estadísticas');
+  return res.json();
+}
+
+export async function deleteEmpleado(id: number): Promise<void> {
+  const res = await fetch(`${API}/empleados/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Error al eliminar');
+}
+
+export async function updateEmpleado(id: number, data: Partial<Empleado>): Promise<Empleado> {
+  const res = await fetch(`${API}/empleados/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Error al actualizar');
+  return res.json();
+}

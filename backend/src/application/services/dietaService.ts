@@ -53,18 +53,29 @@ export class DietaService {
         existing.setDescripcion(dto.descripcion);
       }
 
-      // 3) Si vienen detalles en el DTO, reemplazamos TODOS los detalles
-      if (dto.detalles !== undefined) {
-        const nuevosDetalles = dto.detalles.map(
-          (d) => new DetalleDieta(id, d.alimentoId, d.proporcionKg)
-        );
-        existing.setDetalles(nuevosDetalles);
-      }
-
-      // 4) Persistir cambios (nombre, descripcion y detalles)
+      // 3) Persistir cambios de dieta (nombre / descripción)
       await this.dietaRepository.update(existing);
 
-      return existing;
+      // 4) Si vienen detalles en el body, actualizar cada uno
+      if (dto.detalles && dto.detalles.length > 0) {
+        for (const det of dto.detalles) {
+          if (det.alimentoId === undefined || det.proporcionKg === undefined) {
+            throw new Error("Detalle inválido: 'alimentoId' y 'proporcionKg' son requeridos");
+          }
+
+          const detalle = new DetalleDieta(
+            id,               // dietaId (viene de la URL)
+            det.alimentoId,   // del body
+            det.proporcionKg  // del body
+          );
+
+          await this.dietaRepository.updateDetalle(id, detalle);
+        }
+      }
+
+      // 5) Volver a leer la dieta actualizada (si querés devolverla completa)
+      const updated = await this.dietaRepository.findById(id);
+      return updated ?? existing;
     }
     async exists(id: number): Promise<boolean> {
       return this.dietaRepository.exists(id);
@@ -99,12 +110,13 @@ export class DietaService {
     dietaId: number,
     alimentoId: number,
     proporcionKg: number
-  ): Promise<void> {
+    ): Promise<void> {
     const dieta = await this.dietaRepository.findById(dietaId);
-    if (!dieta) {
-      throw new Error("Dieta no encontrada");
+    if (!dieta) throw new Error("Dieta no encontrada");
+
+    await this.dietaRepository.updateDetalle(
+      dietaId,
+      new DetalleDieta(dietaId, alimentoId, proporcionKg)
+    );
     }
-    const detalle = new DetalleDieta(dietaId, alimentoId, proporcionKg);
-    await this.dietaRepository.updateDetalle(dietaId, detalle);
-  }
 }

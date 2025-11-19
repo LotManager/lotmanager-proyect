@@ -4,8 +4,18 @@ import { PrismaDietaRepository } from "../../infrastructure/repositorios/PrismaD
 import { Request, Response } from "express";
 import { CreateDietaSchema, UpdateDietaSchema, IdParamSchema } from "../../application/dtos/dieta.dto";
 import { CreateDetalleDietaSchema, UpdateDetalleDietaSchema } from "../../application/dtos/detalle-dieta.dto";
+import z from "zod";
 
 const service = new DietaService(new PrismaDietaRepository());
+
+  const UpdateDetalleBodySchema = UpdateDetalleDietaSchema.pick({
+    proporcionKg: true,
+  });
+
+  const DetalleParamsSchema = z.object({
+    dietaId: z.string().min(1),
+    alimentoId: z.string().min(1),
+  });
 
 export class DietaController {
   static async create(req: Request, res: Response) {
@@ -53,20 +63,22 @@ export class DietaController {
     try {
       const { id } = IdParamSchema.parse(req.params);
       const idNumber = Number(id);
-
       const dto = UpdateDietaSchema.parse(req.body);
 
+      // 👈 firma correcta: (id, dto)
       const updated = await service.updateDieta(idNumber, dto);
       if (!updated) {
         return res.status(404).json({ message: "Dieta no encontrada" });
       }
 
-      // ⬇⬇⬇ Usa el mapper que incluye detalles ⬇⬇⬇
-      const response = DietaMapper.toResponseWithDetallesDTO(updated);
+      // Si tenés mapper con detalles, usalo acá
+      const response = DietaMapper.toResponseDTO(updated);
       return res.json(response);
-
-    } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      let message = "Unknown error";
+      if (error instanceof Error) message = error.message;
+      else if (typeof error === "string") message = error;
+      return res.status(400).json({ error: message });
     }
   }
 
@@ -102,14 +114,20 @@ export class DietaController {
 
   static async updateDetalle(req: Request, res: Response) {
     try {
-      const { id } = IdParamSchema.parse({ id: req.params.id });
-      const dietaId = Number(id);
-      const alimentoId = Number(req.params.alimentoId);
-      const body = UpdateDetalleDietaSchema.parse(req.body);
-      if (typeof body.proporcionKg !== 'number') {
-        return res.status(400).json({ error: 'proporcionKg es obligatoria para actualizar' });
+      const { dietaId, alimentoId } = DetalleParamsSchema.parse(req.params);
+      const { proporcionKg } = UpdateDetalleBodySchema.parse(req.body);
+
+      if (proporcionKg === undefined) {
+        return res.status(400).json({ error: "proporcionKg is required" });
       }
-      await service.updateDetalle(dietaId, alimentoId, body.proporcionKg);
+
+      await service.updateDetalle(
+        Number(dietaId),
+        Number(alimentoId),
+        proporcionKg
+      );
+      
+
       return res.status(204).send();
     } catch (error: unknown) {
       let message = 'Unknown error';

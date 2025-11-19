@@ -50,6 +50,7 @@ model Persona {
   nombre   String
   apellido String
   email    String @unique
+  
 
   usuario Usuario?
 }
@@ -60,8 +61,8 @@ model Usuario {
   contrasena String // Contraseña hasheada
   rol        TipoRol
 
-  personaId Int     @unique
-  persona   Persona @relation(fields: [personaId], references: [id])
+  personaId Int?     @unique
+  persona   Persona? @relation(fields: [personaId], references: [id])
 }
 
 // -----------------------------------------------------------------------------

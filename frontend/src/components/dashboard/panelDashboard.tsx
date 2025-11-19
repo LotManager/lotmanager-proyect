@@ -34,7 +34,6 @@ export default function PanelDashboard() {
 				</div>
 				<div>
 					<h2 className="text-lg font-semibold text-green-800">Feedlot System</h2>
-					<span className="text-sm text-slate-500">Tambero</span>
 				</div>
 			</div>
 

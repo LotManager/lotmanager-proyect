@@ -22,17 +22,17 @@ export class AlimentoService {
         return this.alimentoRepository.findAll();
     }
     async updateAlimento(input: UpdateAlimentoInput): Promise<Alimento | null> {
-    const { id, nombre, tipo } = input;
+        const { id, nombre, tipo } = input;
 
-    const alimento = await this.alimentoRepository.findById(id);
-    if (!alimento) return null;
+        const alimento = await this.alimentoRepository.findById(id);
+        if (!alimento) return null;
 
-    if (nombre !== undefined) alimento.setNombre(nombre);
-    if (tipo !== undefined) alimento.setTipo(tipo as any); // tu enum acá
+        if (nombre !== undefined) alimento.setNombre(nombre);
+        if (tipo !== undefined) alimento.setTipo(tipo as any); // tu enum acá
 
-    await this.alimentoRepository.update(alimento);
+        await this.alimentoRepository.update(alimento);
 
-    return alimento;
+        return alimento;
     }
     async deleteAlimento(id: number): Promise<void> {
         return this.alimentoRepository.delete(id);

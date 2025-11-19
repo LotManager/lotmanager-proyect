@@ -49,16 +49,25 @@ export class DietaController {
     }
   }
 
-  static async update(req: Request, res: Response) {
-    const { id } = IdParamSchema.parse(req.params);
-    const idNumber = Number(id);
-    const dto = UpdateDietaSchema.parse(req.body);
+    static async update(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = IdParamSchema.parse(req.params);
+      const idNumber = Number(id);
 
-    const updated = await service.updateDieta({ id: idNumber, data: dto });
-    if (!updated) return res.status(404).json({ message: "Dieta no encontrada" });
+      const dto = UpdateDietaSchema.parse(req.body);
 
-    const response = DietaMapper.toResponseDTO(updated);
-    return res.json(response);
+      const updated = await service.updateDieta(idNumber, dto);
+      if (!updated) {
+        return res.status(404).json({ message: "Dieta no encontrada" });
+      }
+
+      // ⬇⬇⬇ Usa el mapper que incluye detalles ⬇⬇⬇
+      const response = DietaMapper.toResponseWithDetallesDTO(updated);
+      return res.json(response);
+
+    } catch (error: any) {
+      return res.status(400).json({ error: error.message });
+    }
   }
 
   static async delete(req: Request, res: Response) {

@@ -5,11 +5,6 @@ import { DietaMapper } from "../../application/mappers/dieta.mapper";
 import type { CreateDietaDto, UpdateDietaDto } from "../dtos/dieta.dto";
 import type { CreateDetalleDietaDto } from "../dtos/detalle-dieta.dto";
 
-type UpdateDietaInput = {
-  id: number;
-  data: UpdateDietaDto;
-};
-
 export class DietaService {
   constructor(private readonly dietaRepository: IDietaRepository) {}
   // CREA dieta + detalles de una
@@ -44,39 +39,54 @@ export class DietaService {
     async delete(id: number): Promise<void> {
       await this.dietaRepository.delete(id);
     }
-    async updateDieta(input: UpdateDietaInput): Promise<Dieta | null> {
-      const existing = await this.dietaRepository.findById(input.id);
+    async updateDieta(id: number, dto: UpdateDietaDto): Promise<Dieta | null> {
+      // 1) Buscar la dieta existente
+      const existing = await this.dietaRepository.findById(id);
       if (!existing) return null;
 
-      const updated = DietaMapper.applyUpdateDto(existing, input.data);
-      await this.dietaRepository.update(updated);
+      // 2) Actualizar SOLO lo que venga en el DTO
+      if (dto.nombre !== undefined) {
+        existing.setNombre(dto.nombre);
+      }
 
-      return updated;
+      if (dto.descripcion !== undefined) {
+        existing.setDescripcion(dto.descripcion);
+      }
+
+      // 3) Si vienen detalles en el DTO, reemplazamos TODOS los detalles
+      if (dto.detalles !== undefined) {
+        const nuevosDetalles = dto.detalles.map(
+          (d) => new DetalleDieta(id, d.alimentoId, d.proporcionKg)
+        );
+        existing.setDetalles(nuevosDetalles);
+      }
+
+      // 4) Persistir cambios (nombre, descripcion y detalles)
+      await this.dietaRepository.update(existing);
+
+      return existing;
     }
     async exists(id: number): Promise<boolean> {
       return this.dietaRepository.exists(id);
     }
       // AGREGA un detalle a una dieta ya existente
     async addDetalle(dietaId: number, dto: CreateDetalleDietaDto): Promise<Dieta> {
-    const dieta = await this.dietaRepository.findById(dietaId);
-    if (!dieta) {
-      throw new Error("Dieta no encontrada");
+      // Verificar que la dieta existe
+      const dieta = await this.dietaRepository.findById(dietaId);
+      if (!dieta) {
+          throw new Error("Dieta no encontrada");
+      }
+
+      // Crear entidad detalle
+      const detalle = new DetalleDieta(
+          dietaId,
+          dto.alimentoId,
+          dto.proporcionKg
+      );
+
+      // Insertar detalle en DB
+      return await this.dietaRepository.addDetalle(dietaId, detalle);
     }
-
-    const nuevoDetalle = new DetalleDieta(
-      dietaId,             // ahora sí conocemos la dieta
-      dto.alimentoId,
-      dto.proporcionKg
-    );
-
-    // Actualizar la colección en la entidad
-    const detallesActuales = dieta.getDetalles();
-    dieta.setDetalles([...detallesActuales, nuevoDetalle]);
-
-    // Persistir cambios
-    await this.dietaRepository.update(dieta);
-    return dieta;
-  }
   async removeDetalle(dietaId: number, alimentoId: number): Promise<void> {
     const dieta = await this.dietaRepository.findById(dietaId);
     if (!dieta) {

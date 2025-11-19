@@ -67,13 +67,32 @@ export class PrismaDietaRepository implements IDietaRepository {
         ));
     }
     async update(dieta: Dieta): Promise<void> {
+        const detalles: DetalleDieta[] = dieta.getDetalles();
+
+        // armamos el objeto data poco a poco
+        const data: any = {
+        nombre: dieta.getNombre(),
+        descripcion: dieta.getDescripcion(),
+        };
+
+        // Si setDetalles() fue llamado (en el service) y tenés un array (aunque sea vacío),
+        // podemos decidir qué hacer con los detalles
+        if (detalles !== undefined) {
+        // Si querés que cuando el array esté vacío se borren todos:
+        data.detallesDieta = {
+            deleteMany: { dietaId: dieta.getId() }, // borra todos los anteriores
+            // y si hay nuevos, los crea
+            create: detalles.map((d) => ({
+            alimentoId: d.getAlimentoId(),
+            proporcionKg: d.getProporcionKg(),
+            // dietaId NO hace falta, lo pone Prisma por la relación padre
+            })),
+        };
+        }
+
         await this.prisma.dieta.update({
-            where: { id: dieta.getId() },
-            data: {
-                nombre: dieta.getNombre(),
-                descripcion: dieta.getDescripcion(),
-                // Para detalles, se asume que se manejan por separado
-            },
+        where: { id: dieta.getId() },
+        data,
         });
     }
     async delete(id: number): Promise<void> {

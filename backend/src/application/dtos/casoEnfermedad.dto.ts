@@ -32,8 +32,7 @@ export const CasoEnfermedadResponseDTO = z.object({
 export type CasoEnfermedadResponseDTOType = z.infer<typeof CasoEnfermedadResponseDTO>;
 
 export const CasoEnfermedadUpdateDTO = z.object({
-  id: z.number().int().positive(),
-  fechaAlta: z.coerce.date().optional(),
+  fechaDeteccion: z.coerce.date().optional(),
   tratamientoId: z.number().int().positive().optional(),
 });
 

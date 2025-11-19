@@ -13,7 +13,7 @@ import {
 
 // --- DEFINICIÓN DE ENLACES ---
 const navItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: FaHome },
+    { name: 'Home', href: '/dashboard', icon: FaHome },
     { name: 'Gestión de Animales', href: '/dashboard/animales', icon: FaClipboardList }, 
     { name: 'Corrales/Lotes', href: '/dashboard/corrales', icon: FaWarehouse }, 
     { name: 'Dietas', href: '/dashboard/dietas', icon: FaSeedling },

@@ -1,4 +1,4 @@
-import prisma from "../../infrastructure/repositorios/client";
+import prisma from "./client";
 import { Localidad } from "../../domain/entities/Localidad";
 import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository";
 import { Provincia } from "../../domain/entities/Provincia";

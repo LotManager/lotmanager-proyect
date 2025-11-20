@@ -1,4 +1,4 @@
-import prisma from "../../infrastructure/repositorios/client";
+import prisma from "./client";
 import { Feedlot } from "../../domain/entities/Feedlot";
 import { IFeedlotRepository } from "../../domain/interfaces/IFeedlotRepository";
 import { Localidad } from "../../domain/entities/Localidad";

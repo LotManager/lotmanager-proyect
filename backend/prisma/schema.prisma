@@ -50,19 +50,26 @@ model Persona {
   nombre   String
   apellido String
   email    String @unique
-  
 
   usuario Usuario?
 }
 
 model Usuario {
-  id         Int     @id @default(autoincrement())
-  username   String  @unique // Nombre claro
+  id         Int    @id @default(autoincrement())
+  username   String @unique // Nombre claro
   contrasena String // Contraseña hasheada
-  rol        TipoRol
+
+  id_rol Int
+  rol    Rol @relation(fields: [id_rol], references: [id])
 
   personaId Int?     @unique
   persona   Persona? @relation(fields: [personaId], references: [id])
+}
+
+model Rol {
+  id      Int       @id @default(autoincrement())
+  nombre  String
+  Usuario Usuario[]
 }
 
 // -----------------------------------------------------------------------------
@@ -252,11 +259,6 @@ enum TipoEnfermedad {
   INTOXICACION
   TRAUMATOLOGICA
   OTRA
-}
-
-enum TipoRol {
-  ADMINISTRADOR
-  TAMBERO
 }
 
 enum SexoBovino {

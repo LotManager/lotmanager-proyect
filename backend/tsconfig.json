@@ -44,5 +44,5 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src", "prisma.config.ts", "src/application/services/bovinoView.service.ts"]
+  "include": ["src", "prisma.config.js", "src/application/services/bovinoView.service.ts"]
 }

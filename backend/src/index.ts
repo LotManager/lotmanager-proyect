@@ -35,7 +35,7 @@ app.use(cors({
 
 
 //Rutas Andadndo
-//app.use("/api/auth", usuarioRutas);
+app.use("/api/auth", usuarioRutas);
 //app.use("/api/localidades", localidadRutas);
 //app.use("/api/feedlots", feedlotRutas);
 //app.use("/api/provincias", provinciaRutas);

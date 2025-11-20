@@ -34,8 +34,8 @@ export const tokenService: ITokenService = {
       if (!result.success) return null;
 
       const { sub: id, usuario, rol } = result.data;
-      if (rol !== "admin" && rol !== "tambero") return null;
-
+      if (rol !== "ADMINISTRADOR" && rol !== "TAMBERO") return null;
+    
       const rolInstancia = Rol.fromNombre(rol);
       if (!rolInstancia || !rolInstancia.isValid()) return null;
       
@@ -43,6 +43,7 @@ export const tokenService: ITokenService = {
           id,
           username: usuario,
           rol: rolInstancia.toDTO(),
+          personaId: null,
       };
     } catch (error) {
       console.warn("Access token verification failed:", error);

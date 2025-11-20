@@ -1,10 +1,8 @@
 import { z } from "zod";
-import { rolesEnum } from "../../domain/enums/Roles";
 import { Rol } from "../../domain/value-objects/Rol";
 
-// Validación base
-export const rolSchema = z.enum(rolesEnum);
 
+// Validación base
 // DTO para lectura
 export interface UserDTO {
   id: number;
@@ -13,12 +11,12 @@ export interface UserDTO {
     id: number;
     nombre: string;
   };
+  personaId: number | null;
 }
-
 export const userDTOSchema = z.object({
   id: z.number().min(1),
   username: z.string().min(2).max(100),
-  rol: rolSchema.transform((nombre) => Rol.fromNombre(nombre))
+  id_rol: z.number().min(1),
 });
 
 export type UserInput = z.infer<typeof userDTOSchema>;
@@ -27,7 +25,8 @@ export type UserInput = z.infer<typeof userDTOSchema>;
 export interface UserCreateDTO {
   username: string;
   contrasena: string;
-  rol: "admin" | "encargado";
+  id_rol: number;
+  personaId?: number;
 }
 
 export const userCreateDTOSchema = z.object({
@@ -39,8 +38,8 @@ export const userCreateDTOSchema = z.object({
   contrasena: z.string()
     .min(6, "La contraseña debe tener al menos 6 caracteres")
     .max(100),
-  rol: rolSchema.transform((nombre) => Rol.fromNombre(nombre)),
-  personaId: z.number().optional()
+  id_rol: z.number(),
+  personaId: z.number().nullable().optional()
 });
 
 export type UserCreateInput = z.infer<typeof userCreateDTOSchema>;
@@ -56,7 +55,7 @@ export const userUpdateDTOSchema = z.object({
     .min(6)
     .max(100)
     .optional(),
-  rol: rolSchema.transform((nombre) => Rol.fromNombre(nombre)).optional()
+  id_rol: z.number().optional(),
 });
 
 export type UserUpdateInput = z.infer<typeof userUpdateDTOSchema>;

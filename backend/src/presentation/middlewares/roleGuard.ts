@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-export const roleGuard = (rolesPermitidos: ("admin" | "encargado")[]) => {
+const rolesPermitidos: string[] = ["ADMINISTRADOR", "TAMBERO"];
+export const roleGuard = (rolesPermitidos: string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const rolNombre = req.user?.rol?.nombre;
 

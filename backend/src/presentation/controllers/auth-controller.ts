@@ -12,7 +12,7 @@ export async function registerHandler(req: Request, res: Response) {
     console.warn("[AuthController] Datos inválidos en registro:", result.error.format());
     return res.status(400).json({ error: result.error.format() });
   }
-  console.log("[AuthController] Rol recibido:", result.data.rol);
+  console.log("[AuthController] Rol recibido:", result.data.id_rol);
 
   try {
     const authService = new AuthService(new PrismaUserRepository(), tokenService);
@@ -29,7 +29,6 @@ export async function registerHandler(req: Request, res: Response) {
 export async function loginHandler(req: Request, res: Response) {
   const { usuario, contrasena } = req.body;
   console.log('[AuthController] Intento de login:', usuario);
-
   try {
     const authService = new AuthService(new PrismaUserRepository(), tokenService);
     const { user, token, refreshToken } = await authService.login(usuario, contrasena);

@@ -1,12 +1,11 @@
 import { PasswordHash } from "../../domain/value-objects/PasswordHash";
-import prisma from "../../infrastructure/repositorios/client";
+import prisma from "./client";
 import { User } from "../../domain/entities/User";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 import { UserUpdateInput } from "application/dtos/user.dto";
 import { UserMapper } from "../../application/mappers/userMapper";
 import { Prisma } from "@prisma/client";
-import { mapNombreToTipoRol } from "../../application/mappers/userMapper";
 
 
 
@@ -62,6 +61,13 @@ export class PrismaUserRepository implements IUserRepository {
     if (existente) {
       throw new Error(`[UsuarioRepository] El nombre de usuario '${user.getName()}' ya está registrado`);
     }
+    if (user.getPersonaId() !== null) {
+      const personaExiste = await prisma.persona.findUnique({where: { id: user.getPersonaId()! },});
+
+      if (!personaExiste) {
+          throw new Error(`No existe una Persona con id = ${user.getPersonaId()}`);
+        }
+    }
 
     const data = UserMapper.toPrisma(user);
 
@@ -95,14 +101,8 @@ export class PrismaUserRepository implements IUserRepository {
     camposActualizados.contrasena = hash.getValue();
   }
 
-  if (data.rol) {
-    if (!data.rol.isValid()) {
-      throw new Error("[UsuarioRepository] Rol inválido");
-    }
-
-    camposActualizados.rol = {
-      set: mapNombreToTipoRol(data.rol.getNombre())
-    };
+  if (data.id_rol) {
+    camposActualizados.rol = { connect: { id: data.id_rol } } ;
   }
 
   const actualizado = await prisma.usuario.update({

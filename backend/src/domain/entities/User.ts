@@ -8,9 +8,9 @@ export class User {
     private username: string;
     private contrasena: PasswordHash;
     private rol: Rol;
-    private personaId: number;
+    private personaId?: number | null;
     
-    constructor(id: number, username: string, contrasena: PasswordHash, rol: Rol, personaId: number) {
+    constructor(id: number, username: string, contrasena: PasswordHash, rol: Rol, personaId?: number | null) {
         if (username.trim().length === 0) throw new Error('El nombre no puede estar vacío');
 
         this.id = id;
@@ -39,8 +39,8 @@ export class User {
         return this.rol;
     }
 
-    public getPersonaId(): number {
-        return this.personaId;
+    public getPersonaId(): number | null {
+        return this.personaId ?? null;
     }
 
     public getName(): string {
@@ -55,19 +55,12 @@ export class User {
         return this.contrasena.getValue();
     }
 
-    public async validarPassword(plainPassword: string): Promise<boolean> {
-        return await this.contrasena.compareWith(plainPassword);
-    }
-    
     public toDTO(): UserDTO {
-        const nombre = this.rol.getNombre();
-        if (nombre !== "admin" && nombre !== "tambero") {
-            throw new Error(`Rol inválido: ${nombre}`);
-        }
         return {
             id: this.id,
             username: this.username,
-            rol: this.rol.toDTO()
+            rol: this.rol.toDTO(),
+            personaId: this.personaId ?? null
         };
     }
 }

@@ -1,46 +1,31 @@
 import { IAlimentoRepository } from "../../domain/interfaces/IAlimentoRepository";
+import { CreateAlimentoDtoType, UpdateAlimentoDtoType } from "../dtos/alimento.dto";
 import { Alimento } from "../../domain/entities/Alimento";
-import { CreateAlimentoDto } from "../../application/dtos/alimento.dto";
-import { UpdateAlimentoInput } from "../../application/dtos/alimento.dto";
-import { $Enums } from "@prisma/client";
-import { TipoAlimento } from "../../domain/enums/TipoAlimento";
 
 export class AlimentoService {
-    constructor(private alimentoRepository: IAlimentoRepository) {}
+  constructor(private readonly repo: IAlimentoRepository) {}
 
-    async createAlimento(dto: CreateAlimentoDto): Promise<Alimento> {
-        const alimento = new Alimento(0, dto.nombre, dto.tipo as $Enums.TipoAlimento);
-        return this.alimentoRepository.create(alimento);
-    }
-    async getAlimentoById(id: number): Promise<Alimento | null> {
-        return this.alimentoRepository.findById(id);
-    }
-    async getAllAlimentos(filter?: { tipo?: $Enums.TipoAlimento; nombre?: string }): Promise<Alimento[]> {
-        if (filter && (filter.tipo || filter.nombre)) {
-            return this.alimentoRepository.findFiltered(filter);
-        }
-        return this.alimentoRepository.findAll();
-    }
-    async updateAlimento(input: UpdateAlimentoInput): Promise<Alimento | null> {
-        const { id, nombre, tipo } = input;
+  async crear(dto: CreateAlimentoDtoType): Promise<Alimento> {
+    return this.repo.create(dto);
+  }
 
-        const alimento = await this.alimentoRepository.findById(id);
-        if (!alimento) return null;
+  async listar(): Promise<Alimento[]> {
+    return this.repo.findAll();
+  }
 
-        if (nombre !== undefined) alimento.setNombre(nombre);
-        if (tipo !== undefined) alimento.setTipo(tipo as any); // tu enum acá
+  async obtener(id: number): Promise<Alimento | null> {
+    return this.repo.findById(id);
+  }
 
-        await this.alimentoRepository.update(alimento);
+  async actualizar(id: number, dto: UpdateAlimentoDtoType): Promise<Alimento> {
+    const existe = await this.repo.findById(id);
+    if (!existe) throw new Error(`Alimento con ID ${id} no encontrado.`);
+    return this.repo.update(id, dto);
+  }
 
-        return alimento;
-    }
-    async deleteAlimento(id: number): Promise<void> {
-        return this.alimentoRepository.delete(id);
-    }
-    async alimentoExists(id: number): Promise<boolean> {
-        return this.alimentoRepository.exists(id);
-    }
-    getTipos(): string[] {
-        return [TipoAlimento.GRANO, TipoAlimento.FORRAJE, TipoAlimento.SUPLEMENTO];
-    }
+  async eliminar(id: number): Promise<void> {
+    const existe = await this.repo.findById(id);
+    if (!existe) throw new Error(`Alimento con ID ${id} no encontrado.`);
+    return this.repo.delete(id);
+  }
 }

@@ -1,145 +1,137 @@
-import { Dieta } from "../../domain/entities/Dieta";
+import prisma from "../../config/db";
+import { Dieta, DetalleDieta } from "../../domain/entities/Dieta";
+import { Alimento } from "../../domain/entities/Alimento";
 import { IDietaRepository } from "../../domain/interfaces/IDietaRepository";
-import { PrismaClient } from "@prisma/client";
-import { DetalleDieta } from "../../domain/entities/DetalleDieta";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { UpdateDietaDtoType } from "../../application/dtos/dieta.dto";
 
 export class PrismaDietaRepository implements IDietaRepository {
-    private prisma: PrismaClient;
+  
+  // Helper para convertir de Prisma a Dominio incluyendo los detalles
+  private toDomain(data: any): Dieta {
+    const detalles = data.detallesDieta?.map((d: any) => {
+      // Si viene con el alimento incluido, lo mapeamos
+      const alimento = d.alimento 
+        ? new Alimento(d.alimento.id, d.alimento.nombre, d.alimento.tipo) 
+        : undefined;
+        
+      return new DetalleDieta(d.dietaId, d.alimentoId, d.proporcionKg, alimento);
+    }) || [];
 
-    constructor() {
-        this.prisma = new PrismaClient();
-    }
-    async create(dieta: Dieta): Promise<Dieta> {
-        const created = await this.prisma.dieta.create({
-            data: {
-                nombre: dieta.getNombre(),
-                descripcion: dieta.getDescripcion(),
-                detallesDieta: {
-                    create: dieta.getDetalles().map(detalle => ({
-                        alimentoId: detalle.getAlimentoId(),
-                        proporcionKg: detalle.getProporcionKg(),
-                    })),
-                },
-            },
-            include: { detallesDieta: true } // incluir relación
-        });
-        return new Dieta(
-            created.id,
-            created.nombre,
-            created.descripcion ?? "",
-            (created.detallesDieta ?? []).map(detalle => new DetalleDieta(
-                detalle.dietaId,
-                detalle.alimentoId,
-                detalle.proporcionKg
-            ))
-        );
-    }
-    async findById(id: number): Promise<Dieta | null> {
-        const found = await this.prisma.dieta.findUnique({
-            where: { id },
-            include: { detallesDieta: true } // incluir relación
-        });
-        if (!found) return null;
-        return new Dieta(
-            found.id,
-            found.nombre,
-            found.descripcion ?? "",
-            (found.detallesDieta ?? []).map(detalle => new DetalleDieta(
-                detalle.dietaId,
-                detalle.alimentoId,
-                detalle.proporcionKg
-            ))
-        );
-    }
-    async findAll(): Promise<Dieta[]> {
-        const dietas = await this.prisma.dieta.findMany({
-            include: { detallesDieta: true } // incluir relación
-        });
-        return dietas.map(dieta => new Dieta(
-            dieta.id,
-            dieta.nombre,
-            dieta.descripcion ?? "",
-            (dieta.detallesDieta ?? []).map(detalle => new DetalleDieta(
-                detalle.dietaId,
-                detalle.alimentoId,
-                detalle.proporcionKg
-            ))
-        ));
-    }
-    async update(dieta: Dieta): Promise<void> {
-        const detalles: DetalleDieta[] = dieta.getDetalles();
+    return new Dieta(data.id, data.nombre, data.descripcion, detalles);
+  }
 
-        // armamos el objeto data poco a poco
-        const data: any = {
-        nombre: dieta.getNombre(),
-        descripcion: dieta.getDescripcion(),
-        };
-
-        // Si setDetalles() fue llamado (en el service) y tenés un array (aunque sea vacío),
-        // podemos decidir qué hacer con los detalles
-        if (detalles !== undefined) {
-        // Si querés que cuando el array esté vacío se borren todos:
-        data.detallesDieta = {
-            deleteMany: { dietaId: dieta.getId() }, // borra todos los anteriores
-            // y si hay nuevos, los crea
-            create: detalles.map((d) => ({
-            alimentoId: d.getAlimentoId(),
-            proporcionKg: d.getProporcionKg(),
-            // dietaId NO hace falta, lo pone Prisma por la relación padre
-            })),
-        };
+  async create(data: Omit<Dieta, "id">): Promise<Dieta> {
+    // Prisma permite crear el padre y los hijos al mismo tiempo
+    const nueva = await prisma.dieta.create({
+      data: {
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        detallesDieta: {
+          create: data.detallesDieta.map(d => ({
+            alimentoId: d.alimentoId,
+            proporcionKg: d.proporcionKg
+          }))
         }
+      },
+      include: {
+        detallesDieta: {
+          include: { alimento: true } // Traemos info del alimento para devolver el objeto completo
+        }
+      }
+    });
+    return this.toDomain(nueva);
+  }
 
-        await this.prisma.dieta.update({
-        where: { id: dieta.getId() },
-        data,
-        });
-    }
-    async delete(id: number): Promise<void> {
-        await this.prisma.dieta.delete({
-            where: { id },
-        });
-    }
-    async exists(id: number): Promise<boolean> {
-        const count = await this.prisma.dieta.count({
-            where: { id },
-        });
-        return count > 0;
-    }
+  async findAll(): Promise<Dieta[]> {
+    const data = await prisma.dieta.findMany({
+      include: {
+        detallesDieta: {
+          include: { alimento: true }
+        }
+      }
+    });
+    return data.map(d => this.toDomain(d));
+  }
 
-    async addDetalle(dietaId: number, detalle: DetalleDieta): Promise<Dieta> {
-        await this.prisma.detalleDieta.create({
-            data: {
-                dietaId: dietaId,
-                alimentoId: detalle.getAlimentoId(),
-                proporcionKg: detalle.getProporcionKg(),
-            },
-        });
-        return this.findById(dietaId) as Promise<Dieta>;
-    }
+  async findById(id: number): Promise<Dieta | null> {
+    const data = await prisma.dieta.findUnique({
+      where: { id },
+      include: {
+        detallesDieta: {
+          include: { alimento: true }
+        }
+      }
+    });
+    return data ? this.toDomain(data) : null;
+  }
 
-    async removeDetalle(dietaId: number, alimentoId: number): Promise<void> {
-        await this.prisma.detalleDieta.delete({
-            where: {
-                dietaId_alimentoId: {
-                    dietaId: dietaId,
-                    alimentoId: alimentoId,
-                },
-            },
-        });
-    }
+async update(id: number, data: UpdateDietaDtoType): Promise<Dieta> {
+    console.log("⚡️ INICIANDO UPDATE DIETA:", id);
+    console.log("📦 DATOS RECIBIDOS:", JSON.stringify(data, null, 2));
 
-    async updateDetalle(dietaId: number, detalle: DetalleDieta): Promise<void> {
-        await this.prisma.detalleDieta.update({
-            where: {
-                dietaId_alimentoId: {
-                    dietaId: dietaId,
-                    alimentoId: detalle.getAlimentoId(),
-                },
-            },
-            data: {
-                proporcionKg: detalle.getProporcionKg(),
-            },
+    // 1. Preparamos los datos planos
+    const datosDieta: any = {};
+    if (data.nombre) datosDieta.nombre = data.nombre;
+    if (data.descripcion !== undefined) datosDieta.descripcion = data.descripcion;
+
+    // 2. Ejecutamos la transacción
+    await prisma.$transaction(async (tx) => {
+      
+      // PASO A: Actualizar datos básicos de la Dieta
+      if (Object.keys(datosDieta).length > 0) {
+        await tx.dieta.update({
+          where: { id },
+          data: datosDieta
         });
-    }
+      }
+
+      // PASO B: Gestionar los ingredientes (si vienen en la petición)
+      if (data.detalles) {
+        // 1. Borrar todo lo viejo
+        console.log(`🗑️ Borrando ingredientes viejos de la dieta ${id}...`);
+        await tx.detalleDieta.deleteMany({
+          where: { dietaId: id }
+        });
+
+        // 2. Preparar los nuevos datos
+        const nuevosIngredientes = data.detalles.map(d => ({
+          dietaId: id, // Vinculamos explícitamente
+          alimentoId: Number(d.alimentoId),
+          proporcionKg: Number(d.proporcionKg)
+        }));
+
+        console.log("✨ Insertando nuevos ingredientes:", nuevosIngredientes);
+
+        // 3. Insertar los nuevos (usando createMany que es más eficiente y directo)
+        if (nuevosIngredientes.length > 0) {
+          await tx.detalleDieta.createMany({
+            data: nuevosIngredientes
+          });
+        }
+      }
+    });
+
+    // 3. PASO FINAL: Leer el resultado fresco de la base de datos
+    // Esto asegura que devolvemos lo que REALMENTE se guardó.
+    const dietaActualizada = await prisma.dieta.findUnique({
+      where: { id },
+      include: {
+        detallesDieta: {
+          include: { alimento: true }
+        }
+      }
+    });
+
+    if (!dietaActualizada) throw new Error("Error crítico: La dieta desapareció después de actualizar.");
+
+    return this.toDomain(dietaActualizada);
+  }
+
+  async delete(id: number): Promise<void> {
+    // Primero borramos los detalles para evitar error de Foreign Key
+    // (Aunque si tenés onDelete: Cascade en el schema, Prisma lo hace solo)
+    await prisma.detalleDieta.deleteMany({ where: { dietaId: id } });
+    await prisma.dieta.delete({ where: { id } });
+  }
 }

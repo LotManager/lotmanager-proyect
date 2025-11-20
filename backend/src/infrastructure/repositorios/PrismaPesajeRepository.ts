@@ -1,33 +1,35 @@
-import prisma from "../../config/db"
-import { Pesaje } from "../../domain/entities/Pesaje"
-import { IPesajeRepository } from "../../domain/interfaces/IPesajeRepository"
+import prisma from "../../config/db";
+import { Pesaje } from "../../domain/entities/Pesaje";
+import { IPesajeRepository } from "../../domain/interfaces/IPesajeRepository";
+import { Pesaje as PrismaPesajeModel } from "@prisma/client";
 
 export class PrismaPesajeRepository implements IPesajeRepository {
-  private toDomain(data: {
-    id: number
-    id_bovino: number
-    fecha: Date
-    peso_dado: number
-  }): Pesaje {
-    return new Pesaje(data.id, data.id_bovino, data.fecha, data.peso_dado)
+  
+  private toDomain(data: PrismaPesajeModel): Pesaje {
+    return new Pesaje(
+      data.id,
+      data.bovinoId,
+      data.fecha,
+      data.pesoActual
+    );
   }
 
-  public async create(data: Omit<Pesaje, "id">): Promise<Pesaje> {
+  async create(data: Omit<Pesaje, "id">): Promise<Pesaje> {
     const nuevo = await prisma.pesaje.create({
       data: {
-        id_bovino: data.id_bovino,
+        bovinoId: data.bovinoId,
+        pesoActual: data.pesoActual,
         fecha: data.fecha,
-        peso_dado: data.peso_dado,
       },
-    })
-    return this.toDomain(nuevo)
+    });
+    return this.toDomain(nuevo);
   }
 
-  public async findByBovino(id_bovino: number): Promise<Pesaje[]> {
-    const pesajes = await prisma.pesaje.findMany({
-      where: { id_bovino },
-      orderBy: { fecha: "asc" },
-    })
-    return pesajes.map(p => this.toDomain(p))
+  async findByBovino(bovinoId: number): Promise<Pesaje[]> {
+    const data = await prisma.pesaje.findMany({
+      where: { bovinoId },
+      orderBy: { fecha: "desc" },
+    });
+    return data.map(this.toDomain);
   }
 }

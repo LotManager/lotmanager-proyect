@@ -26,8 +26,8 @@ export class PrismaBovinoRepository implements IBovinoRepository {
   async create(data: Omit<Bovino, "id">): Promise<Bovino> {
     const nuevo = await prisma.bovino.create({
       data: {
-        razaId: data.idRaza,
-        corralId: data.idCorral,
+        razaId: data.razaId,
+        corralId: data.corralId,
         caravana: data.caravana,
         situacionBovino: data.situacionBovino,
         estadoSalud: data.estadoSalud,
@@ -55,8 +55,8 @@ export class PrismaBovinoRepository implements IBovinoRepository {
 
   async update(id: number, data: Partial<Omit<Bovino, "id">>): Promise<Bovino> {
     const dataToUpdate: any = {};
-    if (data.idRaza !== undefined) dataToUpdate.razaId = data.idRaza;
-    if (data.idCorral !== undefined) dataToUpdate.corralId = data.idCorral;
+    if (data.razaId !== undefined) dataToUpdate.razaId = data.razaId;
+    if (data.corralId !== undefined) dataToUpdate.corralId = data.corralId;
     if (data.caravana !== undefined) dataToUpdate.caravana = data.caravana;
     if (data.situacionBovino !== undefined) dataToUpdate.situacionBovino = data.situacionBovino;
     if (data.estadoSalud !== undefined) dataToUpdate.estadoSalud = data.estadoSalud;
@@ -108,4 +108,19 @@ export class PrismaBovinoRepository implements IBovinoRepository {
       },
     });
   }
+  
+  public async findByCorralConRelaciones(idCorral: number): Promise<any[]> {
+    return prisma.bovino.findMany({
+      where: {
+        corralId: idCorral, // Filtramos por ID de corral
+      },
+      include: {
+        pesajes: { // Traemos los pesajes para calcular GMD
+          orderBy: { fecha: 'desc' },
+          take: 1,
+        },
+      },
+    });
+  }
+
 }

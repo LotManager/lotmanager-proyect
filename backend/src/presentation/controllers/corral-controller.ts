@@ -2,13 +2,21 @@ import { Request, Response } from "express"
 import { CorralService } from "../../application/services/corralService"
 import { PrismaCorralRepository } from "../../infrastructure/repositorios/PrismaCorralRepository"
 import { CreateCorralDto, UpdateCorralDto  } from "../../application/dtos/corral.dto"
+import { CorralViewService } from "../../application/services/corralView.service";
+import { PrismaBovinoRepository } from "../../infrastructure/repositorios/PrismaBovinoRepository";
+
+
+// --- INSTANCIACIÓN ---
+const corralRepo = new PrismaCorralRepository();
+const bovinoRepo = new PrismaBovinoRepository();
 
 const service = new CorralService(new PrismaCorralRepository())
+const viewService = new CorralViewService(corralRepo, bovinoRepo);
 
 export class CorralController {
   static async listar(_req: Request, res: Response) {
     try {
-      const corrales = await service.listar()
+      const corrales = await viewService.getCorralesForTable();
       res.status(200).json(corrales)
     } catch (error) {
       console.error("Error al listar corrales:", error)

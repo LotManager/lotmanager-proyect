@@ -1,35 +1,23 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Footer from "@/src/components/ui/Footer/Footer";
+// app/layout.tsx (Versión Raíz - Server Component)
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import type { Metadata } from 'next';
+import React from 'react';
+import './globals.css'; 
 
 export const metadata: Metadata = {
-  title: "LotManager",
-  description: "Gestión de lotes de animales",
+  title: "LotManager - Gestión de Ganado",
+  description: "La solución integral para la gestión de lotes.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="es">
+      <body className="min-h-screen bg-gray-50 text-gray-800">
         {children}
-        <Footer />
       </body>
     </html>
   );

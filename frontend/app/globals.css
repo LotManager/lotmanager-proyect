@@ -1,35 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  /* 1. Configuración de Fuentes (vinculada a la variable de Next.js) */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* 2. Tus Colores Personalizados */
+  --color-primary: #15803d;
+  --color-secondary: #14532d;
+  --color-tertiary: #f0fdf4;
+  --color-surface: #ffffff;
+  
+  /* Colores extra para detalles */
+  --color-accent: #dcfce7;
+}
+
+/* 3. Estilos base (opcional, para resets o defaults) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --font-primary: 'Inter', sans-serif;
-  --font-secondary: 'Roboto', sans-serif;
-  --font-serif: 'Merriweather', serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: #6a8e7f;
-  --color-secondary: #214a2f;
-  --color-tertiary: #d5d6aa;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-/* @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-} */
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-primary);
 }
 
-
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+}

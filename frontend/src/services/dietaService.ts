@@ -6,7 +6,7 @@ export type Dieta = {
 };
 
 const _env = (typeof process !== 'undefined' ? (process.env as unknown as Record<string, string | undefined>) : {});
-const API_BASE = _env.NEXT_PUBLIC_API_URL ?? _env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3001';
+const API_BASE = _env.NEXT_PUBLIC_API_URL ?? _env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3000';
 
 console.debug('[dietaService] API_BASE =', API_BASE);
 

@@ -1,7 +1,7 @@
 // components/empleados/EmpleadoTable.tsx
 'use client';
 
-import { Empleado } from '@/types/empleado';
+import { Empleado } from '@/src/types/empleado';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 interface Props {

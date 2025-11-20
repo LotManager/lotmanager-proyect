@@ -1,14 +1,11 @@
-import { Router } from "express"
-import { AlimentoController } from "../controllers/alimento-controller"
-// import { roleGuard } from "../../presentation/middlewares/roleGuard"
+import { Router } from "express";
+import { AlimentoController } from "../controllers/alimento.controller";
 
-const router = Router()
+const router = Router();
 
-router.get("/", AlimentoController.getAll)
-router.get("/tipos", AlimentoController.getTipos)
-router.get("/:id", AlimentoController.getById)
-router.post("/", AlimentoController.create)
-router.put("/:id", AlimentoController.update)
-router.delete("/:id", AlimentoController.delete)
+router.get("/", AlimentoController.listar);
+router.post("/", AlimentoController.crear);
+router.put("/:id", AlimentoController.actualizar);
+router.delete("/:id", AlimentoController.eliminar);
 
-export default router
+export default router;

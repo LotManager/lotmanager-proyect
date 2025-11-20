@@ -9,7 +9,7 @@ export class EnfermedadController {
   async crear(req: Request, res: Response) {
     try {
       const dto = EnfermedadDTO.parse(req.body);
-      const entidad = EnfermedadMapper.fromDTO(dto);
+      const entidad = EnfermedadMapper.fromResponseDTO(dto);
       const creada = await this.service.crear(entidad);
       res.status(201).json(EnfermedadMapper.toResponseDTO(creada));
     } catch (error) {
@@ -37,7 +37,7 @@ export class EnfermedadController {
     }
   }
 
-  async obtenerTodas(res: Response) {
+  async obtenerTodas(_req: Request, res: Response) {
     try {
       const lista = await this.service.obtenerTodas();
       res.json(lista.map(EnfermedadMapper.toResponseDTO));
@@ -69,7 +69,7 @@ export class EnfermedadController {
   }
 }
 
-  async eliminarController(req: Request, res: Response) {
+  async eliminar(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
       if (isNaN(id) || id <= 0) {
@@ -85,46 +85,5 @@ export class EnfermedadController {
     }
   }
 
-  async vincularTratamientoController(req: Request, res: Response) {
-    try {
-        const idEnfermedad = Number(req.params.id);
-        const { idTratamiento, periodo } = req.body;
 
-        if (isNaN(idEnfermedad) || idEnfermedad <= 0 || isNaN(idTratamiento) || idTratamiento <= 0) {
-        return res.status(400).json({ error: "IDs inválidos" });
-        }
-
-        if (!periodo || typeof periodo !== "string") {
-        return res.status(400).json({ error: "Periodo inválido" });
-        }
-
-        await this.service.vincularTratamiento(idEnfermedad, idTratamiento, periodo);
-        res.status(204).send();
-    } catch (error) {
-        console.error("Error al vincular tratamiento:", error);
-        const errorMessage = typeof error === "object" && error !== null && "message" in error
-        ? (error as any).message
-        : String(error);
-        res.status(400).json({ error: errorMessage });
-    }
-  }
-  async desvincularTratamientoController(req: Request, res: Response) {
-  try {
-    const idEnfermedad = Number(req.params.id);
-    const idTratamiento = Number(req.params.idTratamiento);
-
-    if (isNaN(idEnfermedad) || idEnfermedad <= 0 || isNaN(idTratamiento) || idTratamiento <= 0) {
-      return res.status(400).json({ error: "IDs inválidos" });
-    }
-
-    await this.service.desvincularTratamiento(idEnfermedad, idTratamiento);
-    res.status(204).send();
-  } catch (error) {
-    console.error("Error al desvincular tratamiento:", error);
-    const errorMessage = typeof error === "object" && error !== null && "message" in error
-      ? (error as any).message
-      : String(error);
-    res.status(400).json({ error: errorMessage });
-  }
-}
 }

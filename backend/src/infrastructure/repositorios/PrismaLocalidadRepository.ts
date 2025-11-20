@@ -1,4 +1,4 @@
-import prisma from "../../infrastructure/repositorios/client";
+import prisma from "./client";
 import { Localidad } from "../../domain/entities/Localidad";
 import { ILocalidadRepository } from "../../domain/interfaces/ILocalidadRepository";
 import { Provincia } from "../../domain/entities/Provincia";
@@ -7,12 +7,12 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 export class PrismaLocalidadRepository implements ILocalidadRepository {
   private toDomain(data: {
     id: number;
-    codigo_postal: number;
+    codigoPostal: number | null;
     nombre: string;
-    provincia: { id: number; nombre: string };
+    provinciaId: number;
   }): Localidad {
-    const provincia = new Provincia(data.provincia.id, data.provincia.nombre);
-    return new Localidad(data.id, data.codigo_postal, data.nombre, provincia);
+    const provincia = new Provincia(data.provinciaId, ""); // Assuming you might want to fetch the province name elsewhere
+    return new Localidad(data.id, data.codigoPostal, data.nombre, provincia);
   }
 
   public async findById(id: number): Promise<Localidad | null> {
@@ -36,15 +36,14 @@ export class PrismaLocalidadRepository implements ILocalidadRepository {
     }
 
     const nueva = await prisma.localidad.create({
-      data: {
-        id: localidad.getId(),
-        nombre: localidad.getNombre(),
-        codigo_postal: localidad.getCodigoPostal(),
-        id_provincia: localidad.getIdProvincia(),
-      },
-      include: { provincia: true },
+    data: {
+      id: localidad.getId(),
+      nombre: localidad.getNombre(),
+      codigoPostal: localidad.getCodigoPostal(),
+      provinciaId: localidad.getIdProvincia(), // ✅ clave foránea directa
+    },
+    include: { provincia: true },
     });
-
     return this.toDomain(nueva);
   }
 
@@ -54,8 +53,10 @@ export class PrismaLocalidadRepository implements ILocalidadRepository {
         where: { id: localidad.getId() },
         data: {
           nombre: localidad.getNombre(),
-          codigo_postal: localidad.getCodigoPostal(),
-          id_provincia: localidad.getIdProvincia(),
+          codigoPostal: localidad.getCodigoPostal(),
+          provincia: {
+            connect: { id: localidad.getIdProvincia() }
+          },
         },
       });
     } catch (error) {

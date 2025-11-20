@@ -13,8 +13,9 @@ import { Request, Response } from 'express';
 // import provinciaRutas from './presentation/routes/provincia-rutas';
 // import usuarioRutas from './presentation/routes/usuario-rutas';
 // import personalRutas from './presentation/routes/personal-rutas';
-// import enfermedadRutas from './presentation/routes/enfermedad-rutas';
-// import trataminetoRutas from './presentation/routes/tratamiento-rutas'
+import enfermedadRutas from './presentation/routes/enfermedad-rutas';
+import trataminetoRutas from './presentation/routes/tratamiento-rutas'
+import casoEnfermedadRutas from './presentation/routes/casoEnfermedad-rutas';
 // import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento.routes";
 // import suministroRoutes from "./presentation/routes/suministro.routes"
 // import alimentacionRoutes from "./presentation/routes/alimentacion.routes"
@@ -29,6 +30,7 @@ import razaRouter from './presentation/routes/raza-routes';
 import alimentoRoutes from "./presentation/routes/alimento.routes"
 import dietaRouter from './presentation/routes/dieta.routes';
 import suministroRouter from './presentation/routes/suministro.routes';
+import reportesRouter from './presentation/routes/reportes-rutas';
 
 const PORT = process.env.PORT || 3000;
 
@@ -36,7 +38,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:3001', // Adjust as needed
+    origin: 'http://localhost:3000', // Adjust as needed
     credentials: true,
 }));
 
@@ -46,8 +48,9 @@ app.use(cors({
 // app.use("/api/feedlots", feedlotRutas);
 // app.use("/api/provincias", provinciaRutas);
 // app.use("/api/personal", personalRutas);
-// app.use("/api/enfermedades", enfermedadRutas);
-// app.use("/api/tratamientos", trataminetoRutas);
+app.use("/api/enfermedades", enfermedadRutas);
+app.use("/api/tratamientos", trataminetoRutas);
+app.use("/api/casos-enfermedad", casoEnfermedadRutas);
 // app.use('/detalle-alimentos', detalleAlimentoRoutes);
 // app.use('/alimentaciones', alimentacionRoutes);
 // app.use('/api/corral-metrics', corralMetricsRouter);
@@ -61,6 +64,7 @@ app.use('/api/razas', razaRouter);
 app.use('/api/alimentos', alimentoRoutes);
 app.use('/api/dietas', dietaRouter);
 app.use('/api/suministros', suministroRouter);
+app.use('/api/reports', reportesRouter);
 
 // --- Rutas de Test (Las dejamos) ---
 app.get("/test-provincia", (req, res) => {

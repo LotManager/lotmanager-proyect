@@ -1,18 +1,52 @@
-
+import { TipoEnfermedad as DomainTipoEnfermedad } from "../../domain/enums/TipoEnfermedad";
+import { TipoEnfermedad as PrismaTipoEnfermedad } from "@prisma/client";
 import { Enfermedad } from "../../domain/entities/Enfermedad";
-import type { EnfermedadResponseDTO, EnfermedadDTOType } from "../dtos/enfermedad.dto";
+import type { EnfermedadResponseDTO, EnfermedadDTOType, EnfermedadResponseDTOExtendido } from "../dtos/enfermedad.dto";
 
 export class EnfermedadMapper {
-  static fromDTO(dto: EnfermedadDTOType): Enfermedad {
-    return new Enfermedad(0, dto.nombre, dto.descripcion, dto.tipo);
-  }
+  static fromResponseDTO(dto: EnfermedadDTOType): Enfermedad {
+  return new Enfermedad(0, dto.nombre, dto.descripcion, dto.tipo);
+}
 
-    static toResponseDTO(entidad: Enfermedad): EnfermedadResponseDTO {
+static fromPersisted(dto: EnfermedadResponseDTO): Enfermedad {
+  return new Enfermedad(dto.id, dto.nombre, dto.descripcion, dto.tipo);
+}
+  
+  static toResponseDTO(entidad: Enfermedad): EnfermedadResponseDTO {
     return {
         id: entidad.getId(),
         nombre: entidad.getNombre(),
         descripcion: entidad.getDescripcion(),
-        tipo: entidad.getTipo()
+        tipo: entidad.getTipo() as EnfermedadResponseDTO["tipo"], 
         };
     }
+  
+   
+  static toCreateDTO(entidad: Enfermedad): EnfermedadDTOType {
+    return {
+      nombre: entidad.getNombre(),
+      descripcion: entidad.getDescripcion(),
+      tipo: entidad.getTipo() as EnfermedadResponseDTO["tipo"], 
+    };
+  }
+
+  static toExtendedResponseDTO(entidad: Enfermedad): EnfermedadResponseDTOExtendido {
+  return {
+    id: entidad.getId(),
+    nombre: entidad.getNombre(),
+    descripcion: entidad.getDescripcion(),
+    tipo: entidad.getTipo() as EnfermedadResponseDTO["tipo"], 
+    tratamientos: entidad.getTratamientos().map(t => ({
+      nombre: t.nombre
+    }))
+  };
+}
+
 }  
+export function mapTipoFromPrisma(tipo: PrismaTipoEnfermedad): DomainTipoEnfermedad {
+  return tipo as DomainTipoEnfermedad;
+}
+
+export function mapToPrismaTipo(tipo: DomainTipoEnfermedad): PrismaTipoEnfermedad {
+  return tipo as PrismaTipoEnfermedad;
+}

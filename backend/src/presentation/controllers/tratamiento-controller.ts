@@ -21,18 +21,6 @@ export class TratamientoController {
     res.json(tratamiento)
   }
 
-  async obtenerConEnfermedades(req: Request, res: Response) {
-    const { id } = req.params
-    if(!id) return res.status(400).json({message: 'No se introdujo un id'})
-    const parsedId = parseInt(id)
-    if (isNaN(parsedId)) return res.status(400).json({ message: 'ID inválido' })
-
-    const tratamiento = await this.service.getWithEnfermedades(parsedId)
-    if (!tratamiento) return res.status(404).json({ message: 'No encontrado' })
-
-    res.json(tratamiento)
-  }
-
   async crear(req: Request, res: Response) {
     try {
       const tratamiento = await this.service.create(req.body)
@@ -45,7 +33,6 @@ export class TratamientoController {
   async actualizar(req: Request, res: Response) {
     const { id } = req.params
     if (!id) return res.status(400).json({ message: 'Falta el parámetro ID' })
-
     const parsedId = parseInt(id)
     if (isNaN(parsedId)) return res.status(400).json({ message: 'ID inválido' })
 
@@ -57,14 +44,22 @@ export class TratamientoController {
       res.status(400).json({ message: 'Datos inválidos', error })
     }
   }
-
   async eliminar(req: Request, res: Response) {
-    const { id } = req.params
-    if(!id) return res.status(400).json({message: 'No se introdujo un id'})
-    const parsedId = parseInt(id)
-    if (isNaN(parsedId)) return res.status(400).json({ message: 'ID inválido' })
+  const { id } = req.params;
+  if (!id) return res.status(400).json({ message: 'No se introdujo un id' });
 
-    await this.service.delete(parsedId)
-    res.status(204).send()
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) return res.status(400).json({ message: 'ID inválido' });
+
+  try {
+    const deleted = await this.service.delete(parsedId);
+    if (!deleted) return res.status(404).json({ message: 'No encontrado' });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error al eliminar',
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
   }
 }

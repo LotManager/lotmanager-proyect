@@ -18,7 +18,7 @@ const navItems = [
     { name: 'Corrales/Lotes', href: '/dashboard/corrales', icon: FaWarehouse }, 
     { name: 'Dietas', href: '/dashboard/dietas', icon: FaSeedling },
     { name: 'Control Sanitario', href: '/dashboard/sanidad', icon: FaHeart },
-    { name: 'Reportes', href: '/dashboard/reportes', icon: FaChartBar },
+    { name: 'Reportes', href: '/dashboard/reports', icon: FaChartBar },
     { name: 'Gestión de Empleados', href: '/dashboard/empleados', icon: FaUsers },
 ];
 

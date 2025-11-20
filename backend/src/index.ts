@@ -29,6 +29,7 @@ import razaRouter from './presentation/routes/raza-routes';
 import alimentoRoutes from "./presentation/routes/alimento.routes"
 import dietaRouter from './presentation/routes/dieta.routes';
 import suministroRouter from './presentation/routes/suministro.routes';
+import reportesRouter from './presentation/routes/reportes-rutas';
 
 const PORT = process.env.PORT || 3000;
 
@@ -36,7 +37,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:3001', // Adjust as needed
+    origin: 'http://localhost:3000', // Adjust as needed
     credentials: true,
 }));
 
@@ -61,6 +62,7 @@ app.use('/api/razas', razaRouter);
 app.use('/api/alimentos', alimentoRoutes);
 app.use('/api/dietas', dietaRouter);
 app.use('/api/suministros', suministroRouter);
+app.use('/api/reports', reportesRouter);
 
 // --- Rutas de Test (Las dejamos) ---
 app.get("/test-provincia", (req, res) => {

@@ -22,6 +22,7 @@ import casoEnfermedadRutas from './presentation/routes/casoEnfermedad-rutas';
 import pesajeRouter from "./presentation/routes/pesaje-rutas";    
 import bovinoRouter from "./presentation/routes/bovino-rutas";
 import corralMetricsRouter from './presentation/routes/corral-metrics-rutas';
+import { authMiddleware } from './presentation/middlewares/authmiddleware';
 
 const PORT = process.env.PORT || 3000;
 
@@ -39,9 +40,9 @@ app.use("/api/auth", usuarioRutas);
 //app.use("/api/localidades", localidadRutas);
 //app.use("/api/feedlots", feedlotRutas);
 //app.use("/api/provincias", provinciaRutas);
-//app.use("/api/personal", personalRutas);
-app.use("/api/enfermedades", enfermedadRutas);
-app.use("/api/tratamientos", tratamientoRutas);
+app.use("/api/personal", authMiddleware, personalRutas);
+app.use("/api/enfermedades", authMiddleware, enfermedadRutas);
+app.use("/api/tratamientos", authMiddleware, tratamientoRutas);
 //app.use("/api/alimentos", alimentoRoutes);
 //app.use("/api/detalle-alimentos", detalleAlimentoRoutes);
 //app.use("/api/suministros", suministroRoutes);
@@ -51,7 +52,7 @@ app.use("/api/tratamientos", tratamientoRutas);
 //app.use("/api/corrales", corralRoutes); // No anda el put
 
 
-app.use("/api/casos-enfermedad", casoEnfermedadRutas);
+app.use("/api/casos-enfermedad", authMiddleware, casoEnfermedadRutas);
 //app.use("/api/pesaje", roleGuard(["admin", "encargado"]), pesajeRouter);
 app.use("/api/bovinos", bovinoRouter);
 //app.use("/api/corral-metrics", corralMetricsRouter);

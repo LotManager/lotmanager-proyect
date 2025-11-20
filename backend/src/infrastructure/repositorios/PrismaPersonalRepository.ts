@@ -74,10 +74,18 @@ export class PrismaPersonalRepository implements PersonalRepository {
   }
   async findAll(): Promise<PersonalPersisted[]> {
     const personals = await prisma.persona.findMany({
-      include: {
-        usuario: true
+  include: {
+    usuario: {
+      select: {
+        id: true,
+        username: true,
+        contrasena: true,
+        personaId: true,
+        id_rol: true // ✅ esto es lo que te falta
       }
-    });
+    }
+  }
+});
     return personals.map(mapToPersonalPersisted);
   }
 }

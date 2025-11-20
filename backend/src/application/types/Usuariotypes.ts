@@ -1,10 +1,7 @@
-
-import { TipoRol } from "@prisma/client";
-
-export interface UsuarioPersisted {
+export type UsuarioPersisted = {
   id: number;
   username: string;
   contrasena: string;
-  personaId: number;
-  rol: TipoRol;
-}
+  personaId: number | null;
+  id_rol: number; 
+};

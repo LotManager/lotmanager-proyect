@@ -3,11 +3,17 @@ import { UserMapper } from "../mappers/userMapper";
 import { PersonalResponseDto } from "../dtos/personal.dto";
 import { Prisma } from "@prisma/client";
 
-type PersonalWithUsuario = Prisma.PersonaGetPayload<{ include: { usuario: true } }>;
+
+export type PersonalWithUsuario = Prisma.PersonaGetPayload<{
+  include: {
+    usuario: true;
+  };
+}>;
+
 
 export class PersonalMapper {
   static toDomain(data: PersonalWithUsuario): Personal {
-    const usuario = data.usuario ? UserMapper.toDomain(data.usuario) : undefined;
+    const usuario = data.usuario ? UserMapper.toDomain(data.usuario) : null;
 
     return new Personal(
         data.id,

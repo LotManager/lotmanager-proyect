@@ -7,8 +7,8 @@ import {
   updateCorral,
   deleteCorral,
   Corral,
-} from "@/src/services/corral"
-import { AddButton } from "@/src/components/ui/buttons"
+} from "../../../src/services/corral"
+import { AddButton } from "../../../src/components/ui/buttons"
 import { useRouter } from "next/navigation"
 import { CorralTable } from "../../../src/components/corrales/CorralTable"
 import { CorralDialog } from "../../../src/components/corrales/CorralDialog"

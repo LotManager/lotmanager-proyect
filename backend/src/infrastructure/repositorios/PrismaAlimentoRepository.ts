@@ -3,9 +3,24 @@ import { Alimento } from "../../domain/entities/Alimento";
 import { IAlimentoRepository, AlimentoFilter } from "domain/interfaces/IAlimentoRepository";
 
 export class PrismaAlimentoRepository implements IAlimentoRepository {
-    private prisma: PrismaClient;
-    constructor() {
-        this.prisma = new PrismaClient();
+  private toDomain(data: any): Alimento {
+    if (!data) throw new Error("Invalid database object")
+
+    const id = typeof data.id === "number" ? data.id : (typeof data.ID === "number" ? data.ID : undefined)
+    if (id === undefined) throw new Error("Missing id in alimento DB object")
+
+    const nroSerieRaw = data.nro_serie ?? data.nroSerie ?? data.nro ?? undefined
+    if (nroSerieRaw === undefined || nroSerieRaw === null) throw new Error("Missing nroSerie in alimento DB object")
+    const nroSerie = Number(nroSerieRaw)
+
+    if (data.vencimiento == null) throw new Error("Missing vencimiento in alimento DB object")
+    const vencimiento = new Date(data.vencimiento)
+
+    // mapear detallealimento: Prisma define `detallealimento` como array. Tomamos el primero si existe.
+    let detalle: DetalleAlimento | undefined = undefined
+    if (Array.isArray(data.detallealimento) && data.detallealimento.length > 0) {
+      const d = data.detallealimento[0]
+      detalle = new DetalleAlimento(d.id, d.nombre, d.tipo, d.id_alimento)
     }
     async create(alimento: Alimento): Promise<Alimento> {
         const created = await this.prisma.alimento.create({

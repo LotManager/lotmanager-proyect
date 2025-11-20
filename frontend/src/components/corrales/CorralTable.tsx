@@ -1,6 +1,6 @@
 import { Chip } from "@mui/material"
-import { EditButton, DeleteButton, ViewButton } from "@/src/components/ui/buttons"
-import { Corral } from "@/src/services/corral"
+import { EditButton, DeleteButton, ViewButton } from "../../components/ui/buttons"
+import { Corral } from "../../services/corral"
 
 type Props = {
   title: string

@@ -1,28 +1,55 @@
-import { IAlimentoRepository } from "../../domain/interfaces/IAlimentoRepository";
 import { Alimento } from "../../domain/entities/Alimento";
-import { CreateAlimentoDto } from "../../application/dtos/alimento.dto";
-import { UpdateAlimentoInput } from "../../application/dtos/alimento.dto";
-import { $Enums } from "@prisma/client";
-import { TipoAlimento } from "../../domain/enums/TipoAlimento";
+import { DetalleAlimento } from "../../domain/entities/DetalleAlimento";
+import { Suministro } from "../../domain/entities/Suministro";
+import { IAlimentoRepository } from "domain/interfaces/IAlimentoRepository";
+import { IDetalleAlimentoRepository } from "../../domain/interfaces/IDetalleAlimentoRepository";
+import { ISuministroRepository } from "../../domain/interfaces/ISuministroRepository";
 
 export class AlimentoService {
-    constructor(private alimentoRepository: IAlimentoRepository) {}
-
-    async createAlimento(dto: CreateAlimentoDto): Promise<Alimento> {
-        const alimento = new Alimento(0, dto.nombre, dto.tipo as $Enums.TipoAlimento);
-        return this.alimentoRepository.create(alimento);
-    }
-    async getAlimentoById(id: number): Promise<Alimento | null> {
-        return this.alimentoRepository.findById(id);
-    }
-    async getAllAlimentos(filter?: { tipo?: $Enums.TipoAlimento; nombre?: string }): Promise<Alimento[]> {
-        if (filter && (filter.tipo || filter.nombre)) {
-            return this.alimentoRepository.findFiltered(filter);
+    constructor(
+        private readonly alimentoRepo: IAlimentoRepository,
+        private readonly detalleAlimentoRepo?: IDetalleAlimentoRepository,
+        private readonly suministroRepo?: ISuministroRepository
+    ) { }
+    public async registrar(
+        id: number,
+        nroSerie: number,
+        vencimiento: Date,
+        idDetalleAlimento?: number,
+        suministros?: Suministro[]
+    ): Promise<Alimento> {
+        // En este punto aceptamos idDetalleAlimento como referencia. Si quieres
+        // crear el detalle inline, deberíamos recibir un objeto DetalleAlimento
+        // en lugar de sólo el id.
+        let detalle = undefined;
+        if (idDetalleAlimento) {
+            if (this.detalleAlimentoRepo) {
+                const d = await this.detalleAlimentoRepo.findById(idDetalleAlimento);
+                if (!d) throw new Error("DetalleAlimento no encontrado");
+                detalle = d;
+            } else {
+                detalle = new DetalleAlimento(idDetalleAlimento, "", "", id);
+            }
         }
         return this.alimentoRepository.findAll();
     }
-    async updateAlimento(input: UpdateAlimentoInput): Promise<Alimento | null> {
-    const { id, nombre, tipo } = input;
+    public async actualizar(
+        id: number,
+        nroSerie: number,
+        vencimiento: Date,
+        idDetalleAlimento?: number,
+        suministros?: Suministro[]
+    ): Promise<void> {
+        let detalle = undefined;
+        if (idDetalleAlimento) {
+            if (this.detalleAlimentoRepo) {
+                const d = await this.detalleAlimentoRepo.findById(idDetalleAlimento);
+                if (!d) throw new Error("DetalleAlimento no encontrado");
+                detalle = d;
+            } else {
+                detalle = new DetalleAlimento(idDetalleAlimento, "", "", id);
+            }
+        }
 
     const alimento = await this.alimentoRepository.findById(id);
     if (!alimento) return null;

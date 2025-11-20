@@ -1,36 +1,27 @@
-import { IBovinoRepository } from "../../domain/interfaces/IBovinoRepository";
-import { Bovino } from "../../domain/entities/Bovino";
-import { CreateBovinoDtoType, UpdateBovinoDtoType } from "../dtos/bovino.dto";
+import { IBovinoRepository } from "../../domain/interfaces/IBovinoRepository"
+import { Bovino } from "../../domain/entities/Bovino"
 
 export class BovinoService {
   constructor(private readonly repo: IBovinoRepository) {}
 
-  /**
-   * Orquesta la creación de un nuevo bovino.
-   * Su principal responsabilidad aquí es convertir las fechas del DTO.
-   */
-  async crear(dto: CreateBovinoDtoType): Promise<Bovino> {
-    // Convertimos las fechas de string (del DTO) a objetos Date (para la entidad/repo)
-    const dataParaCrear: any = { ...dto };
-    dataParaCrear.ingreso = new Date(dto.ingreso);
-    if (dto.egreso) {
-      dataParaCrear.egreso = new Date(dto.egreso);
-    }
-    return this.repo.create(dataParaCrear);
+  async crear(data: Omit<Bovino, "id">): Promise<Bovino> {
+    return this.repo.create(data)
   }
 
-  /**
-   * Devuelve la lista completa de bovinos.
-   */
   async listar(): Promise<Bovino[]> {
-    return this.repo.findAll();
+    return this.repo.findAll()
   }
 
-  /**
-   * Obtiene un único bovino por su ID.
-   */
   async obtener(id: number): Promise<Bovino | null> {
-    return this.repo.findById(id);
+    return this.repo.findById(id)
+  }
+
+  async actualizar(bovino: Bovino): Promise<Bovino> {
+    return this.repo.update(bovino)
+  }
+
+  async eliminar(id: number): Promise<void> {
+    return this.repo.delete(id)
   }
 
   /**

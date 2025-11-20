@@ -1,6 +1,6 @@
 // src/services/corral.ts
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 // ✅ Actualizamos el tipo para que coincida con el nuevo Backend
 export type Corral = {

@@ -8,5 +8,5 @@ export interface IBovinoRepository {
   delete(id: number): Promise<void>;
   findByCorral(idCorral: number): Promise<Bovino[]>;
   findAllConRelaciones(): Promise<any[]>;
-
+  findByCorralConRelaciones(idCorral: number): Promise<any[]>;
 }

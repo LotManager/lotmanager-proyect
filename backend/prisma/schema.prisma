@@ -17,19 +17,23 @@ datasource db {
 // Módulo: Geografía
 // -----------------------------------------------------------------------------
 model Provincia {
-  id     Int    @id @default(autoincrement())
-  nombre String @unique
+  id          Int         @id @default(autoincrement())
+  nombre      String      @unique
 
   localidades Localidad[]
 }
 
+// -----------------------------------------------------------------------------
+// Módulo: Usuarios y Personas
+// -----------------------------------------------------------------------------
+
 model Localidad {
-  id           Int       @id @default(autoincrement())
-  nombre       String
-  codigoPostal Int?      @map("codigo_postal")
-  provinciaId  Int       @map("id_provincia")
-  provincia    Provincia @relation(fields: [provinciaId], references: [id])
-  feedlots     Feedlot[]
+  id            Int       @id @default(autoincrement())
+  nombre        String
+  codigoPostal  Int?      @map("codigo_postal")
+  provinciaId   Int       @map("id_provincia")
+  provincia     Provincia @relation(fields: [provinciaId], references: [id])
+  feedlots      Feedlot[]
 }
 
 model Feedlot {
@@ -38,79 +42,73 @@ model Feedlot {
   localidadId Int       @map("id_localidad")
   localidad   Localidad @relation(fields: [localidadId], references: [id])
 
-  corrales Corral[]
+  corrales    Corral[]
 }
 
 // -----------------------------------------------------------------------------
-// Módulo: Usuarios y Personas
+// Módulo: Usuarios, Roles y Personas
 // -----------------------------------------------------------------------------
 
+
 model Persona {
-  id       Int    @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   nombre   String
   apellido String
-  email    String @unique
+  email    String  @unique
 
-  usuario Usuario?
+  usuario  Usuario?
 }
 
 model Usuario {
-  id         Int    @id @default(autoincrement())
-  username   String @unique // Nombre claro
-  contrasena String // Contraseña hasheada
+  id         Int     @id @default(autoincrement())
+  username   String  @unique // Nombre claro
+  contrasena String  // Contraseña hasheada
+  rol        TipoRol 
 
-  id_rol Int
-  rol    Rol @relation(fields: [id_rol], references: [id])
-
-  personaId Int?     @unique
-  persona   Persona? @relation(fields: [personaId], references: [id])
-}
-
-model Rol {
-  id      Int       @id @default(autoincrement())
-  nombre  String
-  Usuario Usuario[]
+  personaId  Int @unique    
+  persona    Persona @relation(fields: [personaId], references: [id])
+  
 }
 
 // -----------------------------------------------------------------------------
 // Módulo: Instalaciones y Animales Base
 // -----------------------------------------------------------------------------
 model Corral {
-  id              Int        @id @default(autoincrement())
-  numero          Int        @unique
-  capacidadMaxima Int
+  id              Int      @id @default(autoincrement())
+  numero          Int      @unique
+  capacidadMaxima Int      
   tipo            TipoCorral
-  feedlot         Feedlot    @relation(fields: [feedlotId], references: [id])
-  feedlotId       Int        @map("id_feedlot")
+  feedlot         Feedlot  @relation(fields: [feedlotId], references: [id])
+  feedlotId       Int      @map("id_feedlot")
 
-  bovinos          Bovino[]
-  suministros      Suministro[]
-  movimientosDesde MovimientoCorral[] @relation("MovimientosDesdeCorral")
-  movimientosHacia MovimientoCorral[] @relation("MovimientosHaciaCorral")
+  bovinos             Bovino[]
+  suministros         Suministro[]
+  movimientosDesde    MovimientoCorral[] @relation("MovimientosDesdeCorral")
+  movimientosHacia    MovimientoCorral[] @relation("MovimientosHaciaCorral")
 }
 
 model Raza {
-  id     Int    @id @default(autoincrement())
-  nombre String @unique
+  id      Int      @id @default(autoincrement())
+  nombre  String   @unique
 
   bovinos Bovino[]
 }
 
 model Bovino {
-  id              Int             @id @default(autoincrement())
-  caravana        Int             @unique // Caravana suele ser única
-  razaId          Int             @map("id_raza")
-  raza            Raza            @relation(fields: [razaId], references: [id])
-  corralId        Int             @map("id_corral")
-  corral          Corral          @relation(fields: [corralId], references: [id])
+  id              Int            @id @default(autoincrement())
+  caravana        Int            @unique // Caravana suele ser única
+  razaId          Int            @map("id_raza")
+  raza            Raza           @relation(fields: [razaId], references: [id])
+  corralId        Int            @map("id_corral")
+  corral          Corral         @relation(fields: [corralId], references: [id])
   situacionBovino SituacionBovino // Renombrado de estado_bovino
-  estadoSalud     EstadoSalud     @default(SANO)
+  estadoSalud     EstadoSalud    @default(SANO)
   sexo            SexoBovino
   tipoBovino      TipoBovino
   ingreso         DateTime
   egreso          DateTime?
-  pesoIngreso     Float           @map("peso_ingreso")
-  pesoEgreso      Float?          @map("peso_egreso")
+  pesoIngreso     Float          @map("peso_ingreso")
+  pesoEgreso      Float?         @map("peso_egreso")
 
   pesajes         Pesaje[]
   movimientos     MovimientoCorral[]
@@ -132,8 +130,8 @@ model MovimientoCorral {
   id              Int        @id @default(autoincrement())
   bovinoId        Int        @map("id_bovino")
   bovino          Bovino     @relation(fields: [bovinoId], references: [id])
-  corralOrigenId  Int        @map("id_corral_origen")
-  corralOrigen    Corral     @relation("MovimientosDesdeCorral", fields: [corralOrigenId], references: [id])
+  corralOrigenId  Int       @map("id_corral_origen")
+  corralOrigen    Corral    @relation("MovimientosDesdeCorral", fields: [corralOrigenId], references: [id])
   corralDestinoId Int        @map("id_corral_destino")
   corralDestino   Corral     @relation("MovimientosHaciaCorral", fields: [corralDestinoId], references: [id])
   fecha           DateTime   @default(now()) @map("fechaMovimiento") // Nombre más específico
@@ -144,17 +142,17 @@ model MovimientoCorral {
 // Módulo: Alimentación
 // -----------------------------------------------------------------------------
 model Alimento {
-  id     Int          @id @default(autoincrement())
-  nombre String
-  tipo   TipoAlimento // Usamos el Enum
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  tipo          TipoAlimento // Usamos el Enum
 
   detallesDieta DetalleDieta[]
 }
 
 model Dieta {
-  id          Int     @id @default(autoincrement())
-  nombre      String  @unique
-  descripcion String?
+  id            Int      @id @default(autoincrement())
+  nombre        String   @unique
+  descripcion   String?
 
   detallesDieta DetalleDieta[]
   suministros   Suministro[]
@@ -179,45 +177,42 @@ model Suministro {
   cantidadKg Float    @map("cantidadKg") // Cantidad total en KG
   fecha      DateTime @default(now())
 }
-
 // -----------------------------------------------------------------------------
 // Módulo: Sanidad Animal
 // -----------------------------------------------------------------------------
 
 model Enfermedad {
-  id          Int            @id @default(autoincrement())
-  nombre      String         @unique
-  descripcion String?
-  tipo        TipoEnfermedad
+  id              Int              @id @default(autoincrement())
+  nombre          String           @unique
+  descripcion     String?
+  tipo            TipoEnfermedad
 
-  tratamiento     Tratamiento[]
   casosEnfermedad CasoEnfermedad[]
 }
 
 // Representa un TIPO de tratamiento o protocolo (ej: "Antibiótico X 10ml", "Vacuna Antirrábica")
 model Tratamiento {
-  id          Int        @id @default(autoincrement())
-  nombre      String     @unique // El nombre del protocolo/tipo de tratamiento
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique // El nombre del protocolo/tipo de tratamiento
   descripcion String? // Descripción general del protocolo
   unidad      TipoUnidad // Unidad estándar para este tipo de tratamiento
 
-  Enfermedad     Enfermedad?      @relation(fields: [enfermedadId], references: [id])
-  enfermedadId   Int?
-  CasoEnfermedad CasoEnfermedad[]
+  
+  casosEnfermedad CasoEnfermedad[]
 }
 
 // Representa la instancia de un Bovino teniendo una Enfermedad (el "caso")
 model CasoEnfermedad {
-  id             Int        @id @default(autoincrement())
-  bovinoId       Int        @map("id_bovino")
-  bovino         Bovino     @relation(fields: [bovinoId], references: [id])
-  enfermedadId   Int        @map("id_enfermedad")
-  enfermedad     Enfermedad @relation(fields: [enfermedadId], references: [id])
-  fechaDeteccion DateTime   @map("fecha_deteccion")
-  fechaAlta      DateTime?  @map("fecha_alta")
+  id              Int        @id @default(autoincrement())
+  bovinoId        Int        @map("id_bovino")
+  bovino          Bovino     @relation(fields: [bovinoId], references: [id])
+  enfermedadId    Int        @map("id_enfermedad")
+  enfermedad      Enfermedad @relation(fields: [enfermedadId], references: [id])
+  fechaDeteccion  DateTime   @map("fecha_deteccion")
+  fechaAlta       DateTime?  @map("fecha_alta")
 
-  tratamientoId Int         @map("id_tratamiento")
-  tratamiento   Tratamiento @relation(fields: [tratamientoId], references: [id])
+  tratamientoId   Int         @map("id_tratamiento")
+  tratamiento     Tratamiento @relation(fields: [tratamientoId], references: [id])
 }
 
 // -----------------------------------------------------------------------------
@@ -259,6 +254,11 @@ enum TipoEnfermedad {
   INTOXICACION
   TRAUMATOLOGICA
   OTRA
+}
+
+enum TipoRol {
+  ADMINISTRADOR
+  ENCARGADO
 }
 
 enum SexoBovino {

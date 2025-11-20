@@ -1,19 +1,17 @@
-// app/components/dashboard/WeightEvolutionChart.tsx
-
 "use client";
 
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { FaChartLine, FaWeightHanging } from 'react-icons/fa';
 
-// AHORA ACEPTAMOS "data" COMO PROPIEDAD (PROP)
+// Definimos la interfaz para las props
 interface Props {
     data: { name: string; peso: number }[];
 }
 
 export default function WeightEvolutionChart({ data }: Props) {
     
-    // CASO 1: SI EL ARRAY ESTÁ VACÍO (USUARIO NUEVO)
+    // CASO 1: SI EL ARRAY ESTÁ VACÍO O ES NULL (USUARIO NUEVO)
     if (!data || data.length === 0) {
         return (
             <div className="bg-white p-6 rounded-lg shadow-md h-80 border flex flex-col items-center justify-center text-center">
@@ -26,37 +24,38 @@ export default function WeightEvolutionChart({ data }: Props) {
         );
     }
 
-    // CASO 2: SI HAY UN SOLO DATO
+    // CASO 2: SI HAY UN SOLO DATO (RECIÉN EMPIEZA)
     if (data.length === 1) {
         return (
             <div className="bg-white p-6 rounded-lg shadow-md h-80 border flex flex-col relative overflow-hidden">
                 <h3 className="font-semibold text-xl text-gray-800 mb-2">Evolución de Peso</h3>
                 <div className="flex-1 flex flex-col items-center justify-center z-10">
-                    <p className="text-gray-500 font-medium mb-2">Peso Inicial</p>
+                    <p className="text-gray-500 font-medium mb-2">Peso Inicial Registrado</p>
                     <div className="flex items-baseline gap-2">
                         <span className="text-5xl font-extrabold text-[var(--color-secondary)]">{data[0].peso}</span>
                         <span className="text-xl text-gray-600">kg</span>
                     </div>
                     <p className="text-xs text-green-600 bg-green-100 px-3 py-1 rounded-full mt-4">
-                        Inicio del ciclo
+                        Inicio del ciclo productivo
                     </p>
                 </div>
+                {/* Icono de fondo decorativo */}
                 <FaWeightHanging className="absolute -bottom-4 -right-4 text-gray-100 text-9xl z-0" />
             </div>
         );
     }
 
-    // CASO 3: HAY DATOS SUFICIENTES -> MUESTRA EL GRÁFICO
+    // CASO 3: HAY DATOS SUFICIENTES -> MUESTRA EL GRÁFICO COMPLETO
     return (
         <div className="bg-white p-6 rounded-lg shadow-md h-80 border flex flex-col">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-xl text-gray-800">Evolución de Peso Mensual</h3>
                 <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                    Tendencia
+                    Tendencia General
                 </span>
             </div>
             
-            <div className="flex-1 w-full min-h-0">
+            <div className="flex-1 w-full min-h-0"> {/* min-h-0 es vital para flexbox responsive */}
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
@@ -65,15 +64,41 @@ export default function WeightEvolutionChart({ data }: Props) {
                                 <stop offset="95%" stopColor="#234c2f" stopOpacity={0}/>
                             </linearGradient>
                         </defs>
+                        
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 12 }} dy={10}/>
-                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 12 }} />
+                        
+                        <XAxis 
+                            dataKey="name" 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ fill: '#9ca3af', fontSize: 12 }}
+                            dy={10}
+                        />
+                        
+                        <YAxis 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ fill: '#9ca3af', fontSize: 12 }} 
+                        />
+                        
                         <Tooltip 
                             contentStyle={{ backgroundColor: '#234c2f', border: 'none', borderRadius: '8px', color: '#fff' }}
                             itemStyle={{ color: '#fff' }}
                             formatter={(value: number) => [`${value} kg`, 'Peso']}
+                            cursor={{ stroke: '#234c2f', strokeWidth: 1, strokeDasharray: '4 4' }}
                         />
-                        <Area type="monotone" dataKey="peso" stroke="#234c2f" strokeWidth={3} fillOpacity={1} fill="url(#colorPeso)" />
+
+                        {/* Línea de referencia opcional (Meta) */}
+                        <ReferenceLine y={200} stroke="#ef4444" strokeDasharray="3 3" />
+
+                        <Area 
+                            type="monotone" 
+                            dataKey="peso" 
+                            stroke="#234c2f" 
+                            strokeWidth={3}
+                            fillOpacity={1} 
+                            fill="url(#colorPeso)" 
+                        />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>

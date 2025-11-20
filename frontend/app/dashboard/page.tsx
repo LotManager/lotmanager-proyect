@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react'; // 1. Importamos hooks
 import Link from 'next/link';
-import WeightEvolutionChart from 'src/components/dashboard/WeightEvolutionChart';
-import { getDashboardData } from 'src/lib/api'; // 2. Importamos la función de datos
+import WeightEvolutionChart from '../../src/components/dashboard/WeightEvolutionChart';
+import { getDashboardData } from '../../src/lib/api'; // 2. Importamos la función de datos
 // 3. Agregamos FaCheckCircle a los imports
 import { FaCog, FaChartLine, FaExclamationTriangle, FaRulerHorizontal, FaBell, FaCheckCircle } from 'react-icons/fa';
 

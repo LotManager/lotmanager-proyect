@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Empleado } from '@/types/empleado';
+import type { Empleado } from '../../types/empleado';
 
 interface Props {
     isOpen: boolean;

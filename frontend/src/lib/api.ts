@@ -1,9 +1,8 @@
 // src/lib/api.ts
 
-import type { SanidadStats } from '@/types/sanidad';
-import type { Tratamiento } from '@/types/sanidad';
-import type { Empleado, EmpleadoStats} from "@/types/empleado";
-import type { SanidadRow, ResumenRow, EficienciaBar, EvolucionMes } from '@/types/reportes';
+import type { SanidadStats, Tratamiento } from '../types/sanidad';
+import type { Empleado, EmpleadoStats } from '../types/empleado';
+import type { SanidadRow, ResumenRow, EficienciaBar, EvolucionMes } from '../types/reportes';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export async function getSanidadStats(corralId?: number): Promise<SanidadRow[]> {

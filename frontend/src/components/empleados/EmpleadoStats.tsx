@@ -1,6 +1,6 @@
 'use client';
 
-import { EmpleadoStats as Stats } from '@/types/empleado';
+import { EmpleadoStats as Stats } from '../../types/empleado';
 import { FaUsers, FaUserCheck, FaUserTimes, FaCalendarPlus } from 'react-icons/fa';
 
 export default function EmpleadoStats({ stats }: { stats: Stats }) {

@@ -5,6 +5,7 @@ import React from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 
+
 export const metadata: Metadata = {
     title: 'LotManager - Gestión de Ganado',
     description: 'La solución integral para la gestión de lotes.',

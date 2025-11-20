@@ -1,60 +1,149 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import DietaCard from "@/src/components/dashboard/dietas/DietaCard";
-import { listarDietas, actualizarDieta } from "@/src/services/dietaService";
+import { useEffect, useState } from "react";
+import { Button, CircularProgress, Alert } from "@mui/material";
+import { Add, Restaurant } from "@mui/icons-material"; // Agregamos ícono Restaurant
+
+// Servicios
+import { Dieta, getDietas, createDieta, updateDieta, deleteDieta, CreateDietaInput } from "@/src/services/dieta";
+
+// Componentes
+import { DietaCard } from "@/src/components/dietas/DietaCard";
+import { DietaDialog } from "@/src/components/dietas/DietaDialog";
+// ✅ IMPORTAMOS EL GESTOR DE ALIMENTOS
+import { AlimentosManagerDialog } from "@/src/components/alimentos/AliementoManagerDialog";
 
 export default function DietasPage() {
-  const [dietas, setDietas] = useState<any[]>([]);
+  const [dietas, setDietas] = useState<Dieta[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
+  // Estados del Modal de Dieta
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedDieta, setSelectedDieta] = useState<Dieta | null>(null);
+
+  // ✅ NUEVO ESTADO: Para abrir el Gestor de Alimentos
+  const [openAlimentosManager, setOpenAlimentosManager] = useState(false);
+
+  const loadDietas = async () => {
     setLoading(true);
-    listarDietas()
-      .then((data) => {
-        if (mounted) setDietas(data);
-      })
-      .catch((err) => {
-        console.error('listarDietas failed', err);
-        if (mounted) setError(String(err));
-      })
-      .finally(() => {
-        if (mounted) setLoading(false);
-      });
-    return () => { mounted = false; };
-  }, []);
+    try {
+      const data = await getDietas();
+      setDietas(data);
+    } catch (err: any) {
+      console.error(err);
+      setError("No se pudieron cargar las dietas.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadDietas(); }, []);
+
+  // --- HANDLERS ---
+
+  const handleOpenCreate = () => {
+    setSelectedDieta(null);
+    setOpenDialog(true);
+  };
+
+  const handleEdit = (dieta: Dieta) => {
+    setSelectedDieta(dieta);
+    setOpenDialog(true);
+  };
+
+  const handleSave = async (data: CreateDietaInput) => {
+    try {
+      if (selectedDieta) {
+        await updateDieta(selectedDieta.id, data);
+        alert("Dieta actualizada correctamente");
+      } else {
+        await createDieta(data);
+        alert("Dieta creada correctamente");
+      }
+      setOpenDialog(false);
+      setSelectedDieta(null);
+      loadDietas();
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "Error al guardar");
+    }
+  };
+
+  const handleDelete = async (dieta: Dieta) => {
+    if (!confirm(`¿Estás seguro de eliminar la dieta "${dieta.nombre}"?`)) return;
+    try {
+      await deleteDieta(dieta.id);
+      setDietas(prev => prev.filter(d => d.id !== dieta.id));
+    } catch (e: any) {
+      alert("Error al eliminar");
+    }
+  };
 
   return (
-    <div>
+    <div className="space-y-6 p-6">
+      {/* Header con Botones */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Gestión de Dietas</h1>
+        
+        <div className="flex gap-3">
+          {/* ✅ BOTÓN INGREDIENTES: Abre el AlimentosManagerDialog */}
+          <Button 
+            variant="outlined" 
+            color="inherit"
+            startIcon={<Restaurant />}
+            onClick={() => setOpenAlimentosManager(true)}
+          >
+            Alimentos
+          </Button>
 
-      {loading && <div className="mt-4">Cargando dietas...</div>}
-      {error && <div className="mt-4 text-red-600">Error: {error}</div>}
+          <Button 
+            variant="contained" 
+            color="primary" 
+            startIcon={<Add />}
+            onClick={handleOpenCreate}
+          >
+            Crear Dieta
+          </Button>
+        </div>
+      </div>
+
+      {loading && <div className="flex justify-center p-8"><CircularProgress /></div>}
+      {error && <Alert severity="error">{error}</Alert>}
 
       {!loading && !error && (
-        <div className="mt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {dietas.length === 0 && <div>No hay dietas</div>}
-          {dietas.map((dt) => (
-            <DietaCard
-              key={String(dt.id)}
-              dieta={dt}
-              onView={(id) => console.log('ver', id)}
-              onEdit={async (id) => {
-                try {
-                  const nuevoNombre = window.prompt('Nuevo nombre para la dieta:', String(dt.nombre ?? ''));
-                  if (!nuevoNombre) return; 
-                  const updated = await actualizarDieta(id, { nombre: nuevoNombre });
-                  setDietas((prev) => prev.map((p) => (String(p.id) === String(id) ? updated : p)));
-                } catch (err) {
-                  console.error('Error al actualizar dieta', err);
-                  alert('No se pudo actualizar la dieta: ' + String(err));
-                }
-              }}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {dietas.map((dieta) => (
+            <div key={dieta.id}>
+              <DietaCard 
+                dieta={dieta} 
+                onEdit={handleEdit} 
+                onDelete={handleDelete} 
+              />
+            </div>
           ))}
+          
+          {dietas.length === 0 && (
+            <div className="col-span-full w-full text-center p-8 text-slate-500">
+              No hay dietas registradas. ¡Crea la primera!
+            </div>
+          )}
         </div>
       )}
+
+      {/* Modal de Crear/Editar Dieta */}
+      <DietaDialog 
+        open={openDialog}
+        onClose={() => { setOpenDialog(false); setSelectedDieta(null); }}
+        onSave={handleSave}
+        dietaToEdit={selectedDieta}
+      />
+
+      {/* ✅ Modal Gestor de Alimentos */}
+      <AlimentosManagerDialog 
+        open={openAlimentosManager}
+        onClose={() => setOpenAlimentosManager(false)}
+      />
     </div>
   );
 }

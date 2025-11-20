@@ -1,87 +1,50 @@
-import { PrismaClient, $Enums } from "@prisma/client";
+import prisma from "../../config/db";
 import { Alimento } from "../../domain/entities/Alimento";
-import { IAlimentoRepository, AlimentoFilter } from "domain/interfaces/IAlimentoRepository";
+import { IAlimentoRepository } from "../../domain/interfaces/IAlimentoRepository";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Alimento as PrismaAlimentoModel } from "@prisma/client";
 
 export class PrismaAlimentoRepository implements IAlimentoRepository {
-  private toDomain(data: any): Alimento {
-    if (!data) throw new Error("Invalid database object")
+  
+  private toDomain(data: PrismaAlimentoModel): Alimento {
+    return new Alimento(data.id, data.nombre, data.tipo);
+  }
 
-    const id = typeof data.id === "number" ? data.id : (typeof data.ID === "number" ? data.ID : undefined)
-    if (id === undefined) throw new Error("Missing id in alimento DB object")
+  async create(data: Omit<Alimento, "id">): Promise<Alimento> {
+    const nuevo = await prisma.alimento.create({ data });
+    return this.toDomain(nuevo);
+  }
 
-    const nroSerieRaw = data.nro_serie ?? data.nroSerie ?? data.nro ?? undefined
-    if (nroSerieRaw === undefined || nroSerieRaw === null) throw new Error("Missing nroSerie in alimento DB object")
-    const nroSerie = Number(nroSerieRaw)
+  async findAll(): Promise<Alimento[]> {
+    const data = await prisma.alimento.findMany();
+    return data.map(this.toDomain);
+  }
 
-    if (data.vencimiento == null) throw new Error("Missing vencimiento in alimento DB object")
-    const vencimiento = new Date(data.vencimiento)
+  async findById(id: number): Promise<Alimento | null> {
+    const data = await prisma.alimento.findUnique({ where: { id } });
+    return data ? this.toDomain(data) : null;
+  }
 
-    // mapear detallealimento: Prisma define `detallealimento` como array. Tomamos el primero si existe.
-    let detalle: DetalleAlimento | undefined = undefined
-    if (Array.isArray(data.detallealimento) && data.detallealimento.length > 0) {
-      const d = data.detallealimento[0]
-      detalle = new DetalleAlimento(d.id, d.nombre, d.tipo, d.id_alimento)
+  async update(id: number, data: Partial<Omit<Alimento, "id">>): Promise<Alimento> {
+    try {
+      const actualizado = await prisma.alimento.update({ where: { id }, data });
+      return this.toDomain(actualizado);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+        throw new Error("Alimento no encontrado");
+      }
+      throw error;
     }
-    async create(alimento: Alimento): Promise<Alimento> {
-        const created = await this.prisma.alimento.create({
-            data: {
-                nombre: alimento.getNombre(),
-                tipo: alimento.getTipo() as $Enums.TipoAlimento,
-            },
-        });
-        return new Alimento(
-            created.id,
-            created.nombre,
-            created.tipo as $Enums.TipoAlimento
-        );
+  }
+
+  async delete(id: number): Promise<void> {
+    try {
+      await prisma.alimento.delete({ where: { id } });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+        throw new Error("Alimento no encontrado");
+      }
+      throw error;
     }
-    async findById(id: number): Promise<Alimento | null> {
-        const found = await this.prisma.alimento.findUnique({
-            where: { id },
-        });
-        if (!found) return null;
-        return new Alimento(
-            found.id,
-            found.nombre,
-            found.tipo as $Enums.TipoAlimento
-        );
-    }
-    async findAll(): Promise<Alimento[]> {
-        const alimentos = await this.prisma.alimento.findMany();
-        return alimentos.map(
-            (a) => new Alimento(a.id, a.nombre, a.tipo as $Enums.TipoAlimento)
-        );
-    }
-    async findFiltered(filter: AlimentoFilter): Promise<Alimento[]> {
-        const { tipo, nombre } = filter;
-        const alimentos = await this.prisma.alimento.findMany({
-            where: {
-                ...(tipo ? { tipo } : {}),
-                ...(nombre ? { nombre: { contains: nombre } } : {}),
-            },
-        });
-        return alimentos.map(
-            (a) => new Alimento(a.id, a.nombre, a.tipo as $Enums.TipoAlimento)
-        );
-    }
-    async update(alimento: Alimento): Promise<void> {
-        await this.prisma.alimento.update({
-            where: { id: alimento.getId() },
-            data: {
-                nombre: alimento.getNombre(),
-                tipo: alimento.getTipo() as $Enums.TipoAlimento,
-            },
-        });
-    }
-    async delete(id: number): Promise<void> {
-        await this.prisma.alimento.delete({
-            where: { id },
-        });
-    }
-    async exists(id: number): Promise<boolean> {
-        const count = await this.prisma.alimento.count({
-            where: { id },
-        });
-        return count > 0;
-    }
+  }
 }

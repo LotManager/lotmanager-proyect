@@ -2,7 +2,7 @@
 
 import type { Metadata } from 'next';
 import React from 'react';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import DashboardLayout from '../../src/components/dashboard/DashboardLayout';
 
 
 export const metadata: Metadata = {

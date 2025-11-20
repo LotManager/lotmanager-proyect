@@ -15,3 +15,4 @@ export interface EmpleadoStats {
   inactivos: number;
   nuevosEsteMes: number;
 }
+

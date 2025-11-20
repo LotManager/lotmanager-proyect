@@ -32,7 +32,7 @@ export default function Hero() {
                         href="/registro?mode=register" 
                         className="px-8 py-4 bg-primary hover:bg-green-600 text-white font-bold rounded-full transition-all shadow-xl shadow-green-900/40 hover:-translate-y-1"
                     >
-                        Comenzar Gratis
+                        Comenzar
                     </Link>
                     <a 
                         href="#features" 

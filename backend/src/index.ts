@@ -31,6 +31,9 @@ import alimentoRoutes from "./presentation/routes/alimento.routes"
 import dietaRouter from './presentation/routes/dieta.routes';
 import suministroRouter from './presentation/routes/suministro.routes';
 import reportesRouter from './presentation/routes/reportes-rutas';
+import authRouter from './presentation/routes/auth.routes';
+import dashboardRouter from './presentation/routes/dashboard.routes';
+import sanidadRouter from './presentation/routes/sanidad.routes';
 
 const PORT = process.env.PORT || 3000;
 
@@ -38,7 +41,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:3000', // Adjust as needed
+    origin: 'http://localhost:3001', // Adjust as needed
     credentials: true,
 }));
 
@@ -65,6 +68,9 @@ app.use('/api/alimentos', alimentoRoutes);
 app.use('/api/dietas', dietaRouter);
 app.use('/api/suministros', suministroRouter);
 app.use('/api/reports', reportesRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/dashboard', dashboardRouter);
+app.use('/api/sanidad', sanidadRouter)
 
 // --- Rutas de Test (Las dejamos) ---
 app.get("/test-provincia", (req, res) => {

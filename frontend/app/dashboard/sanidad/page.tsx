@@ -1,108 +1,106 @@
-// app/dashboard/sanidad/page.tsx
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { getTratamientosActivos, getSanidadResumen } from '../../../src/lib/api';
-import type { Tratamiento, SanidadStats as Stats } from '../../../src/types/sanidad';
-import SanidadStats from '../../../src/components/sanidad/SanidadStats';
-import TratamientoActivoTable from '../../../src/components/sanidad/TratamientoActivoTable';
-import AgregarTratamientoModal from '../../../src/components/sanidad/AgregarTratamientoModal';
+import { useState, useEffect } from "react";
+import { Button, Chip, Paper, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Add, Healing, Settings } from "@mui/icons-material"; 
+import { getCasosActivos, CasoEnfermedad, darAltaCaso } from "@/src/services/sanidad";
+import { TratamientoDialog } from "@/src/components/sanidad/TratamientoDialog";
+import { SanidadManagerDialog } from "@/src/components/sanidad/SanidadManagerDialog"; 
 
 export default function SanidadPage() {
-    const [tratamientos, setTratamientos] = useState<Tratamiento[]>([]);
-    const [stats, setStats] = useState<Stats>({ enTratamiento: 0, urgentes: 0, enRecuperacion: 0, completadosEsteMes: 0 });
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [casos, setCasos] = useState<CasoEnfermedad[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openManager, setOpenManager] = useState(false);
 
-    useEffect(() => {
-        Promise.all([getTratamientosActivos(), getSanidadResumen()])
-        .then(([data, st]) => {
-            setTratamientos(data);
-            setStats(st);
-        })
-        .catch((err) => console.error(err)); 
-    }, []);
+  const loadData = () => getCasosActivos().then(setCasos).catch(console.error);
+  
+  useEffect(() => { loadData(); }, []);
 
-    const handleCompletar = async (id: number) => {
-        if (!confirm('¿Marcar como completado?')) return;
-        try {
-            await fetch(`/api/sanidad/tratamientos/${id}/completar`, { method: 'PUT' });
-            setTratamientos((prev) => prev.filter((t) => t.id !== id));
-            setStats((prev) => ({ ...prev, enTratamiento: prev.enTratamiento - 1, completadosEsteMes: prev.completadosEsteMes + 1 }));
-        } catch (e: any) {
-            alert(e.message);
-        }
-    };
+  const handleAlta = async (id: number) => {
+    if(!confirm("¿Dar de alta? El animal volverá a estado SANO.")) return;
+    await darAltaCaso(id);
+    loadData();
+  };
 
-    const handleGuardarNuevo = async (nuevoData: any) => {
-        try {
-            const res = await fetch('/api/sanidad/tratamientos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...nuevoData,
-                    diasRestantes: nuevoData.diasTotales, // Usamos lo que viene del form
-                    estado: 'Activo', // Asegúrate que coincida con tu Tipo (Activo/EnCurso)
-                }),
-            });
+  return (
+    <div className="space-y-6 p-6">
+      
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Control Sanitario</h1>
+        
+        {/* ✅ BOTONES AGRUPADOS A LA DERECHA */}
+        <div className="flex gap-3">
+            <Button 
+              variant="outlined" 
+              color="primary"
+              startIcon={<Settings />} 
+              onClick={() => setOpenManager(true)}
+            >
+              Gestión Sanitaria
+            </Button>
 
-            if (!res.ok) throw new Error(`Error ${res.status} al guardar`);
-
-            const nuevoTratamiento: Tratamiento = await res.json();
-
-            setTratamientos((prev) => [...prev, nuevoTratamiento]);
-            setStats((prev) => ({
-                ...prev,
-                enTratamiento: prev.enTratamiento + 1,
-            }));
-
-            alert("Tratamiento guardado correctamente");
-        } catch (e: any) {
-            alert(`Error: ${e.message}`);
-        }
-    };
-
-    const handleVerDetalle = (id: number) => {
-        alert(`Ver detalle de tratamiento ${id} (próximo paso)`);
-    };
-
-    // --- AQUÍ ES DONDE TE FALTABA CÓDIGO ---
-    return (
-        <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-7xl mx-auto">
-                
-                {/* 1. ENCABEZADO CON FLEXBOX (Título + Botón) */}
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-extrabold text-[var(--color-secondary)]">Control Sanitario</h1>
-                    
-                    {/* ESTE BOTÓN FALTABA */}
-                    <button 
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-[rgb(35,76,47)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm"
-                    >
-                        <span className="text-xl font-bold">+</span> 
-                        Agregar Tratamiento
-                    </button>
-                </div>
-
-                {/* 2. Tarjetas de resumen */}
-                <SanidadStats stats={stats} />
-
-                {/* 3. Tabla de tratamientos */}
-                <div className="mt-8">
-                    <TratamientoActivoTable 
-                        tratamientos={tratamientos} 
-                        onCompletar={handleCompletar} 
-                        onVerDetalle={handleVerDetalle} 
-                    />
-                </div>
-            </div>
-
-            {/* 4. EL MODAL (FALTABA RENDERIZARLO) */}
-            <AgregarTratamientoModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)}
-                onSave={handleGuardarNuevo}
-            />
+            <Button 
+              variant="contained" 
+              color="error" 
+              startIcon={<Add />} 
+              onClick={() => setOpenDialog(true)}
+            >
+              Nuevo Caso
+            </Button>
         </div>
-    );
+      </div>
+
+      {/* TABLA DE ENFERMOS */}
+      <Paper className="overflow-hidden border border-gray-200 rounded-lg shadow-sm">
+        <Table>
+            <TableHead className="bg-gray-50">
+                <TableRow>
+                    <TableCell className="font-semibold text-gray-600">Caravana</TableCell>
+                    <TableCell className="font-semibold text-gray-600">Enfermedad</TableCell>
+                    <TableCell className="font-semibold text-gray-600">Tratamiento</TableCell>
+                    <TableCell className="font-semibold text-gray-600">Fecha Detección</TableCell>
+                    <TableCell className="font-semibold text-gray-600">Acciones</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {casos.map(c => (
+                    <TableRow key={c.id} className="hover:bg-gray-50 transition-colors">
+                        <TableCell><strong>#{c.bovino.caravana}</strong></TableCell>
+                        <TableCell>
+                            <Chip label={c.enfermedad.nombre} color="error" size="small" variant="outlined"/>
+                        </TableCell>
+                        <TableCell>{c.tratamiento.nombre}</TableCell>
+                        <TableCell>{new Date(c.fechaDeteccion).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                            <Button size="small" color="success" startIcon={<Healing />} onClick={() => handleAlta(c.id)}>
+                                Dar Alta
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                ))}
+                {casos.length === 0 && (
+                    <TableRow>
+                        <TableCell colSpan={5} align="center" className="py-8 text-gray-500">
+                            No hay animales enfermos actualmente. 🎉
+                        </TableCell>
+                    </TableRow>
+                )}
+            </TableBody>
+        </Table>
+      </Paper>
+
+      {/* MODALES */}
+      <TratamientoDialog 
+        open={openDialog} 
+        onClose={() => setOpenDialog(false)} 
+        onSuccess={loadData} 
+      />
+
+      <SanidadManagerDialog 
+        open={openManager} 
+        onClose={() => setOpenManager(false)} 
+      />
+    </div>
+  );
 }

@@ -88,11 +88,12 @@ export default function DietasPage() {
         
         <div className="flex gap-3">
           {/* ✅ BOTÓN INGREDIENTES: Abre el AlimentosManagerDialog */}
-          <Button 
+            <Button 
             variant="outlined" 
-            color="inherit"
+            color="primary" // Cambiado de 'inherit' a 'primary' para que se vea azul/verde
             startIcon={<Restaurant />}
             onClick={() => setOpenAlimentosManager(true)}
+            sx={{ fontWeight: 'bold' }} // Un poco más de peso a la letra
           >
             Alimentos
           </Button>

@@ -3,7 +3,7 @@ import { EditButton, DeleteButton, ViewButton, SupplyButton } from "@/src/compon
 import { Corral } from "@/src/services/corral";
 
 type Props = {
-  title?: string; // Lo hice opcional por si no querés título
+  title?: string;
   corrales: Corral[];
   onEdit: (c: Corral) => void;
   onDelete: (id: number) => void;
@@ -19,7 +19,7 @@ export function CorralTable({
   onDelete,
   onView,
   onSupply,
-  chipColor = "primary", // Valor por defecto
+  chipColor = "primary",
 }: Props) {
   return (
     <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
@@ -50,37 +50,45 @@ export function CorralTable({
             ) : (
               corrales.map((c) => (
                 <tr key={c.id} className="border-b hover:bg-slate-50 transition-colors">
+                  
+                  {/* Número (Fuerte) */}
                   <td className="px-4 py-3 font-bold text-slate-700 text-lg">
                     #{c.numero}
                   </td>
-                  <td className="px-4 py-3">
-                    {c.capacidadMaxima} animales
+                  
+                  {/* ✅ CAPACIDAD: Agregamos negrita y color más oscuro */}
+                  <td className="px-4 py-3 font-medium text-slate-700">
+                    {c.capacidadMaxima} <span className="text-sm text-gray-500">animales</span>
                   </td>
+                  
+                  {/* Tipo (Chip Sólido) */}
                   <td className="px-4 py-3">
                     <Chip 
                       label={c.tipo} 
                       color={c.tipo === "ENGORDE" ? "primary" : "error"} 
                       size="small" 
-                      variant="outlined"
+                      variant="filled" // ✅ CORRECCIÓN: Fondo Sólido
                     />
                   </td>
+                  
+                  {/* Dieta Actual (Chip Sólido) */}
                   <td className="px-4 py-3">
                     <Chip 
                       label={c.nombreDieta || "Sin Asignar"} 
                       color={c.nombreDieta && c.nombreDieta !== "Sin Dieta Asignada" ? "success" : "default"}
                       size="small"
+                      variant="filled" // ✅ CORRECCIÓN: Fondo Sólido
                     />
                   </td>
+                  
+                  {/* Acciones */}
                   <td className="px-4 py-3 flex justify-end gap-2">
+                    {onSupply && (
+                      <SupplyButton onClick={() => onSupply(c)} label="" />
+                    )}
                     <ViewButton onClick={() => onView(c.id)} label="" />
                     <EditButton onClick={() => onEdit(c)} label="" />
                     <DeleteButton onClick={() => onDelete(c.id)} label="" />
-                      {onSupply && (
-                      <SupplyButton 
-                        onClick={() => onSupply(c)} 
-                        label="" // Sin texto para que entre bien
-                      />
-                    )}
                   </td>
                 </tr>
               ))

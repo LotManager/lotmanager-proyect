@@ -1,81 +1,27 @@
-// src/services/corral.ts
+import { api } from "./api"; 
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+// ------------------------------------------------------------------
+// 1. TIPOS DE DATOS
+// ------------------------------------------------------------------
 
-// ✅ Actualizamos el tipo para que coincida con el nuevo Backend
 export type Corral = {
-  id: number
-  numero: number
-  capacidadMaxima: number // Antes: capacidad_maxima
-  tipo: "ENGORDE" | "ENFERMA" // Antes: tipoCorral
-  feedlotId: number // Antes: idFeedlot
+  id: number;
+  numero: number;
+  capacidadMaxima: number; 
+  tipo: "ENGORDE" | "ENFERMA"; 
+  feedlotId: number; 
   nombreDieta?: string;
-  
-  // Eliminamos idAlimentacion y nombreAlimentacion ya que ahora se manejan por 'Suministro'
-}
+};
 
-export async function getCorrales(): Promise<Corral[]> {
-  // Asegurate de que tu backend esté corriendo y la URL sea correcta
-  const res = await fetch(`${API_URL}/api/corrales`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Error al obtener corrales")
-  return res.json()
-}
+// Tipos para formularios (Alias para que sea más legible)
+export type CreateCorralInput = Omit<Corral, "id" | "nombreDieta">;
+export type UpdateCorralInput = Partial<CreateCorralInput>;
 
-export async function createCorral(data: Omit<Corral, "id">) {
-  const res = await fetch(`${API_URL}/api/corrales`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
-  if (!res.ok) throw new Error("Error al crear corral")
-  return res.json()
-}
-
-export async function updateCorral(id: number, data: Partial<Corral>) {
-  const res = await fetch(`${API_URL}/api/corrales/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Error al actualizar corral. Status: ${res.status}`);
-  }
-
-  // Nuestro nuevo backend devuelve el objeto actualizado (JSON), así que esto es seguro
-  return res.json(); 
-}
-
-export async function deleteCorral(id: number) {
-  const res = await fetch(`${API_URL}/api/corrales/${id}`, {
-    method: "DELETE",
-  })
-  if (!res.ok) throw new Error("Error al eliminar corral")
-  return true
-}
-
-export async function getCorralById(id: number): Promise<Corral> {
-  const res = await fetch(`${API_URL}/api/corrales/${id}`);
-  
-  if (!res.ok) {
-    throw new Error("Error al obtener los datos del corral");
-  }
-  
-  return res.json();
-}
-
-// --- Tipos auxiliares ---
-
+// Tipos auxiliares para Suministros y Dietas
 export type Alimentacion = {
-  id: number
-  nombre: string
-}
-
-export async function getDietas(): Promise<Alimentacion[]> {
-  const res = await fetch(`${API_URL}/api/alimentaciones`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Error al obtener dietas")
-  return res.json()
-}
+  id: number;
+  nombre: string;
+};
 
 export type SuministroHistorico = {
   id: number;
@@ -98,15 +44,49 @@ export type CorralDetalle = {
   historialSuministros: SuministroHistorico[];
 };
 
+// ------------------------------------------------------------------
+// 2. FUNCIONES 
+// ------------------------------------------------------------------
+
+export async function getCorrales(): Promise<Corral[]> {
+  return api("/api/corrales");
+}
+
+export async function createCorral(data: CreateCorralInput) {
+  return api("/api/corrales", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateCorral(id: number, data: UpdateCorralInput) {
+  return api(`/api/corrales/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteCorral(id: number) {
+  return api(`/api/corrales/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function getCorralById(id: number): Promise<Corral> {
+  return api(`/api/corrales/${id}`);
+}
+
 export async function getCorralDetalle(id: number): Promise<CorralDetalle> {
-  // Llamamos a la nueva ruta de detalle
-  const res = await fetch(`${API_URL}/api/corrales/${id}/detalle`, { cache: "no-store" });
-  
-  if (!res.ok) {
-    // Intentamos leer el error del backend
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al obtener el detalle del corral");
-  }
-  
-  return res.json();
+  return api(`/api/corrales/${id}/detalle`);
+}
+
+// --- Funciones auxiliares ---
+
+export async function getDietas(): Promise<Alimentacion[]> {
+  return api("/api/dietas"); 
+}
+
+export async function getBovinosCountByCorral(id: number): Promise<number> {
+   const data = await api(`/api/corral-metrics/${id}/bovinos-count`);
+   return data.count ?? 0;
 }

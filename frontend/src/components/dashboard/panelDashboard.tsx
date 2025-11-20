@@ -9,6 +9,7 @@ import { FaLayerGroup } from "react-icons/fa";
 import { FcStatistics } from "react-icons/fc";
 import { FiLogOut } from "react-icons/fi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 type NavItem = {
 	label: string;
@@ -26,6 +27,9 @@ const NAV: NavItem[] = [
 ];
 
 export default function PanelDashboard() {
+	
+	const { logout } = useAuth();
+
 	return (
 		<aside className="w-72 min-h-screen bg-white border-r border-slate-200 flex flex-col">
 			<div className="px-6 py-5 flex items-center gap-3 border-b border-slate-100">
@@ -64,14 +68,15 @@ export default function PanelDashboard() {
 			</nav>
 
 			<div className="px-4 py-4 border-t border-slate-100">
-				<Link
-					href="/logout"
-					className="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-red-50 hover:text-red-700 transition-colors"
-				>
-								<FiLogOut className="text-red-600" size={18} />
-								<span className="text-sm">Cerrar Sesión</span>
-				</Link>
-			</div>
+                {/* ✅ CAMBIO: Usamos button en lugar de Link */}
+                <button
+                    onClick={logout} // Llamamos a la función que trajimos del useAuth()
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-red-50 hover:text-red-700 transition-colors text-left"
+                >
+                    <FiLogOut className="text-red-600" size={18} />
+                    <span className="text-sm font-medium">Cerrar Sesión</span>
+                </button>
+            </div>
 		</aside>
 	);
 }

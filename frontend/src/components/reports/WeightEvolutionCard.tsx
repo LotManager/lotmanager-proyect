@@ -68,8 +68,6 @@ export const WeightEvolutionCard: React.FC<WeightEvolutionCardProps> = ({ data, 
           color="text.secondary"
           sx={{ display: "block", mt: 1 }}
         >
-          Valores representativos. Podés conectar estos datos a tu API de historial de pesajes por
-          lote.
         </Typography>
       </CardContent>
     </Card>

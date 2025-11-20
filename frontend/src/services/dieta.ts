@@ -1,4 +1,8 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { api } from "./api";
+
+// ------------------------------------------------------------------
+// 1. TIPOS DE DATOS
+// ------------------------------------------------------------------
 
 export type DetalleDieta = {
   alimentoId: number;
@@ -27,40 +31,36 @@ export type CreateDietaInput = {
   }[];
 };
 
+export type UpdateDietaInput = Partial<CreateDietaInput>;
+
+// ------------------------------------------------------------------
+// 2. FUNCIONES 
+// ------------------------------------------------------------------
+
 export async function getDietas(): Promise<Dieta[]> {
-  const res = await fetch(`${API_URL}/api/dietas`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Error al obtener dietas");
-  return res.json();
+  return api("/api/dietas");
 }
 
 export async function createDieta(data: CreateDietaInput) {
-  const res = await fetch(`${API_URL}/api/dietas`, {
+  return api("/api/dietas", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al crear la dieta");
-  }
-  return res.json();
 }
 
-export async function updateDieta(id: number, data: Partial<CreateDietaInput>) {
-  const res = await fetch(`${API_URL}/api/dietas/${id}`, {
+export async function updateDieta(id: number, data: UpdateDietaInput) {
+  return api(`/api/dietas/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Error al actualizar la dieta");
-  return res.json();
 }
 
 export async function deleteDieta(id: number) {
-  const res = await fetch(`${API_URL}/api/dietas/${id}`, {
+  return api(`/api/dietas/${id}`, {
     method: "DELETE",
   });
-  if (!res.ok) throw new Error("Error al eliminar la dieta");
-  return true;
+}
+
+export async function getDietaById(id: number): Promise<Dieta> {
+  return api(`/api/dietas/${id}`);
 }

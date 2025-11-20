@@ -12,7 +12,7 @@ const controller = new TratamientoController(tratamientoService)
 
 router.post('/', controller.crear.bind(controller))
 router.get('/:id', controller.obtenerPorId.bind(controller))
-router.patch('/:id', controller.actualizar.bind(controller))
+router.put('/:id', controller.actualizar.bind(controller))
 router.delete('/:id', controller.eliminar.bind(controller))
 router.get('/', controller.listar.bind(controller))
 

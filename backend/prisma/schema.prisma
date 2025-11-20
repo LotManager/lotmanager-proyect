@@ -23,6 +23,10 @@ model Provincia {
   localidades Localidad[]
 }
 
+// -----------------------------------------------------------------------------
+// Módulo: Usuarios y Personas
+// -----------------------------------------------------------------------------
+
 model Localidad {
   id            Int       @id @default(autoincrement())
   nombre        String

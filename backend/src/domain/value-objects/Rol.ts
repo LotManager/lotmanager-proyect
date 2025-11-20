@@ -1,49 +1,52 @@
+import { RolDTO } from "application/dtos/rol.dto";
+
 export class Rol {
     private id: number;
-    private nombre: "admin" | "encargado";
-
-    constructor(id: number, nombre: "admin" | "encargado") {
-        if (!["admin", "encargado"].includes(nombre)) {
-            throw new Error(`Rol inválido: ${nombre}`);
-        }
+    private nombre: string;
+    
+    constructor(id: number, nombre: string) {
+        if (nombre.trim().length === 0) throw new Error('El nombre del rol no puede estar vacío');
         this.id = id;
         this.nombre = nombre;
-    }
-
-    static fromNombre(nombre: "admin" | "encargado"): Rol {
-    const mapa: Record<"admin" | "encargado", number> = {
-      admin: 1,
-      encargado: 2
-    };
-    return new Rol(mapa[nombre], nombre);
-  }
-
-  static fromId(id: number): Rol {
-    const mapa: Record<number, "admin" | "encargado"> = {
-    1: "admin",
-    2: "encargado"
-    };
-    const nombre = mapa[id];
-    if (!nombre) throw new Error(`Rol inválido para id: ${id}`);
-    return new Rol(id, nombre);
-    }
-
+    }   
     public isValid(): boolean {
-        return ["admin", "encargado"].includes(this.nombre);
+        return this.nombre.trim().length > 0;
     }
-
     public getId(): number {
         return this.id;
     }
-
-    public getNombre(): "admin" | "encargado" {
+    public getNombre(): string {
         return this.nombre;
     }
-    public isAdmin(): boolean {
-        return this.nombre === 'admin';
-    }
+    public static fromId(id: number): Rol {
+        const roles: Record<number, string> = {
+        1: "ADMINISTRADOR",
+        2: "TAMBERO",
+        };
 
-    public toDTO(): { id: number; nombre: "admin" | "encargado" } {
-        return { id: this.id, nombre: this.nombre as "admin" | "encargado" };
-}
+        const nombre = roles[id];
+        if (!nombre) {
+        throw new Error(`Rol inválido: ${id}`);
+        }
+
+        return new Rol(id, nombre);
+    }
+    public static fromNombre(nombre: string): Rol {
+        const roles: Record<string, number> = {
+            ADMINISTRADOR: 1,
+            TAMBERO: 2,
+        };
+
+        const id = roles[nombre];
+        if (!id) throw new Error(`Rol inválido: ${nombre}`);
+
+        return new Rol(id, nombre);
+    
+    }
+    public toDTO(): RolDTO {
+        return {
+            id: this.id,
+            nombre: this.nombre
+        };
+    }
 }

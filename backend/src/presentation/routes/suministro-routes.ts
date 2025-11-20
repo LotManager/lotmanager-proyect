@@ -1,12 +1,9 @@
-import { Router } from "express"
-import { SuministroController } from "../controllers/suministro-controller"
-// import { roleGuard } from "../../presentation/middlewares/roleGuard"
+import { Router } from "express";
+import { SuministroController } from "../controllers/suministro.controller";
 
-const router = Router()
+const router = Router();
 
-router.get("/", SuministroController.getAll)
-router.get("/:id", SuministroController.getById)
-router.post("/", SuministroController.create)
-router.put("/:id", SuministroController.update)
-router.delete("/:id", SuministroController.delete)
-export default router
+router.post("/", SuministroController.registrar);
+router.get("/corral/:corralId", SuministroController.historial);
+
+export default router;

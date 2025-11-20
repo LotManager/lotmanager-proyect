@@ -4,6 +4,6 @@ export interface AuthPayload {
   usuario: string;
   rol: {
     id: number;
-    nombre: "admin" | "encargado";
+    nombre: string;
   }
 }

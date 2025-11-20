@@ -1,51 +1,44 @@
 import { User } from "../../domain/entities/User";
 import { Rol } from "../../domain/value-objects/Rol";
 import { PasswordHash } from "../../domain/value-objects/PasswordHash";
+import { Prisma, Usuario } from "@prisma/client";
+import { UserDTO } from "../../application/dtos/user.dto";
 
-interface PrismaUser {
-  id: number;
-  usuario: string;
-  contrasena: string;
-  rol: {
-    id: number;
-    nombre: string;
-  };
-}
+
 
 export class UserMapper {
-  static fromPrisma(dbUser: PrismaUser): User {
-    if (!dbUser || !dbUser.rol || !dbUser.contrasena) {
-      throw new Error("Datos de usuario incompletos");
-    }
+  
+  static toDomain(prismaUser: Usuario): User {
+  return new User(
+    prismaUser.id,
+    prismaUser.username,
+    PasswordHash.fromHash(prismaUser.contrasena),
+    Rol.fromId(prismaUser.id_rol),
+    prismaUser.personaId ?? null
+  );
+}
 
-    const rol = Rol.fromId(dbUser.rol.id); 
-    const password = PasswordHash.fromHash(dbUser.contrasena); // ya hasheada
-
-    return new User(dbUser.id, dbUser.usuario, password, rol);
-  }
-
-  static toPersistence(user: User): {
-    id: number;
-    usuario: string;
-    contrasena: string;
-    id_rol: number;
-  } {
+  static toPrisma(user: User): Prisma.UsuarioCreateInput {
     return {
-      id: user.getId(),
-      usuario: user.getName(),
+      username: user.getName(),
       contrasena: user.getPasswordHash(),
-      id_rol: user.getRol().getId()
+      rol: {
+        connect: { id: user.getRol().getId() },
+      },
+      persona: user.getPersonaId() !== null
+        ? { connect: { id: user.getPersonaId()! } }
+        : undefined
     };
   }
-  static toDTO(user: User): {
-    id: number;
-    usuario: string;
-    rol: { id: number; nombre: string };
-  } {
+
+
+  static toDTO(user: User): UserDTO {
     return {
       id: user.getId(),
-      usuario: user.getName(),
-      rol: user.getRol().toDTO()
+      username: user.getName(),
+      rol: user.getRol().toDTO(),
+      personaId: user.getPersonaId()
     };
   }
+  
 }

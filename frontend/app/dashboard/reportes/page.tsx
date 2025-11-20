@@ -1,10 +1,11 @@
 // app/reportes/page.tsx
+
 import { Suspense } from 'react';
-import { getSanidadStats, getResumenMensual, getEficienciaCorral, getEvolucionPesoLote } from '@/lib/api';
-import SanidadStats from '@/components/reportes/SanidadStats';
-import ResumenMensual from '@/components/reportes/ResumenMensual';
-import EficienciaPorCorral from '@/components/reportes/EficienciaPorCorral';
-import EvolucionPesoLote from '@/components/reportes/EvolucionPesoLote';
+import { getSanidadStats, getResumenMensual, getEficienciaCorral, getEvolucionPesoLote } from '../../../src/lib/api';
+import SanidadStats from '../../../src/components/reportes/SanidadStats';
+import ResumenMensual from '../../../src/components/reportes/ResumenMensual';
+import EficienciaPorCorral from '../../../src/components/reportes/EficienciaPorCorral';
+import EvolucionPesoLote from '../../../src/components/reportes/EvolucionPesoLote';
 
 export default async function ReportesPage() {
   const [sanidad, resumen, eficiencia, evolucion] = await Promise.all([

@@ -13,8 +13,9 @@ import { Request, Response } from 'express';
 // import provinciaRutas from './presentation/routes/provincia-rutas';
 // import usuarioRutas from './presentation/routes/usuario-rutas';
 // import personalRutas from './presentation/routes/personal-rutas';
-// import enfermedadRutas from './presentation/routes/enfermedad-rutas';
-// import trataminetoRutas from './presentation/routes/tratamiento-rutas'
+import enfermedadRutas from './presentation/routes/enfermedad-rutas';
+import trataminetoRutas from './presentation/routes/tratamiento-rutas'
+import casoEnfermedadRutas from './presentation/routes/casoEnfermedad-rutas';
 // import detalleAlimentoRoutes from "./presentation/routes/detalleAlimento.routes";
 // import suministroRoutes from "./presentation/routes/suministro.routes"
 // import alimentacionRoutes from "./presentation/routes/alimentacion.routes"
@@ -46,8 +47,9 @@ app.use(cors({
 // app.use("/api/feedlots", feedlotRutas);
 // app.use("/api/provincias", provinciaRutas);
 // app.use("/api/personal", personalRutas);
-// app.use("/api/enfermedades", enfermedadRutas);
-// app.use("/api/tratamientos", trataminetoRutas);
+app.use("/api/enfermedades", enfermedadRutas);
+app.use("/api/tratamientos", trataminetoRutas);
+app.use("/api/casos-enfermedad", casoEnfermedadRutas);
 // app.use('/detalle-alimentos', detalleAlimentoRoutes);
 // app.use('/alimentaciones', alimentacionRoutes);
 // app.use('/api/corral-metrics', corralMetricsRouter);

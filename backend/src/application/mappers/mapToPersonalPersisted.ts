@@ -1,4 +1,4 @@
-import { PersonalPersisted } from "../personal/types/Personaltypes";
+import { PersonalPersisted } from "../types/Personaltypes";
 import { Rol } from "../../domain/value-objects/Rol";
 
 
@@ -9,12 +9,13 @@ export function mapToPersonalPersisted(db: any): PersonalPersisted {
         nombre: db.usuario.usuario,
         rol: new Rol(db.usuario.rol.id, db.usuario.rol.nombre)
       }
-    : undefined;
+    : null;
 
   return {
     id: db.id,
     nombre: db.nombre,
     apellido: db.apellido,
+    email: db.email,
     id_usuario: db.id_usuario,
     usuario
   } as PersonalPersisted;

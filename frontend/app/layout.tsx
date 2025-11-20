@@ -1,22 +1,33 @@
-// app/layout.tsx (Versión Raíz - Server Component)
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
 
-import type { Metadata } from 'next';
-import React from 'react';
-import './globals.css'; 
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "LotManager - Gestión de Ganado",
-  description: "La solución integral para la gestión de lotes.",
+  title: "LotManager",
+  description: "Gestión de lotes de animales",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="es">
-      <body className="min-h-screen bg-gray-50 text-gray-800">
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         {children}
       </body>
     </html>

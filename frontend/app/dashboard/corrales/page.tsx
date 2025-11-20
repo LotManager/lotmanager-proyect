@@ -146,7 +146,7 @@ export default function CorralesPage() {
         corralToEdit={selectedCorral}
       />
 
-      {/* ✅ Modal de Suministro */}
+      {/* Modal de Suministro */}
       <SuministroDialog 
         open={openSupplyDialog}
         onClose={() => setOpenSupplyDialog(false)}

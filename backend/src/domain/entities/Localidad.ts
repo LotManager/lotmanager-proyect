@@ -3,14 +3,14 @@ import { Provincia } from "./Provincia";
 export class Localidad {  
   constructor(
     private  id: number,
-    private  codigoPostal: number,
+    private  codigoPostal: number | null,
     private  nombre: string,
     private  provincia: Provincia
 ) {
     if (!Localidad.isNombreValido(nombre)) {
       throw new Error("Nombre de localidad inválido");
     }
-    if (!Localidad.isCodigoPostalValido(codigoPostal)) {
+    if (codigoPostal !== null && codigoPostal !== undefined && !Localidad.isCodigoPostalValido(codigoPostal)) {
       throw new Error("Código postal inválido");
     }
   }
@@ -19,7 +19,7 @@ export class Localidad {
     return this.id;
   }
 
-  public getCodigoPostal(): number {
+  public getCodigoPostal(): number | null {
     return this.codigoPostal;
   }
 
@@ -49,7 +49,7 @@ export class Localidad {
   public isValid(): boolean {
     return (
       Localidad.isNombreValido(this.nombre) &&
-      Localidad.isCodigoPostalValido(this.codigoPostal)
+      (this.codigoPostal === null || Localidad.isCodigoPostalValido(this.codigoPostal))
     );
   }
 

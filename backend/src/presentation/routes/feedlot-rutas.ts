@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { FeedlotController } from "../../application/mappers/feedlot-controller";
+import { FeedlotController } from "../controllers/feedlot-controller";
 import { authMiddleware } from "../middlewares/authmiddleware";
 
 const router = Router();

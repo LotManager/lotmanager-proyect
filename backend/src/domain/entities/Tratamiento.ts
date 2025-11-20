@@ -1,13 +1,12 @@
-import { Enfermedad } from './Enfermedad'
 import { ITratamiento } from '..//interfaces/ITratamientoRepository'
+import { CasoEnfermedad, TipoUnidad } from '@prisma/client'
 
 export class Tratamiento implements ITratamiento {
   constructor(
     public readonly id: number,
-    public descripcion: string,
-    public dosisAplicada: string,
+    public descripcion: string | null,
     public nombre: string,
-    private enfermedades: Enfermedad[] = []
+    public unidad: TipoUnidad
   ) {}
 
   getId(): number {
@@ -15,22 +14,17 @@ export class Tratamiento implements ITratamiento {
   }
 
   getDescripcion(): string {
+    if (this.descripcion === null) {
+      return ''
+    }
     return this.descripcion
   }
 
-  getDosisAplicada(): string {
-    return this.dosisAplicada
+  getUnidad(): TipoUnidad {
+    return this.unidad
   }
 
   getNombre(): string {
     return this.nombre
-  }
-
-  getEnfermedades(): Enfermedad[] {
-    return this.enfermedades
-  }
-
-  aplicarDosis(nuevaDosis: string): void {
-    this.dosisAplicada = nuevaDosis
   }
 }

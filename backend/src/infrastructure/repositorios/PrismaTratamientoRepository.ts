@@ -21,42 +21,51 @@ export class TratamientoRepository {
   }
 
   async update(id: number, dto: TratamientoUpdateDto): Promise<Tratamiento | null> {
+    if (Object.keys(dto).length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar");
+    }
     const data: Prisma.TratamientoUpdateInput = {
         ...(dto.descripcion !== undefined && { descripcion: dto.descripcion }),
-        ...(dto.dosisAplicada !== undefined && { dosis_aplicada: dto.dosisAplicada }),
+        ...(dto.unidad !== undefined && { unidad: dto.unidad }),
         ...(dto.nombre !== undefined && { nombre: dto.nombre }),
     }
+  
 
-  const updated = await this.prisma.tratamiento.update({
-    where: { id },
-    data,
-  })
-
-  return TratamientoMapper.toEntity(updated)
+    try {
+      const updated = await this.prisma.tratamiento.update({
+        where: { id },
+        data,
+      });
+      return TratamientoMapper.toEntity(updated);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        return null; // registro no encontrado
+      }
+      throw error;
+    }
 }
 
 
-  async delete(id: number): Promise<void> {
-    await this.prisma.tratamiento.delete({ where: { id } })
+  async delete(id: number): Promise<boolean> {
+  try {
+    await this.prisma.tratamiento.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return false;
+    }
+    throw error;
   }
+}
 
   async findAll(): Promise<Tratamiento[]> {
     const all = await this.prisma.tratamiento.findMany()
     return all.map(TratamientoMapper.toEntity)
   }
-  
-  async findWithEnfermedades(id: number): Promise<Tratamiento | null> {
-  const found = await this.prisma.tratamiento.findUnique({
-    where: { id },
-    include: {
-      enfermedadxtratamiento: {
-        include: {
-          enfermedad: true,
-        },
-      },
-    },
-  })
 
-  return found ? TratamientoMapper.toEntityWithEnfermedades(found) : null
+  async exists(id: number): Promise<boolean> {
+    const count = await this.prisma.tratamiento.count({ where: { id } });
+  return count > 0;
 }
+  
 }

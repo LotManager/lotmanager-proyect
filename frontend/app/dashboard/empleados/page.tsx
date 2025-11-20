@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getEmpleados, getEmpleadoStats } from '@/lib/api';
-import { Empleado, EmpleadoStats } from '@/types/empleado';
-import EmpleadoTable from '@/components/empleados/EmpleadoTable';
-import StatsComponent from '@/components/empleados/EmpleadoStats';
+import { getEmpleados, getEmpleadoStats } from '@/src/lib/api';
+import { Empleado, EmpleadoStats } from '@/src/types/empleado';
+import EmpleadoTable from '/components/empleados/EmpleadoTable';
+import StatsComponent from '@/components/empleados/StatsComponent';
 
 export default function EmpleadosPage() {
   const [empleados, setEmpleados] = useState<Empleado[]>([]);

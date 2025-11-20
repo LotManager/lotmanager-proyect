@@ -8,15 +8,16 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { MonthlySummaryCardProps } from "@/src/types/reportes";
 
-const summaryItems = [
-  { label: "Peso promedio inicial", value: "420 kg" },
-  { label: "Peso promedio actual", value: "485 kg", highlight: true },
-  { label: "Ganancia total", value: "65 kg", highlight: true },
-  { label: "GMD promedio", value: "1.8 kg/día", highlight: true },
-];
+export const MonthlySummaryCard: React.FC<MonthlySummaryCardProps> = ({ data }) => {
+  const summaryItems = [
+    { label: "Peso promedio inicial", value: `${data.pesoPromedioInicial} kg` },
+    { label: "Peso promedio actual", value: `${data.pesoPromedioActual} kg`, highlight: true },
+    { label: "Ganancia total", value: `${data.gananciaTotal} kg`, highlight: true },
+    { label: "GMD promedio", value: `${data.gmdPromedio} kg/día`, highlight: true },
+  ];
 
-export const MonthlySummaryCard: React.FC = () => {
   return (
     <Card>
       <CardHeader title="Resumen Mensual" />

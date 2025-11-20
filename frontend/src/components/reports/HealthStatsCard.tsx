@@ -8,15 +8,16 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { HealthStatsCardProps } from "@/src/types/reportes";
 
-const healthStats = [
-  { label: "Animales sanos", value: "97.6%", color: "primary.main" },
-  { label: "En tratamiento", value: "2.1%", color: "warning.main" },
-  { label: "Casos críticos", value: "0.3%", color: "error.main" },
-  { label: "Mortalidad (mes)", value: "0.1%", color: "error.main" },
-];
+export const HealthStatsCard: React.FC<HealthStatsCardProps> = ({ data }) => {
+  const healthStats = [
+    { label: "Animales sanos", value: `${data.sanosPercentage}%`, color: "primary.main" },
+    { label: "En tratamiento", value: `${data.enTratamientoPercentage}%`, color: "warning.main" },
+    { label: "Casos críticos", value: `${data.criticosPercentage}%`, color: "error.main" },
+    { label: "Mortalidad (mes)", value: `${data.mortalidadPercentage}%`, color: "error.main" },
+  ];
 
-export const HealthStatsCard: React.FC = () => {
   return (
     <Card>
       <CardHeader title="Estadísticas de Sanidad" />

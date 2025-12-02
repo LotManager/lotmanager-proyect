@@ -1,18 +1,22 @@
-import React from "react";
-import PanelDashboard from "../../src/components/dashboard/panelDashboard";
+//app/dashboard/layout.tsx
 
-export const metadata = {
-  title: "Dashboard - Feedlot System",
+import type { Metadata } from 'next';
+import React from 'react';
+import DashboardLayout from '../../src/components/dashboard/DashboardLayout';
+
+
+
+export const metadata: Metadata = {
+    title: 'LotManager - Gestión de Ganado',
+    description: 'La solución integral para la gestión de lotes.',
 };
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-screen bg-slate-50">
-      <PanelDashboard />
-
-      <main className="flex-1 p-6">
-        <div className="max-w-7xl mx-auto">{children}</div>
-      </main>
-    </div>
-  );
+export default function RootLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <DashboardLayout>{children}</DashboardLayout>
+    );
 }

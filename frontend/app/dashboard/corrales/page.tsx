@@ -1,148 +1,158 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import {
-  getCorrales,
-  createCorral,
-  updateCorral,
-  deleteCorral,
-  Corral,
-} from "@/src/services/corral"
-import { AddButton } from "@/src/components/ui/buttons"
-import { useRouter } from "next/navigation"
-import { CorralTable } from "../../../src/components/corrales/CorralTable"
-import { CorralDialog } from "../../../src/components/corrales/CorralDialog"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Stack } from "@mui/material";
+import { Add } from "@mui/icons-material";
 
-export default function PensPage() {
-  const router = useRouter()
-  const [corrales, setCorrales] = useState<Corral[]>([])
-  const [loading, setLoading] = useState(true)
+// Servicios
+import { 
+  Corral, getCorrales, createCorral, updateCorral, deleteCorral 
+} from "@/src/services/corral";
 
-  // Estados para crear y editar
-  const [openCreate, setOpenCreate] = useState(false)
-  const [openEdit, setOpenEdit] = useState(false)
-  const [form, setForm] = useState({
-    numero: "",
-    capacidadMaxima: "",
-    tipoCorral: "ENGORDE",
-  })
-  const [selectedCorral, setSelectedCorral] = useState<Corral | null>(null)
+// Componentes
+import { CorralTable } from "@/src/components/corrales/CorralTable";
+import { CorralDialog } from "@/src/components/corrales/CorralDialog";
+import { SuministroDialog } from "@/src/components/corrales/SuministroDialog";
+import { SuministroHistory } from "@/src/components/corrales/SuministroHistory";
 
-  useEffect(() => {
-    getCorrales()
-      .then(setCorrales)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+export default function CorralesPage() {
+  const router = useRouter();
+  
+  // Estados
+  const [corrales, setCorrales] = useState<Corral[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedCorral, setSelectedCorral] = useState<Corral | null>(null);
 
-  if (loading) return <p className="p-4">Cargando corrales...</p>
+  // Estados para Suministro
+  const [openSupplyDialog, setOpenSupplyDialog] = useState(false);
+  const [corralForSupply, setCorralForSupply] = useState<Corral | null>(null);
 
-  const corralesEngorde = corrales.filter((c) => c.tipoCorral === "ENGORDE")
-  const corralesEnfermos = corrales.filter((c) => c.tipoCorral === "ENFERMA")
+  // Carga de datos
+  const loadCorrales = async () => {
+    setLoading(true);
+    try {
+      const data = await getCorrales();
+      setCorrales(data);
+    } catch (err) {
+      console.error(err);
+      // Podrías poner un estado de error aquí si querés mostrar un mensaje
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Crear
-  const handleCreate = async () => {
-    const nuevo = await createCorral({
-      numero: Number(form.numero),
-      capacidadMaxima: Number(form.capacidadMaxima),
-      tipoCorral: form.tipoCorral as "ENGORDE" | "ENFERMA",
-      idFeedlot: 1,
-      idAlimentacion: null,
-    })
-    setCorrales((prev) => [...prev, nuevo])
-    setOpenCreate(false)
-    setForm({ numero: "", capacidadMaxima: "", tipoCorral: "ENGORDE" })
-  }
+  useEffect(() => { loadCorrales(); }, []);
 
-  // Eliminar
+  // --- LÓGICA DE SEPARACIÓN ---
+  // Filtramos los corrales según su tipo
+  const corralesEngorde = corrales.filter(c => c.tipo === "ENGORDE");
+  const corralesEnfermeria = corrales.filter(c => c.tipo === "ENFERMA");
+
+  // --- Handlers ---
+
   const handleDelete = async (id: number) => {
-    await deleteCorral(id)
-    setCorrales((prev) => prev.filter((c) => c.id !== id))
-  }
+    if (!confirm("¿Eliminar este corral? Esta acción no se puede deshacer.")) return;
+    try {
+      await deleteCorral(id);
+      setCorrales(prev => prev.filter(c => c.id !== id));
+    } catch (e: any) { alert(e.message); }
+  };
 
-  // Guardar edición
-  const handleEditSave = async () => {
-    if (!selectedCorral) return
-    const actualizado = await updateCorral(selectedCorral.id, {
-      numero: Number(form.numero),
-      capacidadMaxima: Number(form.capacidadMaxima),
-      tipoCorral: form.tipoCorral,
-    })
-    setCorrales((prev) => prev.map((c) => (c.id === actualizado.id ? actualizado : c)))
-    setOpenEdit(false)
-    setSelectedCorral(null)
-  }
+  const handleSave = async (data: any) => {
+    try {
+      // Aseguramos feedlotId
+      const dataToSend = { ...data, feedlotId: 1 }; 
+
+      if (selectedCorral) {
+        await updateCorral(selectedCorral.id, dataToSend);
+        alert("Corral actualizado correctamente");
+      } else {
+        await createCorral(dataToSend);
+        alert("Corral creado correctamente");
+      }
+      setOpenDialog(false);
+      setSelectedCorral(null);
+      loadCorrales(); // Recargamos la lista
+    } catch (e: any) { 
+        console.error(e);
+        alert(e.message || "Error al guardar"); 
+    }
+  };
+
+  const handleView = (id: number) => {
+    // ✅ Navegamos a la nueva ruta 'corrales'
+    router.push(`/dashboard/corrales/${id}`);
+  };
+
+  const handleOpenCreate = () => {
+    setSelectedCorral(null); 
+    setOpenDialog(true);
+  };
+
+  const handleEdit = (c: Corral) => {
+    setSelectedCorral(c);
+    setOpenDialog(true);
+  };
+
+  const handleSupply = (c: Corral) => {
+    setCorralForSupply(c);
+    setOpenSupplyDialog(true);
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-bold text-slate-800">Corrales</h1>
-        <div className="flex gap-3">
-          <AddButton onClick={() => setOpenCreate(true)} />
-        </div>
+    <div className="space-y-6 p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Gestión de Corrales</h1>
+        <Button 
+          variant="contained" startIcon={<Add />}
+          onClick={handleOpenCreate}
+        >
+          Nuevo Corral
+        </Button>
       </div>
 
-      {/* Corrales de Engorde */}
-      <CorralTable
-        title="Corrales de Engorde"
-        subtitle="Gestión de corrales activos en producción"
-        corrales={corralesEngorde}
-        chipColor="primary"
-        onEdit={(c) => {
-          setSelectedCorral(c)
-          setForm({
-            numero: String(c.numero),
-            capacidadMaxima: String(c.capacidadMaxima),
-            tipoCorral: c.tipoCorral,
-          })
-          setOpenEdit(true)
-        }}
-        onDelete={handleDelete}
-        onView={(id) => router.push(`/dashboard/pens/${id}`)}
+      {/* ✅ Usamos Stack para separar las dos tablas */}
+      <Stack spacing={6}>
+        
+        {/* Tabla 1: Engorde */}
+        <CorralTable
+          title="Corrales de Engorde"
+          corrales={corralesEngorde}
+          chipColor="primary"
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          onView={handleView}
+          onSupply={handleSupply}
+        />
+
+        {/* Tabla 2: Enfermería */}
+        <CorralTable
+          title="Corrales de Enfermería"
+          corrales={corralesEnfermeria}
+          chipColor="error"
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          onView={handleView}
+        />
+
+      </Stack>
+
+      <CorralDialog 
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onSave={handleSave}
+        corralToEdit={selectedCorral}
       />
 
-      {/* Corrales Enfermos */}
-      <CorralTable
-        title="Corrales Enfermos"
-        subtitle="Animales en tratamiento o aislamiento"
-        corrales={corralesEnfermos}
-        chipColor="error"
-        rowHoverClass="hover:bg-red-50"
-        onEdit={(c) => {
-          setSelectedCorral(c)
-          setForm({
-            numero: String(c.numero),
-            capacidadMaxima: String(c.capacidadMaxima),
-            tipoCorral: c.tipoCorral,
-          })
-          setOpenEdit(true)
-        }}
-        onDelete={handleDelete}
-        onView={(id) => router.push(`/dashboard/pens/${id}`)}
-      />
-
-      {/* Modal de creación */}
-      <CorralDialog
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        title="Nuevo Corral"
-        form={form}
-        setForm={setForm}
-        onSave={handleCreate}
-        saveLabel="Guardar"
-      />
-
-      {/* Modal de edición */}
-      <CorralDialog
-        open={openEdit}
-        onClose={() => setOpenEdit(false)}
-        title="Editar Corral"
-        form={form}
-        setForm={setForm}
-        onSave={handleEditSave}
-        saveLabel="Guardar cambios"
+      {/* Modal de Suministro */}
+      <SuministroDialog 
+        open={openSupplyDialog}
+        onClose={() => setOpenSupplyDialog(false)}
+        corral={corralForSupply}
+        onSuccess={loadCorrales} // Recarga la tabla para actualizar "Dieta Actual"
       />
     </div>
-  )
+  );
 }

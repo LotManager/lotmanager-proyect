@@ -1,9 +1,12 @@
-import { Router } from "express"
-import { crearPesaje, listarPesajesPorBovino } from "../controllers/pesaje-controllers"
+import { Router } from "express";
+import { PesajeController } from "../controllers/pesaje-controllers"
 
-const pesajeRouter = Router()
+const pesajeRouter = Router();
 
-pesajeRouter.post("/", crearPesaje)
-pesajeRouter.get("/bovino/:id", listarPesajesPorBovino)
+// Registrar un nuevo pesaje
+pesajeRouter.post("/", PesajeController.registrar);
 
-export default pesajeRouter
+// Ver historial de pesajes de un animal específico
+pesajeRouter.get("/bovino/:bovinoId", PesajeController.historial);
+
+export default pesajeRouter;

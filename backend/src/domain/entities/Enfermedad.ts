@@ -1,3 +1,4 @@
+import { CasoEnfermedad } from "@prisma/client";
 import { TipoEnfermedad } from "../enums/TipoEnfermedad";
 
 export class Enfermedad {
@@ -6,11 +7,16 @@ export class Enfermedad {
         private nombre: string,
         private descripcion: string,
         private tipo: TipoEnfermedad,
-        private tratamientos?: { idTratamiento: number; periodo: string }[]
+        private tratamientos?: { idTratamiento: number; nombre: string }[],
+        private casosEnfermedad?: CasoEnfermedad[]
     ) {}
+
 
     getTratamientos() {
         return this.tratamientos ?? [];
+    }
+    getCasosEnfermedad() {
+        return this.casosEnfermedad ?? [];
     }
     
     getId(): number {
@@ -43,10 +49,14 @@ export class Enfermedad {
         this.tipo = tipo;
     }
 
-    añadirTratamiento(idTratamiento: number, periodo: string): void {
+    añadirTratamiento(idTratamiento: number, nombre: string): void {
         if (!this.tratamientos) this.tratamientos = [];
-            this.tratamientos.push({ idTratamiento, periodo });
+            this.tratamientos.push({ idTratamiento, nombre });
     }   
+    añadirCasoEnfermedad(caso: CasoEnfermedad): void {
+        if (!this.casosEnfermedad) this.casosEnfermedad = [];
+        this.casosEnfermedad.push(caso);
+    }
 
     public toDTO(): { nombre: string; descripcion: string; tipo: TipoEnfermedad } {
     return {

@@ -1,75 +1,101 @@
-import { Chip } from "@mui/material"
-import { EditButton, DeleteButton, ViewButton } from "@/src/components/ui/buttons"
-import { Corral } from "@/src/services/corral"
+import { Chip } from "@mui/material";
+import { EditButton, DeleteButton, ViewButton, SupplyButton } from "@/src/components/ui/buttons";
+import { Corral } from "@/src/services/corral";
 
 type Props = {
-  title: string
-  subtitle?: string
-  corrales: Corral[]
-  chipColor: "primary" | "error"
-  onEdit: (c: Corral) => void
-  onDelete: (id: number) => void
-  onView: (id: number) => void
-  rowHoverClass?: string
-}
+  title?: string;
+  corrales: Corral[];
+  onEdit: (c: Corral) => void;
+  onDelete: (id: number) => void;
+  onView: (id: number) => void;
+  onSupply?: (c: Corral) => void;
+  chipColor?: "primary" | "error" | "success" | "default"; 
+};
 
 export function CorralTable({
   title,
-  subtitle,
   corrales,
-  chipColor,
   onEdit,
   onDelete,
   onView,
-  rowHoverClass = "hover:bg-slate-50",
+  onSupply,
+  chipColor = "primary",
 }: Props) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
-      <div className="px-4 py-3 border-b border-slate-100">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
-      </div>
-      <div className="p-4 space-y-4">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-3 font-semibold">Número</th>
-                <th className="text-left p-3 font-semibold">Capacidad</th>
-                <th className="text-left p-3 font-semibold">Dieta</th>
-                <th className="text-left p-3 font-semibold">Acciones</th>
+    <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+      {title && (
+        <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
+          <h2 className="text-lg font-semibold text-slate-700">{title}</h2>
+        </div>
+      )}
+      
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b">
+            <tr>
+              <th className="px-4 py-3">Número</th>
+              <th className="px-4 py-3">Capacidad</th>
+              <th className="px-4 py-3">Tipo</th>
+              <th className="px-4 py-3">Dieta Actual</th>
+              <th className="px-4 py-3 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {corrales.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                  No hay corrales registrados.
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {corrales.map((c) => (
-                <tr key={c.id} className={`border-b ${rowHoverClass}`}>
-                  <td className="p-3 font-bold text-lg">{c.numero}</td>
-                  <td className="p-3">{c.capacidadMaxima}</td>
-                  <td className="p-3">
-                    <Chip
-                      label={c.nombreAlimentacion ?? "Sin dieta"}
-                      color={chipColor}
-                      size="small"
+            ) : (
+              corrales.map((c) => (
+                <tr key={c.id} className="border-b hover:bg-slate-50 transition-colors">
+                  
+                  {/* Número (Fuerte) */}
+                  <td className="px-4 py-3 font-bold text-slate-700 text-lg">
+                    #{c.numero}
+                  </td>
+                  
+                  {/* ✅ CAPACIDAD: Agregamos negrita y color más oscuro */}
+                  <td className="px-4 py-3 font-medium text-slate-700">
+                    {c.capacidadMaxima} <span className="text-sm text-gray-500">animales</span>
+                  </td>
+                  
+                  {/* Tipo (Chip Sólido) */}
+                  <td className="px-4 py-3">
+                    <Chip 
+                      label={c.tipo} 
+                      color={c.tipo === "ENGORDE" ? "primary" : "error"} 
+                      size="small" 
+                      variant="filled" // ✅ CORRECCIÓN: Fondo Sólido
                     />
                   </td>
-                  <td className="p-3 flex gap-2">
-                    <EditButton onClick={() => onEdit(c)} />
-                    <DeleteButton onClick={() => onDelete(c.id)} />
-                    <ViewButton onClick={() => onView(c.id)} />
+                  
+                  {/* Dieta Actual (Chip Sólido) */}
+                  <td className="px-4 py-3">
+                    <Chip 
+                      label={c.nombreDieta || "Sin Asignar"} 
+                      color={c.nombreDieta && c.nombreDieta !== "Sin Dieta Asignada" ? "success" : "default"}
+                      size="small"
+                      variant="filled" // ✅ CORRECCIÓN: Fondo Sólido
+                    />
+                  </td>
+                  
+                  {/* Acciones */}
+                  <td className="px-4 py-3 flex justify-end gap-2">
+                    {onSupply && (
+                      <SupplyButton onClick={() => onSupply(c)} label="" />
+                    )}
+                    <ViewButton onClick={() => onView(c.id)} label="" />
+                    <EditButton onClick={() => onEdit(c)} label="" />
+                    <DeleteButton onClick={() => onDelete(c.id)} label="" />
                   </td>
                 </tr>
-              ))}
-              {corrales.length === 0 && (
-                <tr>
-                  <td className="p-4 text-slate-500" colSpan={4}>
-                    No hay corrales en esta categoría.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
-  )
+  );
 }

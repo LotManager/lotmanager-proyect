@@ -1,30 +1,59 @@
-// src/services/bovino.ts
+import { api } from "./api";
 
-// NOTA: Este tipo debe coincidir con lo que devuelve tu API.
-// Lo ideal es que la API ya devuelva campos calculados como 'pesoActual' y 'edad'.
+// ------------------------------------------------------------------
+// 1. TIPOS DE DATOS 
+// ------------------------------------------------------------------
+
 export type Bovino = {
   id: number;
-  caravana: number; // Este es el ID visible para el usuario
+  caravana: number;
   pesoActual: number;
-  edad: number; // en meses
+  corralId: number;
   nombreCorral: string;
-  gmd: number; // Ganancia Media Diaria
-  estado_salud: "SANO" | "ENFERMO" | "FALLECIDO";
+  gmd: number;
+  estadoSalud: "SANO" | "ENFERMO" | "FALLECIDO"; 
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export type CreateBovinoInput = {
+  razaId: number;
+  corralId: number;
+  caravana: number;
+  ingreso: string; 
+  pesoIngreso: number;
+  sexo: "MACHO" | "HEMBRA";
+  tipoBovino: "TERNERO" | "NOVILLO" | "VAQUILLONA" | "DESCARTE";
+  situacionBovino?: "ENCORRAL" | "EGRESADA";
+  estadoSalud?: "SANO" | "ENFERMO" | "FALLECIDO";
+  egreso?: string | null;
+  pesoEgreso?: number | null;
+};
+
+export type UpdateBovinoInput = Partial<CreateBovinoInput>;
+
+// ------------------------------------------------------------------
+// 2. FUNCIONES 
+// ------------------------------------------------------------------
 
 export async function getBovinos(): Promise<Bovino[]> {
-  try {
-    const res = await fetch(`${API_URL}/api/bovinos`); // Asegúrate de que la ruta sea correcta
-    if (!res.ok) {
-      throw new Error("Error al obtener los datos de los bovinos");
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    return []; // Devuelve un array vacío en caso de error para no romper la UI
-  }
+  return api("/api/bovinos");
 }
 
-// Aquí agregaremos luego las funciones para crear, editar y eliminar bovinos.
+export async function createBovino(data: CreateBovinoInput) {
+  return api("/api/bovinos", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateBovino(id: number, data: UpdateBovinoInput) {
+  return api(`/api/bovinos/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteBovino(id: number) {
+  return api(`/api/bovinos/${id}`, {
+    method: "DELETE",
+  });
+}

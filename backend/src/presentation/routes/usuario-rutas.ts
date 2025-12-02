@@ -13,8 +13,8 @@ const router = Router();
 
 router.post("/register", registerHandler);
 router.post("/login", loginHandler);
-router.post("/refresh", refreshHandler);
+router.get("/refresh", refreshHandler);
 router.post("/logout", logoutHandler);
-router.patch("/cambiar-contrasena/:id", authMiddleware, changePasswordHandler);
+router.post("/cambiar-contrasena/:id", authMiddleware, changePasswordHandler);
 
 export default router;

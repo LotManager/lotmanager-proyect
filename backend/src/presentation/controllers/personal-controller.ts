@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { PersonalService } from "../../application/services/personalService";
-import { personalCreateSchema } from "../../application/personal/schemas/personalCreateSchema";
-import { personalResponseSchema } from "../../application/personal/schemas/personalResponseSchema";
-import { personalUpdateSchema } from "../../application/personal/schemas/personalUpdateSchema";
-import { PersonalUpdateDto } from "../../application/dtos/personal.dto";
+import { personalCreateSchema, personalResponseSchema} from "../../application/dtos/personal.dto";
+import { personalUpdateSchema } from "../../application/dtos/personal.dto";
 
 
 export class PersonalController {
@@ -24,7 +22,7 @@ export class PersonalController {
   async actualizar(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const dto: PersonalUpdateDto = personalUpdateSchema.parse(req.body);
+      const dto = personalUpdateSchema.parse(req.body);
       const actualizado = await this.service.actualizar(id, dto);
       const response = actualizado.toDTO();
       personalResponseSchema.parse(response);

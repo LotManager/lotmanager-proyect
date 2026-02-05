@@ -5,8 +5,8 @@ import { SituacionBovino, EstadoSalud, SexoBovino, TipoBovino } from "@prisma/cl
 
 // DTO para CREAR un bovino.
 export const CreateBovinoDto = z.object({
-  idRaza: z.number(),
-  idCorral: z.number(),
+  razaId: z.number(),
+  corralId: z.number(),
   caravana: z.number(),
   // ✅ 2. Usamos el Enum y el nombre de campo NUEVOS
   situacionBovino: z.nativeEnum(SituacionBovino).optional().default("ENCORRAL"),

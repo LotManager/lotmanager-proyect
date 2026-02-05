@@ -1,30 +1,85 @@
-// src/services/bovino.ts
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-// NOTA: Este tipo debe coincidir con lo que devuelve tu API.
-// Lo ideal es que la API ya devuelva campos calculados como 'pesoActual' y 'edad'.
+// ------------------------------------------------------------------
+// 1. TIPOS DE DATOS
+// ------------------------------------------------------------------
+
+// ✅ Tipo para la TABLA (Lectura)
+// Coincide con lo que devuelve BovinoViewService.getBovinosForTable()
 export type Bovino = {
   id: number;
-  caravana: number; // Este es el ID visible para el usuario
+  caravana: number;
   pesoActual: number;
-  edad: number; // en meses
+  corralId: number;
   nombreCorral: string;
-  gmd: number; // Ganancia Media Diaria
-  estado_salud: "SANO" | "ENFERMO" | "FALLECIDO";
+  gmd: number;
+  estadoSalud: "SANO" | "ENFERMO" | "FALLECIDO"; 
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// ✅ Tipo para CREAR (Escritura)
+// Coincide con CreateBovinoDto del backend
+export type CreateBovinoInput = {
+  razaId: number;
+  corralId: number;
+  caravana: number;
+  ingreso: string; // ISO Date string
+  pesoIngreso: number;
+  sexo: "MACHO" | "HEMBRA";
+  tipoBovino: "TERNERO" | "NOVILLO" | "VAQUILLONA" | "DESCARTE";
+  // Opcionales con valores por defecto en backend
+  situacionBovino?: "ENCORRAL" | "EGRESADA";
+  estadoSalud?: "SANO" | "ENFERMO" | "FALLECIDO";
+  egreso?: string | null;
+  pesoEgreso?: number | null;
+};
+
+// ✅ Tipo para EDITAR
+export type UpdateBovinoInput = Partial<CreateBovinoInput>;
+
+// ------------------------------------------------------------------
+// 2. FUNCIONES (API CALLS)
+// ------------------------------------------------------------------
 
 export async function getBovinos(): Promise<Bovino[]> {
-  try {
-    const res = await fetch(`${API_URL}/api/bovinos`); // Asegúrate de que la ruta sea correcta
-    if (!res.ok) {
-      throw new Error("Error al obtener los datos de los bovinos");
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    return []; // Devuelve un array vacío en caso de error para no romper la UI
-  }
+  const res = await fetch(`${API_URL}/api/bovinos`, { cache: "no-store" });
+  if (!res.ok) throw new Error("Error al obtener los datos de los bovinos");
+  return res.json();
 }
 
-// Aquí agregaremos luego las funciones para crear, editar y eliminar bovinos.
+export async function createBovino(data: CreateBovinoInput) {
+  const res = await fetch(`${API_URL}/api/bovinos`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  
+  if (!res.ok) {
+    // Intentamos leer el mensaje de error del backend
+    const errorData = await res.json().catch(() => ({}));
+    // Si es un array de errores de Zod, los unimos, sino usamos el mensaje genérico
+    const message = Array.isArray(errorData.error) 
+      ? errorData.error.map((e: any) => e.message).join(", ")
+      : errorData.message || "Error al crear bovino";
+      
+    throw new Error(message);
+  }
+  return res.json();
+}
+
+export async function updateBovino(id: number, data: UpdateBovinoInput) {
+  const res = await fetch(`${API_URL}/api/bovinos/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Error al actualizar bovino");
+  return res.json();
+}
+
+export async function deleteBovino(id: number) {
+  const res = await fetch(`${API_URL}/api/bovinos/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Error al eliminar bovino");
+  return true;
+}

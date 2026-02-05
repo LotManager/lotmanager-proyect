@@ -1,10 +1,9 @@
-import { Alimento } from "domain/entities/Alimento";
+import { Alimento } from "../entities/Alimento";
 
 export interface IAlimentoRepository {
-    findById(id: number): Promise<Alimento | null>;
-    findAll(): Promise<Alimento[]>;
-    create(alimento: Alimento): Promise<Alimento>;
-    update(alimento: Alimento): Promise<void>;
-    delete(id: number): Promise<void>;
-    exists(id: number): Promise<boolean>;
+  create(data: Omit<Alimento, "id">): Promise<Alimento>;
+  findAll(): Promise<Alimento[]>;
+  findById(id: number): Promise<Alimento | null>;
+  update(id: number, data: Partial<Omit<Alimento, "id">>): Promise<Alimento>;
+  delete(id: number): Promise<void>;
 }

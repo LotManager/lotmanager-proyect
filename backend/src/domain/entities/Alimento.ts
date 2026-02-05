@@ -1,41 +1,9 @@
-import { DetalleAlimento } from "./DetalleAlimento";
-import { Suministro } from "./Suministro";
+import { TipoAlimento } from "@prisma/client";
 
 export class Alimento {
-    constructor(
-        private id: number,
-        private nroSerie: number,
-        private vencimiento: Date,
-        private detalleAlimento?: DetalleAlimento,
-        private suministros?: Suministro[],
-    ){}
-    //Getters
-    public getId(): number {
-        return this.id;
-    }
-    public getNroSerie(): number {
-        return this.nroSerie;
-    }
-    public getVencimiento(): Date {
-        return this.vencimiento;
-    }
-    public getDetalleAlimento(): DetalleAlimento | undefined {
-        return this.detalleAlimento;
-    }
-    public getSuministro(): Suministro[] | undefined {
-        return this.suministros;
-    }
-    //Setters
-    public setNroSerie(nroSerie: number): void {
-        this.nroSerie = nroSerie;
-    }
-    public setVencimiento(vencimiento: Date): void {
-        this.vencimiento = vencimiento;
-    }
-    public setDetalleAlimento(detalleAlimento: DetalleAlimento): void {
-        this.detalleAlimento = detalleAlimento;
-    }
-    public setSuministro(suministro: Suministro[]): void {
-        this.suministros = suministro;
-    }
+  constructor(
+    public readonly id: number,
+    public nombre: string,
+    public tipo: TipoAlimento
+  ) {}
 }

@@ -3,8 +3,8 @@ import { SituacionBovino, EstadoSalud, SexoBovino, TipoBovino } from "@prisma/cl
 export class Bovino {
   constructor(
     public readonly id: number,
-    public idRaza: number,
-    public idCorral: number,
+    public razaId: number,
+    public corralId: number,
     public caravana: number,
     public situacionBovino: SituacionBovino, 
     public estadoSalud: EstadoSalud,

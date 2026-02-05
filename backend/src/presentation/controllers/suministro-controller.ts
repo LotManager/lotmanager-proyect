@@ -1,38 +1,76 @@
-import { Request, Response } from "express"
-import { SuministroService } from "../../application/services/suministroService"
-import { PrismaSuministroRepository } from "../../infrastructure/repositorios/PrismaSuministroRepository"
+import { SuministroService } from "../../application/services/suministroService";
+import { SuministroMapper } from "../../application/mappers/suministro.mapper";
+import { PrismaSuministroRepository } from "../../infrastructure/repositorios/PrismaSuministroRepository";
+import { Request, Response } from "express";
+import { CreateSuministroSchema, UpdateSuministroSchema, IdParamSchema } from "../../application/dtos/suministro.dto";
 
-const service = new SuministroService(new PrismaSuministroRepository())
+const service = new SuministroService(new PrismaSuministroRepository());
 
 export class SuministroController {
-  static async listar(_req: Request, res: Response) {
-    const suministros = await service.listar()
-    res.json(suministros)
+  static async create(req: Request, res: Response) {
+    try {
+        const parsed = CreateSuministroSchema.parse(req.body);
+        const suministro = await service.createSuministro(parsed);
+        res.status(201).json(SuministroMapper.toDTO(suministro));
+    } catch (error: unknown) {
+        let message = 'Unknown error';
+        if (error instanceof Error) message = error.message;
+        else if (typeof error === 'string') message = error;
+        res.status(400).json({ error: message });
+    }
   }
-
-  static async obtenerPorId(req: Request, res: Response) {
-    const id = Number(req.params.id)
-    const suministro = await service.obtenerPorId(id)
-    if (!suministro) return res.status(404).json({ message: "No encontrado" })
-    res.json(suministro)
+    static async getById(req: Request, res: Response) {
+    try {
+        const { id } = IdParamSchema.parse(req.params);
+        const idNumber = Number(id);
+        const suministro = await service.findById(idNumber);
+        if (!suministro) return res.status(404).json({ error: "Suministro no encontrado" });
+        res.json(SuministroMapper.toDTO(suministro));
+    } catch (error: unknown) {
+        let message = 'Unknown error';
+        if (error instanceof Error) message = error.message;
+        else if (typeof error === 'string') message = error;
+        res.status(400).json({ error: message });
+    }
   }
-
-  static async registrar(req: Request, res: Response) {
-    const { id, cantidad, idAlimentacion, idAlimento } = req.body
-    const nuevo = await service.registrar(id, cantidad, idAlimentacion, idAlimento)
-    res.status(201).json(nuevo)
+    static async getAll(req: Request, res: Response) {
+    try {
+        const suministros = await service.findAll();
+        const suministrosDto = suministros.map(SuministroMapper.toDTO);
+        res.json(suministrosDto);
+    } catch (error: unknown) {
+        let message = 'Unknown error';
+        if (error instanceof Error) message = error.message;
+        else if (typeof error === 'string') message = error;
+        res.status(400).json({ error: message });
+    }
   }
-
-  static async actualizar(req: Request, res: Response) {
-    const id = Number(req.params.id)
-    const { cantidad, idAlimentacion, idAlimento } = req.body
-    await service.actualizar(id, cantidad, idAlimentacion, idAlimento)
-    res.status(204).send()
+    static async update(req: Request, res: Response) {
+    try {
+        const { id } = IdParamSchema.parse(req.params);
+        const idNumber = Number(id);
+        const dto = UpdateSuministroSchema.parse(req.body);
+        const updated = await service.update({ id: idNumber, data: dto });
+        if (!updated) return res.status(404).json({ error: "Suministro no encontrado" });
+        res.json(SuministroMapper.toDTO(updated));
+    } catch (error: unknown) {
+        let message = 'Unknown error';
+        if (error instanceof Error) message = error.message;
+        else if (typeof error === 'string') message = error;
+        res.status(400).json({ error: message });
+    }
   }
-
-  static async eliminar(req: Request, res: Response) {
-    const id = Number(req.params.id)
-    await service.eliminar(id)
-    res.status(204).send()
+    static async delete(req: Request, res: Response) {
+    try {
+        const { id } = IdParamSchema.parse(req.params);
+        const idNumber = Number(id);
+        await service.delete(idNumber);
+        res.status(204).send();
+    } catch (error: unknown) {
+        let message = 'Unknown error';
+        if (error instanceof Error) message = error.message;
+        else if (typeof error === 'string') message = error;
+        res.status(400).json({ error: message });
+    }
   }
 }

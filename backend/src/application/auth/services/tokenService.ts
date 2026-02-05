@@ -11,7 +11,7 @@ export const tokenService: ITokenService = {
     return jwt.sign(
       {
         sub: user.id,
-        usuario: user.usuario,
+        usuario: user.username,
         rol: user.rol.nombre,
       },
       config.jwtSecret,
@@ -34,16 +34,17 @@ export const tokenService: ITokenService = {
       if (!result.success) return null;
 
       const { sub: id, usuario, rol } = result.data;
-      if (rol !== "admin" && rol !== "encargado") return null;
-
+      if (rol !== "ADMINISTRADOR" && rol !== "TAMBERO") return null;
+    
       const rolInstancia = Rol.fromNombre(rol);
       if (!rolInstancia || !rolInstancia.isValid()) return null;
       
       return {
           id,
-          usuario,
-          rol: rolInstancia.toDTO(), // devuelve { id, nombre }
-    };
+          username: usuario,
+          rol: rolInstancia.toDTO(),
+          personaId: null,
+      };
     } catch (error) {
       console.warn("Access token verification failed:", error);
       return null;

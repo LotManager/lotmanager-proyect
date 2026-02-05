@@ -1,5 +1,4 @@
 // src/components/ui/buttons.tsx
-
 import { Button, ButtonProps } from "@mui/material";
 import React from "react";
 
@@ -42,7 +41,7 @@ export function ActionButton({
 // ----------------------------------------------------
 // 2. TUS BOTONES ESPECÍFICOS (AHORA MÁS SIMPLES)
 // ----------------------------------------------------
-import { FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaEye, FaBalanceScale, FaExchangeAlt, FaUtensils } from "react-icons/fa";
 
 type SpecificButtonProps = {
   onClick?: () => void;
@@ -86,5 +85,38 @@ export const ViewButton = ({ onClick, label = "Ver" }: SpecificButtonProps) => (
     icon={<FaEye />}
     variant="outlined"
     color="secondary"
+  />
+);
+
+export const WeighButton = ({ onClick, label = "Pesar" }: SpecificButtonProps) => (
+  <ActionButton
+    onClick={onClick}
+    label={label}
+    icon={<FaBalanceScale />} // ⚖️ Ícono de balanza
+    variant="outlined"
+    color="info" // Un color azulito/celeste queda bien para acciones informativas
+    className="border-blue-500 text-blue-600 hover:bg-blue-50"
+  />
+);
+
+export const MoveButton = ({ onClick, label = "Mover" }: SpecificButtonProps) => (
+  <ActionButton
+    onClick={onClick}
+    label={label}
+    icon={<FaExchangeAlt />}
+    variant="outlined"
+    color="warning" // Un color naranja/amarillo para distinguir del resto
+    className="border-orange-500 text-orange-600 hover:bg-orange-50"
+  />
+);
+
+export const SupplyButton = ({ onClick, label = "" }: SpecificButtonProps) => (
+  <ActionButton
+    onClick={onClick}
+    label={label}
+    icon={<FaUtensils />}
+    variant="outlined"
+    color="success" // Verde
+    className="border-green-600 text-green-700 hover:bg-green-50"
   />
 );

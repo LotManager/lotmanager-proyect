@@ -5,24 +5,26 @@ import { UserDTO } from "../../application/dtos/user.dto";
 
 export class User {
     private id: number;
-    private usuario: string;
+    private username: string;
     private contrasena: PasswordHash;
     private rol: Rol;
-
-    constructor(id: number, usuario: string, contrasena: PasswordHash, rol: Rol) {
-        if (usuario.trim().length === 0) throw new Error('El nombre no puede estar vacío');
+    private personaId?: number | null;
+    
+    constructor(id: number, username: string, contrasena: PasswordHash, rol: Rol, personaId?: number | null) {
+        if (username.trim().length === 0) throw new Error('El nombre no puede estar vacío');
 
         this.id = id;
-        this.usuario = usuario;
+        this.username = username;
         this.contrasena = contrasena;
         this.rol = rol;
+        this.personaId = personaId;
     }
     
     public isValid(): boolean {
         return (
-            this.usuario.trim().length > 0 &&
+            this.username.trim().length > 0 &&
             PasswordHash.isValid(this.contrasena.getValue()) &&
-            (!this.rol || this.rol.isValid())
+            this.rol.isValid()
         );
     }
     public async checkPassword(plain: string): Promise<boolean> {
@@ -37,31 +39,28 @@ export class User {
         return this.rol;
     }
 
-    public getName(): string {
-        return this.usuario;
+    public getPersonaId(): number | null {
+        return this.personaId ?? null;
     }
-    public setName(usuario: string): void {
-        if (usuario.trim().length === 0) throw new Error('El nombre no puede estar vacío');
-        this.usuario = usuario;
+
+    public getName(): string {
+        return this.username;
+    }
+    public setName(username: string): void {
+        if (username.trim().length === 0) throw new Error('El nombre no puede estar vacío');
+        this.username = username;
     }
     
     public getPasswordHash(): string {
         return this.contrasena.getValue();
     }
 
-    public async validarPassword(plainPassword: string): Promise<boolean> {
-        return await this.contrasena.compareWith(plainPassword);
-    }
-    
     public toDTO(): UserDTO {
-        const nombre = this.rol.getNombre();
-        if (nombre !== "admin" && nombre !== "encargado") {
-            throw new Error(`Rol inválido: ${nombre}`);
-        }
         return {
             id: this.id,
-            usuario: this.usuario,
-            rol: this.rol.toDTO()
+            username: this.username,
+            rol: this.rol.toDTO(),
+            personaId: this.personaId ?? null
         };
     }
 }

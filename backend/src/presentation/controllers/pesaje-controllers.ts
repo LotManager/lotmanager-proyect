@@ -1,28 +1,30 @@
-import { Request, Response } from "express"
-import { PesajeService } from "../../application/services/pesajeService"
-import { PrismaPesajeRepository } from "../../infrastructure/repositorios/PrismaPesajeRepository"
-import { Pesaje } from "../../domain/entities/Pesaje"
+import { Request, Response } from "express";
+import { PesajeService } from "../../application/services/pesajeService";
+import { PrismaPesajeRepository } from "../../infrastructure/repositorios/PrismaPesajeRepository";
+import { CreatePesajeDto } from "../../application/dtos/pesaje.dto";
 
-const service = new PesajeService(new PrismaPesajeRepository())
+const service = new PesajeService(new PrismaPesajeRepository());
 
-export const crearPesaje = async (req: Request, res: Response) => {
-  try {
-    const { id_bovino, fecha, peso_dado } = req.body
-    const nuevo = await service.registrar(
-      new Pesaje(null, Number(id_bovino), new Date(fecha), Number(peso_dado))
-    )
-    res.status(201).json(nuevo)
-  } catch (e: any) {
-    res.status(400).json({ error: e.message })
+export class PesajeController {
+  static async registrar(req: Request, res: Response) {
+    const parsed = CreatePesajeDto.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
+
+    try {
+      const nuevo = await service.registrar(parsed.data);
+      res.status(201).json(nuevo);
+    } catch (error) {
+      res.status(500).json({ message: "Error al registrar pesaje" });
+    }
   }
-}
 
-export const listarPesajesPorBovino = async (req: Request, res: Response) => {
-  try {
-    const id_bovino = Number(req.params.id)
-    const pesajes = await service.historial(id_bovino)
-    res.json(pesajes)
-  } catch (e: any) {
-    res.status(400).json({ error: e.message })
+  static async historial(req: Request, res: Response) {
+    const bovinoId = Number(req.params.bovinoId);
+    try {
+      const historial = await service.historial(bovinoId);
+      res.json(historial);
+    } catch (error) {
+      res.status(500).json({ message: "Error al obtener historial" });
+    }
   }
 }

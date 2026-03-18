@@ -1,212 +1,217 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react"
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
-  TextField, Stack, MenuItem, FormControl, InputLabel, Select, 
-  CircularProgress, IconButton, Typography, Divider
-} from "@mui/material";
-import { Delete, AddCircleOutline } from "@mui/icons-material";
-
-// ✅ 1. CORREGIDO: Importamos los tipos y funciones desde el servicio del frontend
-import { getAlimentos, Alimento } from "@/src/services/alimento";
-import { Dieta, CreateDietaInput } from "@/src/services/dieta"; 
-
-// Definimos un tipo local para el formulario que sea más flexible (acepta strings temporales)
-type FormState = {
-  nombre: string;
-  descripcion: string;
-  detalles: {
-    alimentoId: number | string; // Permite string vacío para el select inicial
-    proporcionKg: number | string; // Permite string vacío mientras se escribe
-  }[];
-};
+  TextField, Stack, MenuItem, FormControl, InputLabel, Select,
+  CircularProgress, Divider, Typography, FormHelperText, IconButton
+} from "@mui/material"
+import { useForm, useFieldArray, Controller, SubmitHandler } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Delete, AddCircleOutline } from "@mui/icons-material"
+import { dietaSchema, DietaFormValues } from "@/src/lib/schemas/dieta.schema"
+import { getAlimentos, Alimento } from "@/src/services/alimento"
+import { Dieta, CreateDietaInput } from "@/src/services/dieta"
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
-  // ✅ El onSave espera el tipo estricto del servicio
-  onSave: (data: CreateDietaInput) => Promise<void>; 
-  dietaToEdit?: Dieta | null;
-};
+  open: boolean
+  onClose: () => void
+  onSave: (data: CreateDietaInput) => Promise<void>
+  dietaToEdit?: Dieta | null
+}
 
-const initialState: FormState = {
+const defaultValues: DietaFormValues = {
   nombre: "",
   descripcion: "",
-  detalles: [{ alimentoId: "", proporcionKg: "" }] // Fila vacía inicial
-};
+  detalles: [{ alimentoId: 0, proporcionKg: 0 }],
+}
 
 export function DietaDialog({ open, onClose, onSave, dietaToEdit }: Props) {
-  // ✅ 2. ACÁ VA EL ESTADO (Usamos el tipo local FormState)
-  const [form, setForm] = useState<FormState>(initialState);
-  
-  const [alimentos, setAlimentos] = useState<Alimento[]>([]);
-  const [loadingData, setLoadingData] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [alimentos, setAlimentos] = useState<Alimento[]>([])
+  const [loadingData, setLoadingData] = useState(false)
 
-  // Cargar Alimentos
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<DietaFormValues>({
+    resolver: zodResolver(dietaSchema),
+    defaultValues,
+  })
+
+  // useFieldArray maneja el array de ingredientes de forma limpia
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "detalles",
+  })
+
+  // Cargar alimentos disponibles
   useEffect(() => {
-    if (open) {
-      setLoadingData(true);
-      getAlimentos()
-        .then(setAlimentos)
-        .catch(console.error)
-        .finally(() => setLoadingData(false));
-    }
-  }, [open]);
+    if (!open) return
+    setLoadingData(true)
+    getAlimentos()
+      .then(setAlimentos)
+      .catch(console.error)
+      .finally(() => setLoadingData(false))
+  }, [open])
 
-  // Cargar datos si es Edición
-useEffect(() => {
-    if (open && dietaToEdit) {
-      // 1. Obtenemos el array de detalles, o un array vacío si es null/undefined
-      const detallesRecibidos = dietaToEdit.detallesDieta || [];
-      
-      // 2. Si hay detalles, los mapeamos. Si no, usamos el initialState (con una fila vacía).
-      const detallesParaForm = detallesRecibidos.length > 0 
-        ? detallesRecibidos.map(d => ({
-            alimentoId: d.alimentoId,
-            proporcionKg: d.proporcionKg
-          }))
-        : initialState.detalles; // Fallback: al menos una fila vacía para empezar
-
-      setForm({
+  // Pre-llenar al editar
+  useEffect(() => {
+    if (!open) return
+    if (dietaToEdit) {
+      const detallesRecibidos = dietaToEdit.detallesDieta || []
+      reset({
         nombre: dietaToEdit.nombre,
         descripcion: dietaToEdit.descripcion || "",
-        detalles: detallesParaForm,
-      });
-    } else if (open && !dietaToEdit) {
-      // Si es creación, reseteamos a los valores iniciales
-      setForm(initialState);
+        detalles: detallesRecibidos.length > 0
+          ? detallesRecibidos.map((d) => ({
+              alimentoId: d.alimentoId,
+              proporcionKg: d.proporcionKg,
+            }))
+          : defaultValues.detalles,
+      })
+    } else {
+      reset(defaultValues)
     }
-  }, [open, dietaToEdit]); // Dependencias
+  }, [open, dietaToEdit, reset])
 
-  // --- HANDLERS ---
+  const onSubmit: SubmitHandler<DietaFormValues> = async (values) => {
+    await onSave({
+      nombre: values.nombre,
+      descripcion: values.descripcion,
+      detalles: values.detalles,
+    })
+    onClose()
+  }
 
-  const handleAddRow = () => {
-    setForm(prev => ({
-      ...prev,
-      detalles: [...prev.detalles, { alimentoId: "", proporcionKg: "" }]
-    }));
-  };
-
-  const handleRemoveRow = (index: number) => {
-    setForm(prev => ({
-      ...prev,
-      detalles: prev.detalles.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleChangeRow = (index: number, field: "alimentoId" | "proporcionKg", value: any) => {
-    const newDetalles = [...form.detalles];
-    newDetalles[index] = { ...newDetalles[index], [field]: value };
-    setForm(prev => ({ ...prev, detalles: newDetalles }));
-  };
-
-  const handleSubmit = async () => {
-    setSaving(true);
-    try {
-      // ✅ CONVERSIÓN: Pasamos del FormState flexible al CreateDietaInput estricto
-      const payload: CreateDietaInput = {
-        nombre: form.nombre,
-        descripcion: form.descripcion,
-        // Filtramos filas incompletas y convertimos a números
-        detalles: form.detalles
-          .filter(d => d.alimentoId && d.proporcionKg)
-          .map(d => ({
-            alimentoId: Number(d.alimentoId),
-            proporcionKg: Number(d.proporcionKg)
-          }))
-      };
-
-      if (payload.detalles.length === 0) {
-        alert("La dieta debe tener al menos un ingrediente.");
-        setSaving(false);
-        return;
-      }
-
-      await onSave(payload);
-      onClose();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Calculamos el total visualmente para ayudar al usuario
-  const totalMezcla = form.detalles.reduce((acc, curr) => acc + Number(curr.proporcionKg || 0), 0);
+  // Total de mezcla calculado reactivamente
+  const detallesWatched = watch("detalles")
+  const totalMezcla = detallesWatched.reduce(
+    (acc: number, d: {proporcionKg?: number | string}) => acc + Number(d.proporcionKg || 0), 0
+  )
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>{dietaToEdit ? "Editar Dieta" : "Nueva Dieta"}</DialogTitle>
+      <DialogTitle>{dietaToEdit ? "Editar dieta" : "Nueva dieta"}</DialogTitle>
       <DialogContent>
-        {loadingData ? <div className="flex justify-center p-4"><CircularProgress /></div> : (
+        {loadingData ? (
+          <div className="flex justify-center p-4"><CircularProgress /></div>
+        ) : (
           <Stack spacing={3} sx={{ mt: 1 }}>
-            
-            <TextField
-              label="Nombre de la Dieta"
-              fullWidth
-              value={form.nombre}
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+            <Controller
+              name="nombre"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Nombre de la dieta"
+                  fullWidth
+                  error={!!errors.nombre}
+                  helperText={errors.nombre?.message}
+                />
+              )}
             />
-            <TextField
-              label="Descripción (Opcional)"
-              fullWidth
-              multiline
-              rows={2}
-              value={form.descripcion}
-              onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+
+            <Controller
+              name="descripcion"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Descripción (opcional)"
+                  fullWidth
+                  multiline
+                  rows={2}
+                  error={!!errors.descripcion}
+                  helperText={errors.descripcion?.message}
+                />
+              )}
             />
 
             <Divider>Ingredientes</Divider>
 
-            {form.detalles.map((detalle, index) => (
-              <Stack key={index} direction="row" spacing={2} alignItems="center">
-                <FormControl fullWidth>
-                  <InputLabel>Ingrediente</InputLabel>
-                  <Select
-                    value={detalle.alimentoId}
-                    label="Ingrediente"
-                    onChange={(e) => handleChangeRow(index, "alimentoId", e.target.value)}
-                  >
-                    {alimentos.map((al) => (
-                      <MenuItem key={al.id} value={al.id}>
-                        {al.nombre} ({al.tipo})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+            {/* Error del array completo (ej: "al menos un ingrediente", "ingrediente repetido") */}
+            {errors.detalles?.root?.message && (
+              <Typography color="error" variant="body2">
+                {errors.detalles.root.message}
+              </Typography>
+            )}
 
-                <TextField
-                  label="Kg"
-                  type="number"
-                  sx={{ width: 150 }}
-                  value={detalle.proporcionKg}
-                  onChange={(e) => handleChangeRow(index, "proporcionKg", e.target.value)}
+            {fields.map((field, index) => (
+              <Stack key={field.id} direction="row" spacing={2} alignItems="flex-start">
+                <Controller
+                  name={`detalles.${index}.alimentoId`}
+                  control={control}
+                  render={({ field: f }) => (
+                    <FormControl fullWidth error={!!errors.detalles?.[index]?.alimentoId}>
+                      <InputLabel>Ingrediente</InputLabel>
+                      <Select {...f} label="Ingrediente" value={f.value || ""}>
+                        {alimentos.map((al) => (
+                          <MenuItem key={al.id} value={al.id}>
+                            {al.nombre} ({al.tipo})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors.detalles?.[index]?.alimentoId && (
+                        <FormHelperText>
+                          {errors.detalles[index].alimentoId?.message}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  )}
                 />
 
-                <IconButton color="error" onClick={() => handleRemoveRow(index)} disabled={form.detalles.length === 1}>
+                <Controller
+                  name={`detalles.${index}.proporcionKg`}
+                  control={control}
+                  render={({ field: f }) => (
+                    <TextField
+                      {...f}
+                      label="Kg"
+                      type="number"
+                      sx={{ width: 150 }}
+                      error={!!errors.detalles?.[index]?.proporcionKg}
+                      helperText={errors.detalles?.[index]?.proporcionKg?.message}
+                    />
+                  )}
+                />
+
+                <IconButton
+                  color="error"
+                  onClick={() => remove(index)}
+                  disabled={fields.length === 1}
+                  sx={{ mt: 1 }}
+                >
                   <Delete />
                 </IconButton>
               </Stack>
             ))}
 
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Button startIcon={<AddCircleOutline />} onClick={handleAddRow}>
-                Agregar Ingrediente
+              <Button
+                startIcon={<AddCircleOutline />}
+                onClick={() => append({ alimentoId: 0, proporcionKg: 0 })}
+              >
+                Agregar ingrediente
               </Button>
               <Typography variant="subtitle1" fontWeight="bold">
-                Total Mezcla: {totalMezcla} kg
+                Total mezcla: {totalMezcla.toFixed(2)} kg
               </Typography>
             </Stack>
-
           </Stack>
         )}
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose} color="inherit">Cancelar</Button>
-        <Button onClick={handleSubmit} variant="contained" disabled={saving}>
-          {saving ? <CircularProgress size={24} /> : "Guardar Receta"}
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          variant="contained"
+          disabled={isSubmitting || loadingData}
+        >
+          {isSubmitting ? <CircularProgress size={24} /> : "Guardar receta"}
         </Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }

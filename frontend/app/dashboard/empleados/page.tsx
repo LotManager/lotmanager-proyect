@@ -10,7 +10,13 @@ import AgregarEmpleadoModal from '../../../src/components/empleados/AgregarEmple
 
 export default function EmpleadosPage() {
   const [empleados, setEmpleados] = useState<Empleado[]>([]);
-  const [stats, setStats] = useState<EmpleadoStats>({ total: 0, activos: 0, inactivos: 0, nuevosEsteMes: 0 });
+  const [stats, setStats] = useState<EmpleadoStats>({ 
+    total: 0, 
+    activos: 0, 
+    inactivos: 0, 
+    nuevosEsteMes: 0,
+    porRol: { Veterinario: 0, Empleado: 0, Administrador: 0, Superior: 0 }
+  });
   
   // 2. ESTADO DEL MODAL
   const [isModalOpen, setIsModalOpen] = useState(false);

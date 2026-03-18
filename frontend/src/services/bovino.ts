@@ -58,7 +58,7 @@ export async function createBovino(data: CreateBovinoInput) {
     const errorData = await res.json().catch(() => ({}));
     // Si es un array de errores de Zod, los unimos, sino usamos el mensaje genérico
     const message = Array.isArray(errorData.error) 
-      ? errorData.error.map((e: any) => e.message).join(", ")
+      ? errorData.error.map((e: {message?: string}) => e.message).join(", ")
       : errorData.message || "Error al crear bovino";
       
     throw new Error(message);

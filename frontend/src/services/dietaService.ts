@@ -29,12 +29,12 @@ function mapAlimentacionToDieta(raw: Record<string, unknown>): Dieta {
 	let corrales: Array<{ id: string | number; nombre: string } | string> = [];
 	const c = (raw as Record<string, unknown>)['corral'] ?? (raw as Record<string, unknown>)['corales'] ?? (raw as Record<string, unknown>)['corrales'];
 
-	if (typeof process !== 'undefined' && (process.env as any)?.NODE_ENV !== 'production') {
+	if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
 		try {
 
 			console.debug('[dietaService] raw.corral =', JSON.stringify(c));
 		} catch (e) {
-
+			// ignore
 		}
 	}
 	if (c) {

@@ -5,7 +5,7 @@ import Sidebar from '../Sidebar';
 import { usePathname } from 'next/navigation';
 
 // Mock next/link to render children directly
-jest.mock('next/link', () => ({ __esModule: true, default: ({ href, children }: any) => <a href={href}>{children}</a> }));
+jest.mock('next/link', () => ({ __esModule: true, default: ({ href, children }: {href: string; children: React.ReactNode}) => <a href={href}>{children}</a> }));
 
 // Mock usePathname
 jest.mock('next/navigation', () => ({
@@ -16,7 +16,7 @@ jest.mock('next/navigation', () => ({
 // Mock MUI Button to a simple button
 jest.mock('@mui/material', () => ({
   __esModule: true,
-  Button: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
+  Button: ({ children, onClick }: {children: React.ReactNode; onClick?: () => void}) => <button onClick={onClick}>{children}</button>,
 }));
 
 // Mock react-icons to simple components

@@ -51,9 +51,10 @@ export default function AnimalsManagementPage() {
     try {
       const data = await getBovinos();
       setBovinos(data);
-    } catch (err: any) {
-      console.error("Error al cargar bovinos:", err);
-      setError(err.message || "No se pudieron cargar los animales.");
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      console.error("Error al cargar bovinos:", error);
+      setError(error.message || "No se pudieron cargar los animales.");
     } finally {
       setLoading(false);
     }
@@ -100,9 +101,10 @@ export default function AnimalsManagementPage() {
       await deleteBovino(id);
       setBovinos((prev) => prev.filter((b) => b.id !== id));
       alert("Bovino eliminado correctamente.");
-    } catch (err: any) {
-      console.error("Error al eliminar:", err);
-      alert(`Error al eliminar: ${err.message}`);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      console.error("Error al eliminar:", error);
+      alert(`Error al eliminar: ${error.message}`);
     }
   };
 
@@ -128,9 +130,10 @@ export default function AnimalsManagementPage() {
       setOpenBovinoDialog(false);
       setSelectedBovino(null);
       await loadBovinos();
-    } catch (error: any) {
-      console.error("Error al guardar:", error);
-      alert(`Error: ${error.message}`);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error("Error al guardar:", err);
+      alert(`Error: ${err.message}`);
       throw error;
     }
   };

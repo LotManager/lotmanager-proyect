@@ -7,7 +7,7 @@ import {
 } from "@mui/material"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { pesajeSchema, PesajeFormValues } from "@/src/lib/schemas/PesajeSchema"
+import { pesajeSchema, PesajeFormValues } from "@/src/lib/schemas/pesaje.schema"
 import { registrarPesaje } from "@/src/services/pesaje"
 import { useNotification } from "@/src/contexts/NotificationContext"
 
@@ -48,13 +48,13 @@ export function PesajeDialog({ open, onClose, bovinoId, caravana, onSuccess }: P
         pesoActual: values.pesoActual,
         fecha: new Date(values.fecha).toISOString(),
       })
-      // ✅ Snackbar verde en lugar de alert()
+      // Snackbar verde en lugar de alert()
       notify("Pesaje registrado correctamente", "success")
       onSuccess()
       handleClose()
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Error al registrar pesaje"
-      // ✅ Snackbar rojo en lugar de alert(`Error: ...`)
+      // Snackbar rojo en lugar de alert(`Error: ...`)
       notify(message, "error")
     }
   }

@@ -9,7 +9,7 @@ import {
 } from "@mui/material"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { movimientoSchema, MovimientoFormValues } from "@/src/lib/schemas/MovimientoSchema"
+import { movimientoSchema, MovimientoFormValues } from "@/src/lib/schemas/movimiento.schema"
 import { getCorrales, Corral } from "@/src/services/corral"
 import { crearMovimiento } from "@/src/services/movimiento"
 import { Bovino } from "@/src/services/bovino"

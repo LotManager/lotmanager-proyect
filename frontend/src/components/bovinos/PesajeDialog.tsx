@@ -28,7 +28,7 @@ export function PesajeDialog({ open, onClose, bovinoId, caravana, onSuccess }: P
     reset,
     formState: { errors, isSubmitting },
   } = useForm<PesajeFormValues>({
-    resolver: zodResolver(pesajeSchema),
+    resolver: zodResolver(pesajeSchema) as any,
     defaultValues: {
       pesoActual: undefined,
       fecha: new Date().toISOString().split("T")[0],

@@ -41,7 +41,7 @@ export function BovinoDialog({ open, onClose, onSave, bovinoToEdit }: Props) {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<BovinoFormValues>({
-    resolver: zodResolver(bovinoSchema),
+    resolver: zodResolver(bovinoSchema) as any,
     defaultValues,
   })
 

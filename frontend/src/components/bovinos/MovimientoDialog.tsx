@@ -33,7 +33,7 @@ export function MovimientoDialog({ open, onClose, bovino, onSuccess }: Props) {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<MovimientoFormValues>({
-    resolver: zodResolver(movimientoSchema),
+    resolver: zodResolver(movimientoSchema) as any,
     defaultValues: { corralDestinoId: 0, motivo: "CAMBIO" },
   })
 

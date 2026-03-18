@@ -35,7 +35,7 @@ export function DietaDialog({ open, onClose, onSave, dietaToEdit }: Props) {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<DietaFormValues>({
-    resolver: zodResolver(dietaSchema),
+    resolver: zodResolver(dietaSchema) as any,
     defaultValues,
   })
 
